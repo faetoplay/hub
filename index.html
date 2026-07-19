@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FaetoPlay</title>
+<meta name="description" content="FaetoPlay — cozy game guides, trackers, and tools.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500&family=Karla:wght@400;600&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  /* Palette sampled from faetoplay_outro_softvibes.mp4 */
+  :root{
+    --plum-deep:#1C1020;
+    --plum:#3A2033;
+    --plum-lift:#4B293F;
+    --plum-soft:#6B495A;
+    --cream:#FAF5ED;
+    --mauve:#B0978F;
+    --rose:#D6BFB4;
+    --champagne:#F4CE94;
+    --line:rgba(250,245,237,.12);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    color:var(--cream);
+    font:400 17px/1.65 Karla,system-ui,sans-serif;
+    padding:0 24px 96px;
+    background:var(--plum-deep);
+    background-image:
+      radial-gradient(120% 70% at 50% 0%, var(--plum-lift) 0%, var(--plum) 42%, var(--plum-deep) 78%);
+    background-attachment:fixed;
+    min-height:100vh;
+  }
+  .wrap{max-width:640px;margin:0 auto}
+  :focus-visible{outline:2px solid var(--champagne);outline-offset:4px;border-radius:4px}
+
+  header{padding:104px 0 60px}
+  .mark{
+    font-family:Fraunces,Georgia,serif;
+    font-weight:300;
+    font-size:clamp(46px,11vw,74px);
+    line-height:1;
+    letter-spacing:-.015em;
+    margin:0;
+    background:linear-gradient(96deg,var(--cream) 12%,var(--champagne) 58%,var(--rose) 92%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .mark b{font-weight:500}
+  .tagline{margin:20px 0 0;color:var(--rose);max-width:40ch;font-size:19px}
+
+  h2{
+    font-family:Karla,sans-serif;
+    font-weight:600;
+    font-size:12px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--mauve);
+    margin:60px 0 18px;
+  }
+
+  ul{list-style:none;margin:0;padding:0}
+
+  /* Guides & tools */
+  .card{
+    display:block;
+    background:rgba(250,245,237,.05);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:22px 24px;
+    text-decoration:none;
+    color:var(--cream);
+    margin-bottom:12px;
+    transition:background .18s ease,border-color .18s ease,transform .18s ease;
+  }
+  .card:hover{background:rgba(244,206,148,.09);border-color:rgba(244,206,148,.4);transform:translateY(-1px)}
+  .card .name{font-family:Fraunces,Georgia,serif;font-weight:500;font-size:23px;display:block;line-height:1.25}
+  .card .meta{color:var(--mauve);font-size:15.5px;display:block;margin-top:7px}
+
+  /* Social rows */
+  li.link{border-bottom:1px solid var(--line)}
+  li.link:last-child{border-bottom:0}
+  a.row{
+    display:flex;align-items:baseline;gap:16px;
+    padding:15px 4px;color:var(--cream);text-decoration:none;border-radius:6px;
+  }
+  a.row .name{font-weight:600}
+  a.row .handle{
+    margin-left:auto;font-family:'DM Mono',ui-monospace,monospace;
+    font-size:13.5px;color:var(--mauve);text-align:right;
+  }
+  a.row:hover .name{color:var(--champagne)}
+  a.row:hover .handle{color:var(--rose)}
+
+  .support{
+    display:inline-block;margin-top:6px;padding:13px 26px;border-radius:999px;
+    background:linear-gradient(100deg,var(--champagne),var(--rose));
+    color:#2A1622;text-decoration:none;font-weight:600;
+  }
+  .support:hover{filter:brightness(1.07)}
+  .lede{color:var(--mauve);margin:0 0 14px}
+
+  footer{
+    margin-top:80px;padding-top:26px;border-top:1px solid var(--line);
+    color:var(--mauve);font-size:14px;
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  @media (max-width:520px){
+    a.row{flex-wrap:wrap;gap:2px}
+    a.row .handle{margin-left:0;width:100%;text-align:left}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1 class="mark">Faeto<b>Play</b></h1>
+    <p class="tagline">Cozy games, taken a little too seriously. Guides, trackers, and checklists for people who like to finish the event.</p>
+  </header>
+
+  <h2>Guides &amp; tools</h2>
+  <a class="card" href="nikki-banner-checklist.html">
+    <span class="name">Infinity Nikki Banner Checklist</span>
+    <span class="meta">Every task for the current banner, sorted by the last day you can safely start it.</span>
+  </a>
+  <a class="card" href="https://faetoplay.github.io/FF14MSQThematicTracker/">
+    <span class="name">FFXIV MSQ Thematic Tracker</span>
+    <span class="meta">Work through the main scenario by theme instead of by patch number.</span>
+  </a>
+
+  <h2>Find me</h2>
+  <ul>
+    <li class="link"><a class="row" href="https://www.youtube.com/@faetoplay"><span class="name">YouTube</span><span class="handle">@faetoplay</span></a></li>
+    <li class="link"><a class="row" href="https://www.twitch.tv/kahako_the_fae"><span class="name">Twitch</span><span class="handle">kahako_the_fae</span></a></li>
+    <li class="link"><a class="row" href="https://www.tiktok.com/@faetoplay"><span class="name">TikTok</span><span class="handle">@faetoplay</span></a></li>
+    <li class="link"><a class="row" href="https://www.instagram.com/faetoplay/"><span class="name">Instagram</span><span class="handle">@faetoplay</span></a></li>
+    <li class="link"><a class="row" href="https://www.threads.net/@faetoplay"><span class="name">Threads</span><span class="handle">@faetoplay</span></a></li>
+    <li class="link"><a class="row" href="https://x.com/faetoplay"><span class="name">X</span><span class="handle">@faetoplay</span></a></li>
+    <li class="link"><a class="row" href="https://github.com/faetoplay"><span class="name">GitHub</span><span class="handle">faetoplay</span></a></li>
+  </ul>
+
+  <h2>Support the work</h2>
+  <p class="lede">Tips keep the guides free and the trackers updated.</p>
+  <a class="support" href="https://ko-fi.com/faetoplay">Buy me a Ko-fi</a>
+
+  <footer>
+    FaetoPlay · <a href="mailto:inquiries@faetoplay.com" style="color:var(--mauve)">inquiries@faetoplay.com</a><br>
+    Not affiliated with any game developer or publisher.
+  </footer>
+
+</div>
+</body>
+</html>

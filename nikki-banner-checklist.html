@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Golden Dust Checklist · FaetoPlay</title>
+<meta name="description" content="A banner-by-banner TODO checklist for Infinity Nikki, sorted by the last day you can safely start each task.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Karla:wght@400;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Palette sampled from the Golden Dust event splash */
+  :root{
+    --bronze-deep:#150E05;
+    --bronze:#241A0D;
+    --bronze-lift:#3A2A12;
+    --card:rgba(211,175,101,.07);
+    --gold-dim:#88632D;
+    --gold:#D3AF65;
+    --gold-bright:#FDED8E;
+    --cream:#F7EBCE;
+    --dim:#B18A46;
+    --alarm:#E28E5C;
+    --line:rgba(211,175,101,.2);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;color:var(--cream);
+    font:400 17px/1.65 Karla,system-ui,sans-serif;
+    padding:0 24px 96px;
+    background:var(--bronze-deep);
+    background-image:radial-gradient(115% 60% at 50% 0%, var(--bronze-lift) 0%, var(--bronze) 45%, var(--bronze-deep) 80%);
+    background-attachment:fixed;
+    min-height:100vh;
+  }
+  .wrap{max-width:760px;margin:0 auto}
+  a{color:var(--gold)}
+  :focus-visible{outline:2px solid var(--gold-bright);outline-offset:3px;border-radius:4px}
+
+  .back{display:inline-block;margin:34px 0 0;font-size:14px;color:var(--dim);text-decoration:none}
+  .back:hover{color:var(--gold-bright)}
+
+  h1{
+    font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;
+    font-size:clamp(36px,8vw,54px);line-height:1.05;letter-spacing:.005em;margin:18px 0 6px;
+    background:linear-gradient(98deg,var(--gold-bright) 8%,var(--gold) 52%,var(--gold-dim) 96%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .sub{color:var(--dim);margin:0 0 34px;font-size:15.5px}
+
+  /* Banner status card */
+  .status{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:26px;display:flex;flex-wrap:wrap;gap:24px 44px;align-items:flex-end;
+  }
+  .big{font-family:'DM Mono',monospace;font-weight:500;font-size:54px;line-height:.9;color:var(--gold-bright)}
+  .big small,.stat small{
+    display:block;font-family:Karla,sans-serif;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--dim);margin-bottom:9px;font-weight:600;
+  }
+  .stat{font-family:'DM Mono',monospace;font-size:19px;color:var(--cream)}
+  .track{height:3px;background:rgba(211,175,101,.16);border-radius:2px;margin-top:22px;width:100%;overflow:hidden}
+  .track > i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold-bright))}
+
+  h2{
+    font-family:Karla,sans-serif;font-weight:600;font-size:12px;
+    letter-spacing:.22em;text-transform:uppercase;color:var(--dim);
+    margin:56px 0 4px;display:flex;align-items:center;gap:12px;
+  }
+  h2 .count{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0;opacity:.75}
+  h2.now{color:var(--alarm)}
+  .h2note{color:var(--dim);font-size:14.5px;margin:0 0 14px}
+  .empty{
+    color:var(--dim);font-size:15px;font-style:italic;opacity:.7;
+    margin:0;padding:16px 0;border-bottom:1px solid var(--line);
+  }
+
+  ul{list-style:none;margin:0;padding:0}
+  li.task{border-bottom:1px solid var(--line);display:flex;gap:15px;padding:17px 0;align-items:flex-start}
+  li.task:last-child{border-bottom:0}
+  li.task input{
+    appearance:none;-webkit-appearance:none;flex:0 0 auto;
+    width:21px;height:21px;margin:3px 0 0;border:1px solid var(--gold-dim);
+    background:transparent;cursor:pointer;border-radius:5px;transition:background .15s ease;
+  }
+  li.task input:hover{border-color:var(--gold)}
+  li.task input:checked{background:var(--gold);border-color:var(--gold)}
+  li.task input:checked::after{content:"✓";display:block;color:var(--bronze-deep);font-size:14px;line-height:19px;text-align:center;font-weight:700}
+  .body{flex:1;min-width:0}
+  .title{font-weight:600}
+  .note{color:var(--dim);font-size:15px;margin-top:3px}
+  .deadline{font-family:'DM Mono',monospace;font-size:13px;color:var(--dim);margin-top:7px;display:flex;flex-wrap:wrap;gap:6px 16px}
+  .deadline .hot{color:var(--alarm)}
+  li.task.done .title,li.task.done .note{opacity:.38;text-decoration:line-through}
+  li.task.done .deadline{opacity:.38}
+  li.task.locked .title{color:var(--dim)}
+  li.task.locked input:disabled{
+    cursor:not-allowed;opacity:.4;border-style:dashed;border-color:var(--alarm);
+  }
+  li.task.locked input:disabled:hover{border-color:var(--alarm)}
+
+  [hidden]{display:none!important}
+  .tag{
+    display:inline-block;font-size:10.5px;font-weight:600;letter-spacing:.12em;
+    text-transform:uppercase;padding:2px 8px;margin-left:8px;border-radius:999px;
+    border:1px solid var(--line);color:var(--dim);vertical-align:1.5px;white-space:nowrap;
+  }
+  .tag.mid{border-color:rgba(211,175,101,.5);color:var(--gold)}
+  .tag.locked{border-color:rgba(226,142,92,.6);color:var(--alarm)}
+
+  .toolbar{display:flex;gap:14px;flex-wrap:wrap;margin-top:52px;padding-top:24px;border-top:1px solid var(--line)}
+  button{
+    font:600 14px Karla,sans-serif;background:transparent;color:var(--dim);
+    border:1px solid var(--line);border-radius:999px;padding:9px 20px;cursor:pointer;
+  }
+  button:hover{color:var(--gold-bright);border-color:var(--gold)}
+  .saved{color:var(--dim);font-size:13px;font-family:'DM Mono',monospace;align-self:center}
+  footer{margin-top:44px;color:var(--dim);font-size:14px}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  @media (max-width:520px){ .big{font-size:44px} .status{gap:20px 28px;padding:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="back" href="index.html">← FaetoPlay</a>
+  <h1 id="bannerName">Banner Checklist</h1>
+  <p class="sub" id="bannerDates"></p>
+
+  <div class="status">
+    <div class="big" id="daysLeft">—<small>Days left in banner</small></div>
+    <div class="stat" id="endsOn">—<small>Banner ends</small></div>
+    <div class="stat" id="doneCount">—<small>Tasks done</small></div>
+    <div class="track"><i id="track" style="width:0%"></i></div>
+  </div>
+
+  <div id="lists"></div>
+
+  <div class="toolbar">
+    <button id="uncheck">Clear all checkmarks</button>
+    <span class="saved">Progress saves in this browser only.</span>
+  </div>
+
+  <footer>FaetoPlay · Not affiliated with Papergames or Infold Games.</footer>
+</div>
+
+<script>
+/* ============================================================
+   EDIT EVERYTHING BETWEEN THE ==== LINES. Nothing below needs
+   touching. See PLANNING-README.md for the full field guide.
+   ============================================================ */
+
+const BANNER = {
+  id:    "2026-07-golden-dust",        // change this every banner; it resets checkmarks
+  name:  "Golden Dust",
+  start: "2026-07-16T23:00-04:00",     // day 1, with timezone offset (-04:00 = EDT)
+  end:   "2026-08-26T14:00-04:00",     // est. maintenance start; see README
+  resetNote: "Daily reset 7:00 AM ET"  // set to "" to hide
+};
+
+/* Task fields:
+     title    (required) what to do
+     startBy  (required) last day-count-remaining you can still start it.
+                         30 = "start no later than 30 days remaining".
+                         999 = start day one.  0 = any time before the deadline.
+     type     "every" | "mid" | "unique"   -- default "every". Only "mid" shows a badge.
+     note     one line of context
+     id       short handle so other tasks can point at this one, e.g. "ch11"
+     gate     prerequisite text. Shows a LOCKED badge and a "Needs first" line.
+     requires the id of the task that satisfies the gate. When that task is checked
+              off, the LOCKED badge and the "Needs first" line disappear on their own.
+              A gate without a requires stays locked-looking forever.
+     deadline optional YYYY-MM-DDTHH:MM±HH:MM if this task ends before the banner does
+*/
+const TASKS = [
+
+  // --- This banner only ---
+  { title:"Time to Collect — 48 Whimstars",
+    type:"unique", startBy:14,
+    note:"City of Hidden Secrets, in Heaven's Reach. Tiers at 24 / 30 / 36 / 42 / 48." },
+
+  { title:"Login Gifts — claim all 7 days",
+    type:"unique", startBy:7, deadline:"2026-08-06T07:00-04:00",
+    note:"Invitation from the Golden City. One claim per day, so seven separate logins." },
+
+  // --- New Story: Itzaland chapters 10–14 ---
+  // Chapters are permanent, but the 50-Diamond reward for each expires with the banner.
+  // Strictly sequential, so the runway is cumulative: two days budgeted per chapter,
+  // counting backward from the banner end.
+  { title:"Ch. 10 — Beyond the Haven Veil",
+    id:"ch10", type:"unique", startBy:10,
+    note:"Itzaland main storyline. Limited-time reward: 50 Diamonds." },
+
+  { title:"Ch. 11 — Winding Toward the End of Happiness",
+    id:"ch11", type:"unique", startBy:8,
+    gate:"Itzaland main storyline, Chapter 10", requires:"ch10",
+    note:"Limited-time reward: 50 Diamonds." },
+
+  { title:"Ch. 12 — Echoing in the Depths of the Soul",
+    id:"ch12", type:"unique", startBy:6,
+    gate:"Itzaland main storyline, Chapter 11", requires:"ch11",
+    note:"Limited-time reward: 50 Diamonds." },
+
+  { title:"Ch. 13 — The Knell and Eternal Dreams",
+    id:"ch13", type:"unique", startBy:4,
+    gate:"Itzaland main storyline, Chapter 12", requires:"ch12",
+    note:"Limited-time reward: 50 Diamonds." },
+
+  { title:"Ch. 14 — Dust and the City of Gold",
+    id:"ch14", type:"unique", startBy:2,
+    gate:"Itzaland main storyline, Chapter 13", requires:"ch13",
+    note:"Limited-time reward: 50 Diamonds." },
+
+  // --- Fun to Play ---
+  // Activities are permanent; only the Diamond rewards shown expire with the banner.
+  { title:"Jolly Shroomfair — use the Wonder Coin Machine once",
+    type:"unique", startBy:3,
+    gate:"Complete Itzaland main storyline, Chapter 11", requires:"ch11",
+    note:"Dawn Market. Limited-time reward: 30 Diamonds." },
+
+  { title:"Jolly Shroomfair — take part in Master Mechanic once",
+    type:"unique", startBy:3,
+    gate:"Complete Itzaland main storyline, Chapter 11", requires:"ch11",
+    note:"Dawn Market. Limited-time reward: 30 Diamonds." },
+
+  { title:"Jolly Shroomfair — play Shroom-Ring Toss once",
+    type:"unique", startBy:3,
+    gate:"Complete Itzaland main storyline, Chapter 11", requires:"ch11",
+    note:"Dawn Market. Limited-time reward: 30 Diamonds." },
+
+  { title:"Wanted: Coocoo Copter — collect Crystal of Blessing in the Center District",
+    type:"unique", startBy:3,
+    gate:"Progress to Itzaland main storyline, Chapter 10", requires:"ch10",
+    note:"Limited-time reward: 50 Diamonds." },
+
+  { title:"Everbloom Mystery — collect Crystal of Blessing in Everbloom Garden",
+    type:"unique", startBy:3,
+    gate:"Progress to Itzaland main storyline, Chapter 10", requires:"ch10",
+    note:"Limited-time reward: 50 Diamonds." },
+
+  { title:"Skyline Rush — take part in Skyward Race once",
+    type:"unique", startBy:3,
+    gate:"Progress to Itzaland main storyline, Chapter 11", requires:"ch11",
+    note:"Heaven's Reach. Limited-time reward: 50 Diamonds." },
+
+  // --- Every banner ---
+  // Nothing entered yet. Add your recurring tasks here with type:"every".
+
+  // --- Shows up mid-banner ---
+  // Nothing entered yet. Add them here with type:"mid".
+
+];
+
+/* ============================================================ */
+
+const DAY = 86400000;
+const now = new Date();
+const bannerEnd = new Date(BANNER.end);
+const bannerStart = new Date(BANNER.start);
+
+const daysUntil = d => (new Date(d) - now) / DAY;
+const fmt = d => new Date(d).toLocaleDateString(undefined,{month:"short",day:"numeric"});
+
+const bannerDaysLeft = Math.max(0, daysUntil(bannerEnd));
+const totalDays = Math.max(1, (bannerEnd - bannerStart) / DAY);
+
+document.title = BANNER.name + " Checklist · FaetoPlay";
+document.getElementById("bannerName").textContent = BANNER.name;
+document.getElementById("bannerDates").textContent =
+  "Infinity Nikki banner checklist · " + fmt(bannerStart) + " – " + fmt(bannerEnd) +
+  " · " + Math.round(totalDays) + " days total" +
+  (BANNER.resetNote ? " · " + BANNER.resetNote : "");
+document.getElementById("daysLeft").firstChild.textContent = Math.floor(bannerDaysLeft);
+document.getElementById("endsOn").firstChild.textContent =
+  bannerEnd.toLocaleDateString(undefined,{month:"short",day:"numeric"}) + ", " +
+  bannerEnd.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"});
+document.getElementById("track").style.width =
+  Math.min(100, Math.max(0, (1 - bannerDaysLeft/totalDays) * 100)) + "%";
+
+/* --- saved state --- */
+const KEY = "faetoplay.nikki." + BANNER.id;
+let done = {};
+try { done = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e){ done = {}; }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(done)); } catch(e){} };
+
+/* --- work out urgency --- */
+const enriched = TASKS.map((t,i) => {
+  const left = t.deadline ? daysUntil(t.deadline) : bannerDaysLeft;
+  const startBy = t.startBy ?? 0;
+  return {...t, i, left, startBy, slack: left - startBy};
+});
+
+const buckets = [
+  { key:"now",   heading:"Start now", note:"You are at or past the safe start day for these.",
+    test:t => t.slack <= 0 },
+  { key:"soon",  heading:"Start within 3 days", note:"", test:t => t.slack > 0 && t.slack <= 3 },
+  { key:"later", heading:"Later in the banner", note:"", test:t => t.slack > 3 }
+];
+
+const typeTag = { mid:["mid","Mid-banner"] };
+const listsEl = document.getElementById("lists");
+const taken = new Set();
+const rendered = [];
+
+function isUnlocked(t){
+  if (!t.gate) return true;
+  if (!t.requires) return false;
+  const pre = TASKS.find(x => x.id === t.requires);
+  return !!(pre && done[pre.title]);
+}
+
+function refreshLocks(){
+  rendered.forEach(li => {
+    const t = li._task;
+    if (!t.gate) return;
+    const open = isUnlocked(t);
+    if (li._lock)     li._lock.hidden = open;
+    if (li._gateLine) li._gateLine.hidden = open;
+    li.classList.toggle("locked", !open);
+    if (li._box){
+      // Never disable a box that's already ticked — that would strand the checkmark.
+      li._box.disabled = !open && !li._box.checked;
+      li._box.title = open ? "" : "Locked until: " + t.gate;
+    }
+  });
+}
+
+buckets.forEach(b => {
+  const items = enriched.filter(t => !taken.has(t.i) && b.test(t)).sort((a,z) => a.slack - z.slack);
+  items.forEach(t => taken.add(t.i));
+
+  const h = document.createElement("h2");
+  if (b.key === "now" && items.length) h.className = "now";
+  h.innerHTML = b.heading + (items.length ? ' <span class="count">' + items.length + '</span>' : '');
+  listsEl.appendChild(h);
+
+  if (!items.length){
+    const empty = document.createElement("p");
+    empty.className = "empty";
+    empty.textContent = "More information coming soon";
+    listsEl.appendChild(empty);
+    return;
+  }
+
+  if (b.note){
+    const p = document.createElement("p");
+    p.className = "h2note"; p.textContent = b.note;
+    listsEl.appendChild(p);
+  }
+  const ul = document.createElement("ul");
+  items.forEach(t => ul.appendChild(row(t)));
+  listsEl.appendChild(ul);
+});
+
+function row(t){
+  const li = document.createElement("li");
+  li.className = "task" + (done[t.title] ? " done" : "");
+  li._task = t;
+
+  const box = document.createElement("input");
+  box.type = "checkbox";
+  box.checked = !!done[t.title];
+  box.setAttribute("aria-label", t.title);
+  box.onchange = () => {
+    done[t.title] = box.checked;
+    li.classList.toggle("done", box.checked);
+    save(); tally(); refreshLocks();
+  };
+
+  const body = document.createElement("div");
+  body.className = "body";
+
+  const title = document.createElement("div");
+  title.className = "title";
+  title.append(t.title);
+
+  const tag = typeTag[t.type];
+  if (tag){
+    const s = document.createElement("span");
+    s.className = "tag " + tag[0];
+    s.textContent = tag[1];
+    title.append(" ", s);
+  }
+  if (t.gate){
+    const lock = document.createElement("span");
+    lock.className = "tag locked";
+    lock.textContent = "Locked";
+    title.append(" ", lock);
+    li._lock = lock;
+  }
+  body.appendChild(title);
+
+  if (t.note){
+    const n = document.createElement("div");
+    n.className = "note"; n.textContent = t.note;
+    body.appendChild(n);
+  }
+  if (t.gate){
+    const g = document.createElement("div");
+    g.className = "note"; g.textContent = "Needs first: " + t.gate;
+    body.appendChild(g);
+    li._gateLine = g;
+  }
+
+  const meta = document.createElement("div");
+  meta.className = "deadline";
+  const startTxt = t.startBy >= 999 ? "start day 1" : "start by " + t.startBy + "d remaining";
+  meta.innerHTML =
+    '<span' + (t.slack <= 0 ? ' class="hot"' : '') + '>' + startTxt + '</span>' +
+    '<span>' + Math.floor(Math.max(0,t.left)) + 'd left' +
+      (t.deadline ? " (ends " + fmt(t.deadline) + ")" : "") + '</span>';
+  body.appendChild(meta);
+
+  li.append(box, body);
+  li._box = box;
+  rendered.push(li);
+  return li;
+}
+
+function tally(){
+  const n = TASKS.filter(t => done[t.title]).length;
+  document.getElementById("doneCount").firstChild.textContent = n + " / " + TASKS.length;
+}
+tally();
+refreshLocks();
+
+document.getElementById("uncheck").onclick = () => {
+  if (!confirm("Clear every checkmark for this banner?")) return;
+  done = {}; save(); location.reload();
+};
+</script>
+</body>
+</html>
