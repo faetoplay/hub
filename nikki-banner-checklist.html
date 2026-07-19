@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Golden Dust Checklist · FaetoPlay</title>
-<meta name="description" content="A banner-by-banner TODO checklist for Infinity Nikki, sorted by the last day you can safely start each task.">
+<meta name="description" content="A banner-by-banner TODO checklist for Infinity Nikki, grouped by event and sorted by which deadline lands first.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Karla:wght@400;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -33,7 +33,7 @@
     background-attachment:fixed;
     min-height:100vh;
   }
-  .wrap{max-width:760px;margin:0 auto}
+  .wrap{max-width:1040px;margin:0 auto}
   a{color:var(--gold)}
   :focus-visible{outline:2px solid var(--gold-bright);outline-offset:3px;border-radius:4px}
 
@@ -62,61 +62,131 @@
   .track{height:3px;background:rgba(211,175,101,.16);border-radius:2px;margin-top:22px;width:100%;overflow:hidden}
   .track > i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold-bright))}
 
+  /* Pinned reminders. Not tasks — no checkbox, no save state, not in the tally. */
+  .reminder{
+    display:flex;gap:6px 14px;align-items:baseline;flex-wrap:wrap;
+    background:var(--card);border:1px solid var(--line);
+    border-left:3px solid var(--gold);border-radius:10px;
+    padding:15px 19px;margin-top:20px;
+  }
+  .reminder .title{font-weight:600}
+  .reminder .cadence{font-family:'DM Mono',monospace;font-size:13px;color:var(--alarm)}
+
+  /* Do first — only rendered when something is actually behind schedule. */
+  .dofirst{
+    border:1px solid rgba(226,142,92,.55);border-radius:12px;
+    background:rgba(226,142,92,.07);padding:16px 19px;margin-top:20px;
+  }
+  .dofirst.clear{border-color:var(--line);background:var(--card)}
+  .dofirst h2{margin:0 0 8px;color:var(--alarm)}
+  .dofirst.clear h2{color:var(--dim)}
+  .dofirst ul{margin:0}
+  .dofirst li{
+    font-size:15px;padding:5px 0 5px 16px;position:relative;color:var(--cream);
+  }
+  .dofirst li::before{content:"";position:absolute;left:0;top:14px;width:6px;height:1px;background:var(--alarm)}
+  .dofirst li span{font-family:'DM Mono',monospace;font-size:12.5px;color:var(--alarm);margin-left:8px}
+  .dofirst p{margin:0;font-size:15px;color:var(--dim)}
+
+  /* Two-column body: story spine on the left, everything else on the right. */
+  .cols{display:grid;grid-template-columns:290px minmax(0,1fr);gap:26px;margin-top:44px;align-items:start}
+
   h2{
     font-family:Karla,sans-serif;font-weight:600;font-size:12px;
     letter-spacing:.22em;text-transform:uppercase;color:var(--dim);
-    margin:56px 0 4px;display:flex;align-items:center;gap:12px;
+    margin:0 0 4px;display:flex;align-items:center;gap:12px;
   }
   h2 .count{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0;opacity:.75}
-  h2.now{color:var(--alarm)}
-  .h2note{color:var(--dim);font-size:14.5px;margin:0 0 14px}
-  .empty{
-    color:var(--dim);font-size:15px;font-style:italic;opacity:.7;
-    margin:0;padding:16px 0;border-bottom:1px solid var(--line);
+  .colnote{color:var(--dim);font-size:13.5px;margin:0 0 14px;font-family:'DM Mono',monospace}
+
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:2px 20px 8px;margin-bottom:12px;
   }
+  .card > header{
+    display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+    padding:15px 0 9px;flex-wrap:wrap;
+  }
+  .card > header .name{font-weight:600;font-size:16px}
+  .card > header .when{font-family:'DM Mono',monospace;font-size:12.5px;color:var(--dim);white-space:nowrap}
+  .card > header .when.hot{color:var(--alarm)}
 
   ul{list-style:none;margin:0;padding:0}
-  li.task{border-bottom:1px solid var(--line);display:flex;gap:15px;padding:17px 0;align-items:flex-start}
-  li.task:last-child{border-bottom:0}
+  li.task{border-top:1px solid var(--line);display:flex;gap:14px;padding:13px 0;align-items:flex-start}
   li.task input{
     appearance:none;-webkit-appearance:none;flex:0 0 auto;
-    width:21px;height:21px;margin:3px 0 0;border:1px solid var(--gold-dim);
+    width:21px;height:21px;margin:2px 0 0;border:1px solid var(--gold-dim);
     background:transparent;cursor:pointer;border-radius:5px;transition:background .15s ease;
   }
   li.task input:hover{border-color:var(--gold)}
   li.task input:checked{background:var(--gold);border-color:var(--gold)}
   li.task input:checked::after{content:"✓";display:block;color:var(--bronze-deep);font-size:14px;line-height:19px;text-align:center;font-weight:700}
   .body{flex:1;min-width:0}
-  .title{font-weight:600}
-  .note{color:var(--dim);font-size:15px;margin-top:3px}
-  .deadline{font-family:'DM Mono',monospace;font-size:13px;color:var(--dim);margin-top:7px;display:flex;flex-wrap:wrap;gap:6px 16px}
-  .deadline .hot{color:var(--alarm)}
+  .title{font-weight:600;font-size:15.5px}
+  .note{color:var(--dim);font-size:14px;margin-top:3px}
+  .meta{font-family:'DM Mono',monospace;font-size:12.5px;color:var(--dim);margin-top:6px}
+  .meta .hot{color:var(--alarm)}
   li.task.done .title,li.task.done .note{opacity:.38;text-decoration:line-through}
-  li.task.done .deadline{opacity:.38}
+  li.task.done .meta{opacity:.38}
   li.task.locked .title{color:var(--dim)}
-  li.task.locked input:disabled{
-    cursor:not-allowed;opacity:.4;border-style:dashed;border-color:var(--alarm);
-  }
+  li.task.locked input:disabled{cursor:not-allowed;opacity:.4;border-style:dashed;border-color:var(--alarm)}
   li.task.locked input:disabled:hover{border-color:var(--alarm)}
 
-  [hidden]{display:none!important}
-  .tag{
-    display:inline-block;font-size:10.5px;font-weight:600;letter-spacing:.12em;
-    text-transform:uppercase;padding:2px 8px;margin-left:8px;border-radius:999px;
-    border:1px solid var(--line);color:var(--dim);vertical-align:1.5px;white-space:nowrap;
+  /* Collapsed lock line — replaces a run of locked rows with one summary. */
+  .locked-line{
+    border-top:1px solid var(--line);padding:12px 0 6px;
+    display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+    font-size:14px;color:var(--dim);
   }
-  .tag.mid{border-color:rgba(211,175,101,.5);color:var(--gold)}
-  .tag.locked{border-color:rgba(226,142,92,.6);color:var(--alarm)}
+  .locked-line .why{color:var(--alarm)}
+  .disclose{
+    font:600 13px Karla,sans-serif;background:none;border:0;padding:0;margin-left:auto;
+    color:var(--gold);cursor:pointer;text-decoration:underline;text-underline-offset:3px;
+  }
+  .disclose:hover{color:var(--gold-bright)}
 
-  .toolbar{display:flex;gap:14px;flex-wrap:wrap;margin-top:52px;padding-top:24px;border-top:1px solid var(--line)}
-  button{
+  /* A group where nothing is actionable yet doesn't earn a card. */
+  .pending{
+    display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+    padding:12px 20px;border:1px dashed var(--line);border-radius:10px;
+    margin-bottom:10px;font-size:14px;color:var(--dim);
+  }
+  .pending .name{font-weight:600;color:var(--cream);font-size:15px}
+  .pending .why{color:var(--alarm)}
+
+  /* Story spine */
+  .spine{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:2px 20px 10px}
+  .spine li.task:first-child{border-top:0}
+  .spine .opens{font-family:'DM Mono',monospace;font-size:12.5px;color:var(--gold);margin-top:4px}
+  .spine .opens.was{color:var(--dim)}
+  .spine li.task.locked .opens{color:var(--dim)}
+  .spinefoot{color:var(--dim);font-size:13.5px;margin:0 0 9px;line-height:1.5}
+
+  /* Expired */
+  .expired{margin-top:30px;border-top:1px solid var(--line);padding-top:10px}
+  .expired > button{
+    font:600 13px Karla,sans-serif;background:none;border:0;padding:8px 0;
+    color:var(--dim);cursor:pointer;display:flex;gap:9px;align-items:center;width:100%;
+  }
+  .expired > button:hover{color:var(--gold)}
+  .expired ul{padding-bottom:8px}
+  .expired li.task{opacity:.5}
+
+  .toolbar{display:flex;gap:14px;flex-wrap:wrap;margin-top:44px;padding-top:24px;border-top:1px solid var(--line)}
+  button.action{
     font:600 14px Karla,sans-serif;background:transparent;color:var(--dim);
     border:1px solid var(--line);border-radius:999px;padding:9px 20px;cursor:pointer;
   }
-  button:hover{color:var(--gold-bright);border-color:var(--gold)}
+  button.action:hover{color:var(--gold-bright);border-color:var(--gold)}
   .saved{color:var(--dim);font-size:13px;font-family:'DM Mono',monospace;align-self:center}
-  footer{margin-top:44px;color:var(--dim);font-size:14px}
+  footer{margin-top:40px;color:var(--dim);font-size:14px}
+
+  [hidden]{display:none!important}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  @media (max-width:860px){
+    .cols{grid-template-columns:1fr;gap:34px}
+    body{padding:0 18px 80px}
+  }
   @media (max-width:520px){ .big{font-size:44px} .status{gap:20px 28px;padding:22px} }
 </style>
 </head>
@@ -134,10 +204,18 @@
     <div class="track"><i id="track" style="width:0%"></i></div>
   </div>
 
-  <div id="lists"></div>
+  <div id="reminders"></div>
+  <div id="dofirst"></div>
+
+  <div class="cols">
+    <section id="storyCol"></section>
+    <section id="groupCol"></section>
+  </div>
+
+  <div id="expired"></div>
 
   <div class="toolbar">
-    <button id="uncheck">Clear all checkmarks</button>
+    <button class="action" id="uncheck">Clear all checkmarks</button>
     <span class="saved">Progress saves in this browser only.</span>
   </div>
 
@@ -158,96 +236,170 @@ const BANNER = {
   resetNote: "Daily reset 7:00 AM ET"  // set to "" to hide
 };
 
+/* The group whose tasks run down the left column as a sequence rather than a
+   set. One per banner — the main story chain. Every other group is a card. */
+const STORY_GROUP = "Main story";
+
 /* Task fields:
      title    (required) what to do
+     group    (required) which card it appears under. Use the in-game tile name so
+                         the page matches what the reader is looking at. Set it to
+                         STORY_GROUP for the main story chain.
      startBy  (required) last day-count-remaining you can still start it.
                          30 = "start no later than 30 days remaining".
                          999 = start day one.  0 = any time before the deadline.
      type     "every" | "mid" | "unique"   -- default "every". Only "mid" shows a badge.
      note     one line of context
      id       short handle so other tasks can point at this one, e.g. "ch11"
-     gate     prerequisite text. Shows a LOCKED badge and a "Needs first" line.
+     short    abbreviated label used when other tasks name this one as a blocker,
+              e.g. "Ch. 11". Falls back to the full title. Worth setting on
+              anything that gates something else.
+     gate     prerequisite text, shown on the expanded row.
      requires the id of the task that satisfies the gate. When that task is checked
-              off, the LOCKED badge and the "Needs first" line disappear on their own.
-              A gate without a requires stays locked-looking forever.
+              off, the row unlocks on its own, without a reload.
      deadline optional YYYY-MM-DDTHH:MM±HH:MM if this task ends before the banner does
+     unlockDay optional event-day number (1-based). The task stays locked and its box
+              stays disabled until that day has arrived, worked out from the banner
+              start and the 7 AM ET reset. Combines with gate/requires — both must
+              clear before the box becomes clickable.
 */
+/* Pinned reminders. These are NOT tasks — no checkbox, no saved state, and they
+   don't count toward the tally. They render above everything and stay put.
+     title    (required) what to remember
+     cadence  (required) how often, shown in parentheses beside the title  */
+const REMINDERS = [
+  { title:"Raised Your Shroomling Today?", cadence:"twice daily" }
+];
+
 const TASKS = [
 
-  // --- This banner only ---
-  { title:"Time to Collect — 48 Whimstars",
-    type:"unique", startBy:14,
-    note:"City of Hidden Secrets, in Heaven's Reach. Tiers at 24 / 30 / 36 / 42 / 48." },
-
-  { title:"Login Gifts — claim all 7 days",
-    type:"unique", startBy:7, deadline:"2026-08-06T07:00-04:00",
-    note:"Invitation from the Golden City. One claim per day, so seven separate logins." },
-
-  // --- New Story: Itzaland chapters 10–14 ---
-  // Chapters are permanent, but the 50-Diamond reward for each expires with the banner.
-  // Strictly sequential, so the runway is cumulative: two days budgeted per chapter,
-  // counting backward from the banner end.
+  // --- New Story: Itzaland chapters 10–14 -------------------------------------
+  // The left column. Strictly sequential, and the thing most other tasks wait on.
+  // Chapters are permanent; the 50-Diamond reward for each expires with the banner.
+  // Two days budgeted per chapter, counting backward from the banner end.
   { title:"Ch. 10 — Beyond the Haven Veil",
-    id:"ch10", type:"unique", startBy:10,
+    group:STORY_GROUP, id:"ch10", short:"Ch. 10", type:"unique", startBy:10,
     note:"Itzaland main storyline. Limited-time reward: 50 Diamonds." },
 
   { title:"Ch. 11 — Winding Toward the End of Happiness",
-    id:"ch11", type:"unique", startBy:8,
+    group:STORY_GROUP, id:"ch11", short:"Ch. 11", type:"unique", startBy:8,
     gate:"Itzaland main storyline, Chapter 10", requires:"ch10",
     note:"Limited-time reward: 50 Diamonds." },
 
   { title:"Ch. 12 — Echoing in the Depths of the Soul",
-    id:"ch12", type:"unique", startBy:6,
+    group:STORY_GROUP, id:"ch12", short:"Ch. 12", type:"unique", startBy:6,
     gate:"Itzaland main storyline, Chapter 11", requires:"ch11",
     note:"Limited-time reward: 50 Diamonds." },
 
   { title:"Ch. 13 — The Knell and Eternal Dreams",
-    id:"ch13", type:"unique", startBy:4,
+    group:STORY_GROUP, id:"ch13", short:"Ch. 13", type:"unique", startBy:4,
     gate:"Itzaland main storyline, Chapter 12", requires:"ch12",
     note:"Limited-time reward: 50 Diamonds." },
 
   { title:"Ch. 14 — Dust and the City of Gold",
-    id:"ch14", type:"unique", startBy:2,
+    group:STORY_GROUP, id:"ch14", short:"Ch. 14", type:"unique", startBy:2,
     gate:"Itzaland main storyline, Chapter 13", requires:"ch13",
     note:"Limited-time reward: 50 Diamonds." },
 
-  // --- Fun to Play ---
+  // --- Time to Collect --------------------------------------------------------
+  { title:"48 Whimstars",
+    group:"Time to Collect", type:"unique", startBy:14 },
+
+  // --- Login Gifts ------------------------------------------------------------
+  { title:"Claim all 7 days",
+    group:"Login Gifts", type:"unique", startBy:7, deadline:"2026-08-06T07:00-04:00",
+    note:"Invitation from the Golden City. One claim per day, so seven separate logins." },
+
+  // --- Fun to Play ------------------------------------------------------------
   // Activities are permanent; only the Diamond rewards shown expire with the banner.
   { title:"Jolly Shroomfair — use the Wonder Coin Machine once",
-    type:"unique", startBy:3,
+    group:"Fun to Play", type:"unique", startBy:3,
     gate:"Complete Itzaland main storyline, Chapter 11", requires:"ch11",
     note:"Dawn Market. Limited-time reward: 30 Diamonds." },
 
   { title:"Jolly Shroomfair — take part in Master Mechanic once",
-    type:"unique", startBy:3,
+    group:"Fun to Play", type:"unique", startBy:3,
     gate:"Complete Itzaland main storyline, Chapter 11", requires:"ch11",
     note:"Dawn Market. Limited-time reward: 30 Diamonds." },
 
   { title:"Jolly Shroomfair — play Shroom-Ring Toss once",
-    type:"unique", startBy:3,
+    group:"Fun to Play", type:"unique", startBy:3,
     gate:"Complete Itzaland main storyline, Chapter 11", requires:"ch11",
     note:"Dawn Market. Limited-time reward: 30 Diamonds." },
 
   { title:"Wanted: Coocoo Copter — collect Crystal of Blessing in the Center District",
-    type:"unique", startBy:3,
+    group:"Fun to Play", type:"unique", startBy:3,
     gate:"Progress to Itzaland main storyline, Chapter 10", requires:"ch10",
     note:"Limited-time reward: 50 Diamonds." },
 
   { title:"Everbloom Mystery — collect Crystal of Blessing in Everbloom Garden",
-    type:"unique", startBy:3,
+    group:"Fun to Play", type:"unique", startBy:3,
     gate:"Progress to Itzaland main storyline, Chapter 10", requires:"ch10",
     note:"Limited-time reward: 50 Diamonds." },
 
   { title:"Skyline Rush — take part in Skyward Race once",
-    type:"unique", startBy:3,
+    group:"Fun to Play", type:"unique", startBy:3,
     gate:"Progress to Itzaland main storyline, Chapter 11", requires:"ch11",
     note:"Heaven's Reach. Limited-time reward: 50 Diamonds." },
 
-  // --- Every banner ---
-  // Nothing entered yet. Add your recurring tasks here with type:"every".
+  // --- Starlit Shop -----------------------------------------------------------
+  // 13 Limited-Time tiles totalling 1,245 Starlit Crystals. At 54/day from the Sea of
+  // Stars daily that's a 24-day grind, so startBy 26 leaves the usual two-day buffer.
+  // Tiles read 39d, i.e. they close with the banner — no deadline of its own.
+  { title:"Buy out the Limited-Time tab (1,245 Starlit Crystals)",
+    group:"Starlit Shop", type:"unique", startBy:26 },
 
-  // --- Shows up mid-banner ---
-  // Nothing entered yet. Add them here with type:"mid".
+  // --- Rainbow-Colored Gift ---------------------------------------------------
+  // Tile read 39d 18h, i.e. closes with the banner — no deadline of its own.
+  { title:"Complete all tasks",
+    group:"Rainbow-Colored Gift", type:"unique", startBy:14 },
+
+  // --- Mira Crown: Pinnacle Contest -------------------------------------------
+  // Refreshes on the 15th and the last day of each month, 24 stars each cycle. Three
+  // cycles touch this banner, so three rows — a checkbox that had to be un-ticked twice
+  // would lose the record of the earlier hauls. Cycles 2 and 3 open mid-banner and use
+  // unlockDay to stay locked until they do. See PLANNING-README for the boundary math.
+  { title:"Pinnacle Contest — 24 stars (cycle ending Jul 31)",
+    group:"Mira Crown", type:"unique", startBy:3, deadline:"2026-07-31T07:00-04:00" },
+
+  { title:"Pinnacle Contest — 24 stars (cycle ending Aug 15)",
+    group:"Mira Crown", type:"mid", startBy:3, unlockDay:16, deadline:"2026-08-15T07:00-04:00" },
+
+  { title:"Pinnacle Contest — 24 stars (cycle ending Aug 31)",
+    group:"Mira Crown", type:"mid", startBy:3, unlockDay:31 },
+
+  // --- Current Adventures -----------------------------------------------------
+  // Starlight Contest read 19d 0h on Jul 18, so it dies well before the banner does.
+  { title:"Starlight Contest — complete \"True, As I Am\"",
+    group:"Current Adventures", type:"unique", startBy:3, deadline:"2026-08-06T07:00-04:00" },
+
+  // Tales of Itzaland III: five days, each opening a fresh set of tasks. The day
+  // number is the only thing knowable ahead of time — hence one checkbox per day
+  // rather than per task. Days 4 and 5 need their notes filled in once they open.
+  { title:"Tales of Itzaland III — Day 1",
+    group:"Current Adventures", type:"unique", startBy:2, unlockDay:1,
+    gate:"Unlock Heaven's Reach (mid Chapter 10)", requires:"ch10",
+    note:"Poem of Motive Power and Gears. Four tasks, 100 event points each." },
+
+  { title:"Tales of Itzaland III — Day 2",
+    group:"Current Adventures", type:"unique", startBy:2, unlockDay:2,
+    gate:"Unlock Heaven's Reach (mid Chapter 10)", requires:"ch10",
+    note:"Secrets of the Mechanical City. Four tasks, 100 event points each." },
+
+  { title:"Tales of Itzaland III — Day 3",
+    group:"Current Adventures", type:"unique", startBy:2, unlockDay:3,
+    gate:"Unlock Heaven's Reach (mid Chapter 10)", requires:"ch10",
+    note:"Ingenuity and Inspiration. Four tasks, 100 event points each." },
+
+  { title:"Tales of Itzaland III — Day 4",
+    group:"Current Adventures", type:"unique", startBy:2, unlockDay:4,
+    gate:"Unlock Heaven's Reach (mid Chapter 10)", requires:"ch10",
+    note:"Tasks unknown until the day opens. Four tasks, 100 event points each." },
+
+  { title:"Tales of Itzaland III — Day 5",
+    group:"Current Adventures", type:"unique", startBy:2, unlockDay:5,
+    gate:"Unlock Heaven's Reach (mid Chapter 10)", requires:"ch10",
+    note:"Tasks unknown until the day opens. Four tasks, 100 event points each." }
 
 ];
 
@@ -263,6 +415,22 @@ const fmt = d => new Date(d).toLocaleDateString(undefined,{month:"short",day:"nu
 
 const bannerDaysLeft = Math.max(0, daysUntil(bannerEnd));
 const totalDays = Math.max(1, (bannerEnd - bannerStart) / DAY);
+
+/* --- event day counter ---
+   Day 1 starts with the banner; every later day starts at the next 7 AM ET reset, not
+   24h after launch. Golden Dust opened at 11 PM ET, so Day 1 is a short one.
+   ET is hardcoded to -04:00 to match the literal offsets on the dates above — it does
+   not follow DST, so change it alongside them after Nov 1, 2026. */
+const ET_OFFSET = -4 * 3600000;
+function eventDayStart(n){
+  if (n <= 1) return bannerStart;
+  const etMs = +bannerStart + ET_OFFSET;                 // banner start on an ET clock
+  let reset = Math.floor(etMs / DAY) * DAY + 7 * 3600000; // 7 AM ET that same ET day
+  if (reset <= etMs) reset += DAY;                        // already past it → next one
+  return new Date(reset + (n - 2) * DAY - ET_OFFSET);     // n=2 is the first reset
+}
+let eventDay = 1;
+while (eventDayStart(eventDay + 1) <= now) eventDay++;
 
 document.title = BANNER.name + " Checklist · FaetoPlay";
 document.getElementById("bannerName").textContent = BANNER.name;
@@ -283,111 +451,94 @@ let done = {};
 try { done = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e){ done = {}; }
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(done)); } catch(e){} };
 
-/* --- work out urgency --- */
+/* --- urgency ---
+   slack = days left on this task's deadline − the runway it needs.
+   It no longer drives page order on its own; it drives the Do-first strip, the
+   per-card marker, and the tiebreak between cards that share a deadline. */
 const enriched = TASKS.map((t,i) => {
   const left = t.deadline ? daysUntil(t.deadline) : bannerDaysLeft;
   const startBy = t.startBy ?? 0;
-  return {...t, i, left, startBy, slack: left - startBy};
+  return {...t, i, left, startBy, slack: left - startBy,
+          deadlineAt: t.deadline ? new Date(t.deadline) : bannerEnd,
+          expired: left <= 0};
 });
 
-const buckets = [
-  { key:"now",   heading:"Start now", note:"You are at or past the safe start day for these.",
-    test:t => t.slack <= 0 },
-  { key:"soon",  heading:"Start within 3 days", note:"", test:t => t.slack > 0 && t.slack <= 3 },
-  { key:"later", heading:"Later in the banner", note:"", test:t => t.slack > 3 }
-];
+const byId = id => TASKS.find(x => x.id === id);
+const label = t => t && (t.short || t.title);
 
-const typeTag = { mid:["mid","Mid-banner"] };
-const listsEl = document.getElementById("lists");
-const taken = new Set();
-const rendered = [];
+/* --- locking --- */
+const dayReached = t => !t.unlockDay || eventDay >= t.unlockDay;
 
 function isUnlocked(t){
+  if (!dayReached(t)) return false;
   if (!t.gate) return true;
   if (!t.requires) return false;
-  const pre = TASKS.find(x => x.id === t.requires);
+  const pre = byId(t.requires);
   return !!(pre && done[pre.title]);
 }
 
-function refreshLocks(){
-  rendered.forEach(li => {
-    const t = li._task;
-    if (!t.gate) return;
-    const open = isUnlocked(t);
-    if (li._lock)     li._lock.hidden = open;
-    if (li._gateLine) li._gateLine.hidden = open;
-    li.classList.toggle("locked", !open);
-    if (li._box){
-      // Never disable a box that's already ticked — that would strand the checkmark.
-      li._box.disabled = !open && !li._box.checked;
-      li._box.title = open ? "" : "Locked until: " + t.gate;
-    }
+/* Two kinds of blocker, worded differently on purpose: a day lock is a promise
+   about the calendar, a prerequisite is an instruction. A task can carry both;
+   the prerequisite is the one worth naming, since it's the one you can act on. */
+function gateOpen(t){ return !t.gate || isUnlocked({...t, unlockDay:null}); }
+
+/* Collapses a run of locked tasks into as few lines as possible: one per
+   prerequisite, plus one for everything waiting only on the calendar. */
+function lockSummary(hidden){
+  const out = [], byGate = {}, dayOnly = [];
+  hidden.forEach(t => {
+    if (!gateOpen(t)){
+      const k = "after " + (label(byId(t.requires)) || t.gate);
+      (byGate[k] = byGate[k] || []).push(t);
+    } else dayOnly.push(t);
   });
+  Object.keys(byGate).forEach(k => out.push({ label:k, tasks:byGate[k] }));
+  if (dayOnly.length){
+    const days = [...new Set(dayOnly.map(t => fmt(eventDayStart(t.unlockDay))))];
+    out.push({
+      label: "open" + (dayOnly.length === 1 ? "s " : " ") +
+             (days.length <= 2 ? days.join(" and ") : days[0] + " – " + days[days.length-1]),
+      tasks: dayOnly
+    });
+  }
+  return out;
 }
 
-buckets.forEach(b => {
-  const items = enriched.filter(t => !taken.has(t.i) && b.test(t)).sort((a,z) => a.slack - z.slack);
-  items.forEach(t => taken.add(t.i));
+function lockDetail(t){
+  const parts = [];
+  if (!dayReached(t))
+    parts.push("event Day " + t.unlockDay + ", opening " + fmt(eventDayStart(t.unlockDay)));
+  if (t.gate) parts.push(t.gate);
+  return parts.join(" · ");
+}
 
-  const h = document.createElement("h2");
-  if (b.key === "now" && items.length) h.className = "now";
-  h.innerHTML = b.heading + (items.length ? ' <span class="count">' + items.length + '</span>' : '');
-  listsEl.appendChild(h);
+let rendered = [];
 
-  if (!items.length){
-    const empty = document.createElement("p");
-    empty.className = "empty";
-    empty.textContent = "More information coming soon";
-    listsEl.appendChild(empty);
-    return;
-  }
+/* ============ rows ============ */
 
-  if (b.note){
-    const p = document.createElement("p");
-    p.className = "h2note"; p.textContent = b.note;
-    listsEl.appendChild(p);
-  }
-  const ul = document.createElement("ul");
-  items.forEach(t => ul.appendChild(row(t)));
-  listsEl.appendChild(ul);
-});
-
-function row(t){
+function row(t, opts){
+  opts = opts || {};
+  const open = isUnlocked(t);
   const li = document.createElement("li");
-  li.className = "task" + (done[t.title] ? " done" : "");
+  li.className = "task" + (done[t.title] ? " done" : "") +
+                 ((t.gate || t.unlockDay) && !open ? " locked" : "");
   li._task = t;
 
   const box = document.createElement("input");
   box.type = "checkbox";
   box.checked = !!done[t.title];
   box.setAttribute("aria-label", t.title);
-  box.onchange = () => {
-    done[t.title] = box.checked;
-    li.classList.toggle("done", box.checked);
-    save(); tally(); refreshLocks();
-  };
+  // Never disable a box that's already ticked — that would strand the checkmark.
+  box.disabled = (opts.frozen || !open) && !box.checked;
+  if (!open) box.title = "Locked until: " + lockDetail(t);
+  box.onchange = () => { done[t.title] = box.checked; save(); renderAll(); };
 
   const body = document.createElement("div");
   body.className = "body";
 
   const title = document.createElement("div");
   title.className = "title";
-  title.append(t.title);
-
-  const tag = typeTag[t.type];
-  if (tag){
-    const s = document.createElement("span");
-    s.className = "tag " + tag[0];
-    s.textContent = tag[1];
-    title.append(" ", s);
-  }
-  if (t.gate){
-    const lock = document.createElement("span");
-    lock.className = "tag locked";
-    lock.textContent = "Locked";
-    title.append(" ", lock);
-    li._lock = lock;
-  }
+  title.textContent = t.title;
   body.appendChild(title);
 
   if (t.note){
@@ -395,34 +546,292 @@ function row(t){
     n.className = "note"; n.textContent = t.note;
     body.appendChild(n);
   }
-  if (t.gate){
+  if (opts.opens){
+    const o = document.createElement("div");
+    o.className = "opens" + (done[t.title] ? " was" : "");
+    o.textContent = opts.opens;
+    body.appendChild(o);
+  }
+  if ((t.gate || t.unlockDay) && !open){
     const g = document.createElement("div");
-    g.className = "note"; g.textContent = "Needs first: " + t.gate;
+    g.className = "note"; g.textContent = "Needs first: " + lockDetail(t);
     body.appendChild(g);
-    li._gateLine = g;
+  }
+  if (!opts.hideMeta){
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    const startTxt = t.startBy >= 999 ? "start day 1" : "start by " + t.startBy + "d remaining";
+    meta.innerHTML =
+      '<span' + (t.slack <= 0 ? ' class="hot"' : '') + '>' + startTxt + '</span>' +
+      ' · <span>' + Math.floor(Math.max(0,t.left)) + 'd left</span>' +
+      (t.deadline ? ' <span>(ends ' + fmt(t.deadline) + ')</span>' : '');
+    body.appendChild(meta);
   }
 
-  const meta = document.createElement("div");
-  meta.className = "deadline";
-  const startTxt = t.startBy >= 999 ? "start day 1" : "start by " + t.startBy + "d remaining";
-  meta.innerHTML =
-    '<span' + (t.slack <= 0 ? ' class="hot"' : '') + '>' + startTxt + '</span>' +
-    '<span>' + Math.floor(Math.max(0,t.left)) + 'd left' +
-      (t.deadline ? " (ends " + fmt(t.deadline) + ")" : "") + '</span>';
-  body.appendChild(meta);
-
   li.append(box, body);
-  li._box = box;
-  rendered.push(li);
   return li;
 }
 
-function tally(){
-  const n = TASKS.filter(t => done[t.title]).length;
-  document.getElementById("doneCount").firstChild.textContent = n + " / " + TASKS.length;
+/* ============ left column: the story spine ============ */
+
+const storyTasks = enriched.filter(t => t.group === STORY_GROUP);
+// How many non-story tasks each chapter releases. This is the reason to do it.
+const opensCount = {};
+storyTasks.forEach(s => {
+  opensCount[s.id] = TASKS.filter(x => x.group !== STORY_GROUP && x.requires === s.id).length;
+});
+
+function opensText(t){
+  const n = opensCount[t.id] || 0;
+  const finished = !!done[t.title];
+  const nextUp = !finished && storyTasks.every(s => s.i >= t.i || done[s.title]);
+  const bits = [];
+  if (nextUp) bits.push("next up");
+  if (n) bits.push((finished ? "opened " : "opens ") + n + (n === 1 ? " task" : " tasks"));
+  return bits.join(" · ");
 }
-tally();
-refreshLocks();
+
+function renderStory(){
+  const col = document.getElementById("storyCol");
+  col.textContent = "";
+  if (!storyTasks.length) return;
+
+  const n = storyTasks.filter(t => done[t.title]).length;
+  const h = document.createElement("h2");
+  h.innerHTML = STORY_GROUP + ' <span class="count">' + n + " / " + storyTasks.length + '</span>';
+  col.appendChild(h);
+
+  const lede = document.createElement("p");
+  lede.className = "spinefoot";
+  lede.textContent = "Do these in order. Most of the other tasks wait on them.";
+  col.appendChild(lede);
+
+  const next = storyTasks.find(t => !done[t.title]);
+  const note = document.createElement("p");
+  note.className = "colnote";
+  note.textContent = !next ? "All chapters done."
+    : opensCount[next.id] ? label(next) + " next — opens " + opensCount[next.id] + " tasks"
+    : label(next) + " next";
+  col.appendChild(note);
+
+  const ul = document.createElement("ul");
+  ul.className = "spine";
+  storyTasks.forEach(t => ul.appendChild(row(t, {opens:opensText(t), hideMeta:true})));
+  col.appendChild(ul);
+}
+
+/* ============ right column: one card per event ============ */
+
+const otherTasks = enriched.filter(t => t.group !== STORY_GROUP);
+const groupOrder = [];
+const groupMap = {};
+otherTasks.forEach(t => {
+  if (!groupMap[t.group]){ groupMap[t.group] = []; groupOrder.push(t.group); }
+  groupMap[t.group].push(t);
+});
+
+/* Cards sort by whichever deadline lands first. Most groups inherit the banner end,
+   so they tie — the tiebreak is the most urgent task inside, which is what pushes a
+   long grind like the Starlit Shop above a one-sitting task that shares its date. */
+function buildGroups(){
+  return groupOrder.map(name => {
+    const all = groupMap[name];
+    const live = all.filter(t => !t.expired);
+    const basis = live.length ? live : all;
+    return {
+      name, all, live,
+      visible: live.filter(t => isUnlocked(t) || done[t.title]),
+      hidden:  live.filter(t => !isUnlocked(t) && !done[t.title]),
+      deadlineAt: Math.min(...basis.map(t => +t.deadlineAt)),
+      slack: Math.min(...basis.map(t => t.slack))
+    };
+  }).filter(g => g.live.length)
+    .sort((a,b) => a.deadlineAt - b.deadlineAt || a.slack - b.slack);
+}
+
+function renderGroups(){
+  const col = document.getElementById("groupCol");
+  col.textContent = "";
+  const groups = buildGroups();
+  // A group with nothing actionable doesn't earn a card; it drops to a single line
+  // at the bottom so the top of the column stays things you can actually do.
+  const active  = groups.filter(g => g.visible.length);
+  const pending = groups.filter(g => !g.visible.length);
+  const live = otherTasks.filter(t => !t.expired);
+
+  const h = document.createElement("h2");
+  h.innerHTML = 'Everything else <span class="count">' +
+    live.filter(t => done[t.title]).length + " / " + live.length + '</span>';
+  col.appendChild(h);
+
+  const note = document.createElement("p");
+  note.className = "colnote";
+  note.textContent = "Grouped by where you find it in game · soonest deadline first";
+  col.appendChild(note);
+
+  active.forEach(g => col.appendChild(card(g)));
+  pending.forEach(g => col.appendChild(pendingLine(g)));
+}
+
+function card(g){
+  const sec = document.createElement("section");
+  sec.className = "card";
+
+  const head = document.createElement("header");
+  const name = document.createElement("span");
+  name.className = "name"; name.textContent = g.name;
+  const when = document.createElement("span");
+  when.className = "when" + (g.slack <= 3 ? " hot" : "");
+  when.textContent = g.slack <= 0 ? "start now"
+    : g.deadlineAt >= +bannerEnd
+      ? "start by " + Math.max(0, Math.min(...g.live.map(t => t.startBy))) + "d left"
+      : "ends " + fmt(new Date(g.deadlineAt));
+  head.append(name, when);
+  sec.appendChild(head);
+
+  const ul = document.createElement("ul");
+  g.visible.forEach(t => ul.appendChild(row(t)));
+  sec.appendChild(ul);
+
+  if (g.hidden.length) sec.appendChild(lockedLines(g.hidden));
+  return sec;
+}
+
+/* One line standing in for a run of locked rows, grouped by what they wait on. */
+function discloser(hold){
+  const btn = document.createElement("button");
+  btn.className = "disclose";
+  btn.type = "button";
+  btn.textContent = "Show";
+  btn.setAttribute("aria-expanded", "false");
+  btn.onclick = () => {
+    hold.hidden = !hold.hidden;
+    btn.textContent = hold.hidden ? "Show" : "Hide";
+    btn.setAttribute("aria-expanded", String(!hold.hidden));
+  };
+  return btn;
+}
+
+function lockedLines(hidden){
+  const wrap = document.createElement("div");
+  lockSummary(hidden).forEach(part => {
+    const line = document.createElement("div");
+    line.className = "locked-line";
+    const txt = document.createElement("span");
+    txt.innerHTML = part.tasks.length + (part.tasks.length === 1 ? " task " : " tasks ") +
+      '<span class="why">' + part.label + '</span>';
+    const hold = document.createElement("ul");
+    hold.hidden = true;
+    part.tasks.forEach(t => hold.appendChild(row(t)));
+    line.append(txt, discloser(hold));
+    wrap.append(line, hold);
+  });
+  return wrap;
+}
+
+function pendingLine(g){
+  const d = document.createElement("div");
+  d.className = "pending";
+  const name = document.createElement("span");
+  name.className = "name"; name.textContent = g.name;
+  const parts = lockSummary(g.hidden);
+  const rest = document.createElement("span");
+  rest.innerHTML = parts.map(p =>
+    p.tasks.length + " " + '<span class="why">' + p.label + '</span>').join(", ");
+  const hold = document.createElement("ul");
+  hold.hidden = true;
+  hold.style.width = "100%";
+  g.hidden.forEach(t => hold.appendChild(row(t)));
+  d.append(name, rest, discloser(hold), hold);
+  return d;
+}
+
+/* ============ do first ============ */
+
+function renderDoFirst(){
+  const el = document.getElementById("dofirst");
+  el.textContent = "";
+  const late = enriched
+    .filter(t => !t.expired && !done[t.title] && isUnlocked(t) && t.slack <= 3)
+    .sort((a,b) => a.slack - b.slack);
+
+  const box = document.createElement("div");
+  box.className = "dofirst" + (late.length ? "" : " clear");
+  const h = document.createElement("h2");
+  h.textContent = late.length ? "Do first · " + late.length : "Do first";
+  box.appendChild(h);
+
+  if (!late.length){
+    const p = document.createElement("p");
+    p.textContent = "Nothing is behind schedule. Work down the list at your own pace.";
+    box.appendChild(p);
+  } else {
+    const ul = document.createElement("ul");
+    late.forEach(t => {
+      const li = document.createElement("li");
+      li.innerHTML = t.title + '<span>' + Math.floor(Math.max(0, t.left)) + 'd left</span>';
+      ul.appendChild(li);
+    });
+    box.appendChild(ul);
+  }
+  el.appendChild(box);
+}
+
+/* ============ expired ============
+   Individual tasks, not whole groups — a group can outlive some of its rows. */
+
+function renderExpired(){
+  const el = document.getElementById("expired");
+  el.textContent = "";
+  const gone = enriched.filter(t => t.expired);
+  if (!gone.length) return;
+
+  const sec = document.createElement("section");
+  sec.className = "expired";
+  const ul = document.createElement("ul");
+  ul.hidden = true;
+  gone.forEach(t => ul.appendChild(row(t, {frozen:true, hideMeta:true})));
+  const btn = document.createElement("button");
+  btn.type = "button";
+  const set = () => {
+    btn.textContent = (ul.hidden ? "▸  " : "▾  ") + "Expired · " + gone.length +
+      (gone.length === 1 ? " task" : " tasks");
+    btn.setAttribute("aria-expanded", String(!ul.hidden));
+  };
+  btn.onclick = () => { ul.hidden = !ul.hidden; set(); };
+  set();
+  sec.append(btn, ul);
+  el.appendChild(sec);
+}
+
+/* ============ render ============
+   Ticking a box can change the shape of the page — unlocking a chapter moves seven
+   tasks out of a collapsed line and into real rows — so everything redraws at once
+   rather than patching individual rows. 24 rows; the cost is nothing. */
+
+function renderAll(){
+  document.getElementById("doneCount").firstChild.textContent =
+    TASKS.filter(t => done[t.title]).length + " / " + TASKS.length;
+  renderDoFirst();
+  renderStory();
+  renderGroups();
+  renderExpired();
+}
+
+/* --- pinned reminders, drawn once --- */
+const remEl = document.getElementById("reminders");
+REMINDERS.forEach(r => {
+  const d = document.createElement("div");
+  d.className = "reminder";
+  const t = document.createElement("span");
+  t.className = "title"; t.textContent = r.title;
+  const c = document.createElement("span");
+  c.className = "cadence"; c.textContent = "(" + r.cadence + ")";
+  d.append(t, c);
+  remEl.appendChild(d);
+});
+
+renderAll();
 
 document.getElementById("uncheck").onclick = () => {
   if (!confirm("Clear every checkmark for this banner?")) return;
