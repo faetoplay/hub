@@ -163,6 +163,13 @@
   .spinefoot{color:var(--dim);font-size:13.5px;margin:0 0 9px;line-height:1.5}
 
   /* Expired */
+  .card.weekly{border-left:3px solid var(--gold)}
+  .card.weekly li.task:first-child{border-top:0}
+  .optional{
+    font-family:'DM Mono',monospace;font-size:11.5px;font-weight:400;
+    color:var(--dim);margin-left:9px;letter-spacing:.04em;
+  }
+
   .expired{margin-top:30px;border-top:1px solid var(--line);padding-top:10px}
   .expired > button{
     font:600 13px Karla,sans-serif;background:none;border:0;padding:8px 0;
@@ -269,6 +276,29 @@ const STORY_GROUP = "Main story";
      cadence  (required) how often, shown in parentheses beside the title  */
 const REMINDERS = [
   { title:"Raised Your Shroomling Today?", cadence:"twice daily" }
+];
+
+/* Weekly tasks. Checkbox like a normal task, but the tick is stored against the
+   current week and clears itself at the Monday 7 AM ET reset — no need to come back
+   and un-tick four boxes. They're outside the banner tally, since "done" for them
+   means done this week, not done for good. Most of these carry over between banners
+   untouched; see NEXT-BANNER.md.
+     title    (required)
+     note     one line of context
+     optional set true for anything you can skip without losing progress. Optional
+              tasks are labelled and stay out of the Do-first strip. */
+const WEEKLY = [
+  { title:"Mira Crown — Arena",
+    note:"Materials for the Miracle outfit come from here." },
+
+  { title:"Starlit Pursuit",
+    optional:true },
+
+  { title:"Home Island tasks",
+    note:"2,000 points is the weekly cap." },
+
+  { title:"Mira Journey",
+    note:"8,000 points is the weekly cap." }
 ];
 
 const TASKS = [
@@ -432,6 +462,22 @@ function eventDayStart(n){
 let eventDay = 1;
 while (eventDayStart(eventDay + 1) <= now) eventDay++;
 
+/* --- weekly reset ---
+   Monday 7 AM ET. Same hardcoded ET offset as above, so it needs the same DST edit. */
+function weekStartAt(at){
+  const etMs = +at + ET_OFFSET;                       // that instant on an ET clock
+  const dow  = new Date(etMs).getUTCDay();            // 0 Sun … 1 Mon, read in ET
+  const back = (dow + 6) % 7;                         // days since Monday
+  let ms = (Math.floor(etMs / DAY) - back) * DAY + 7 * 3600000;
+  if (ms > etMs) ms -= 7 * DAY;                       // before this week's reset
+  return ms - ET_OFFSET;                              // back to a real instant
+}
+const weekStart = weekStartAt(now);
+const weekEnd   = weekStart + 7 * DAY;
+const weekId    = new Date(weekStart + ET_OFFSET).toISOString().slice(0,10);
+const weekKey   = t => "weekly:" + t.title + "@" + weekId;
+const hoursToReset = (weekEnd - now) / 3600000;
+
 document.title = BANNER.name + " Checklist · FaetoPlay";
 document.getElementById("bannerName").textContent = BANNER.name;
 document.getElementById("bannerDates").textContent =
@@ -450,6 +496,15 @@ const KEY = "faetoplay.nikki." + BANNER.id;
 let done = {};
 try { done = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e){ done = {}; }
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(done)); } catch(e){} };
+
+// Last week's weekly ticks are dead weight — drop them rather than let them pile up.
+let pruned = false;
+Object.keys(done).forEach(k => {
+  if (k.indexOf("weekly:") === 0 && k.slice(k.lastIndexOf("@") + 1) !== weekId){
+    delete done[k]; pruned = true;
+  }
+});
+if (pruned) save();
 
 /* --- urgency ---
    slack = days left on this task's deadline − the runway it needs.
@@ -649,6 +704,67 @@ function buildGroups(){
     .sort((a,b) => a.deadlineAt - b.deadlineAt || a.slack - b.slack);
 }
 
+/* ============ weekly ============
+   Pinned above the event cards. It isn't sorted with them: its deadline is the same
+   every week, and it's the thing most likely to be why you opened the page today. */
+
+function weeklyDone(t){ return !!done[weekKey(t)]; }
+
+function renderWeekly(col){
+  if (!WEEKLY.length) return;
+  const sec = document.createElement("section");
+  sec.className = "card weekly";
+
+  const head = document.createElement("header");
+  const name = document.createElement("span");
+  name.className = "name";
+  name.textContent = "This week";
+  const when = document.createElement("span");
+  when.className = "when" + (hoursToReset <= 24 ? " hot" : "");
+  // Days-and-hours rather than a rounded day count: over a 7-day horizon the
+  // rounding is the difference between "6d left" and "nearly a full week left".
+  when.textContent = "resets Mon 7 AM · " + (hoursToReset < 24
+    ? Math.max(0, Math.round(hoursToReset)) + "h left"
+    : Math.floor(hoursToReset / 24) + "d " + Math.floor(hoursToReset % 24) + "h left");
+  head.append(name, when);
+  sec.appendChild(head);
+
+  const ul = document.createElement("ul");
+  WEEKLY.forEach(t => {
+    const li = document.createElement("li");
+    li.className = "task" + (weeklyDone(t) ? " done" : "");
+
+    const box = document.createElement("input");
+    box.type = "checkbox";
+    box.checked = weeklyDone(t);
+    box.setAttribute("aria-label", t.title + " (this week)");
+    box.onchange = () => { done[weekKey(t)] = box.checked; save(); renderAll(); };
+
+    const body = document.createElement("div");
+    body.className = "body";
+    const title = document.createElement("div");
+    title.className = "title";
+    title.textContent = t.title;
+    if (t.optional){
+      const tag = document.createElement("span");
+      tag.className = "optional";
+      tag.textContent = "optional";
+      title.appendChild(tag);
+    }
+    body.appendChild(title);
+    if (t.note){
+      const n = document.createElement("div");
+      n.className = "note"; n.textContent = t.note;
+      body.appendChild(n);
+    }
+
+    li.append(box, body);
+    ul.appendChild(li);
+  });
+  sec.appendChild(ul);
+  col.appendChild(sec);
+}
+
 function renderGroups(){
   const col = document.getElementById("groupCol");
   col.textContent = "";
@@ -664,11 +780,14 @@ function renderGroups(){
     live.filter(t => done[t.title]).length + " / " + live.length + '</span>';
   col.appendChild(h);
 
+  const weeklyLeft = WEEKLY.filter(t => !weeklyDone(t) && !t.optional).length;
   const note = document.createElement("p");
   note.className = "colnote";
-  note.textContent = "Grouped by where you find it in game · soonest deadline first";
+  note.textContent = "Grouped by where you find it in game · soonest deadline first" +
+    (WEEKLY.length ? " · " + weeklyLeft + " weekly left" : "");
   col.appendChild(note);
 
+  renderWeekly(col);
   active.forEach(g => col.appendChild(card(g)));
   pending.forEach(g => col.appendChild(pendingLine(g)));
 }
@@ -755,6 +874,13 @@ function renderDoFirst(){
     .filter(t => !t.expired && !done[t.title] && isUnlocked(t) && t.slack <= 3)
     .sort((a,b) => a.slack - b.slack);
 
+  // In the last day of the week, an untouched weekly cap is genuinely urgent.
+  const weeklyLate = hoursToReset <= 24
+    ? WEEKLY.filter(t => !t.optional && !weeklyDone(t))
+            .map(t => ({title:t.title, left:hoursToReset / 24, weekly:true}))
+    : [];
+  late.push(...weeklyLate);
+
   const box = document.createElement("div");
   box.className = "dofirst" + (late.length ? "" : " clear");
   const h = document.createElement("h2");
@@ -769,7 +895,9 @@ function renderDoFirst(){
     const ul = document.createElement("ul");
     late.forEach(t => {
       const li = document.createElement("li");
-      li.innerHTML = t.title + '<span>' + Math.floor(Math.max(0, t.left)) + 'd left</span>';
+      li.innerHTML = t.title + '<span>' + (t.weekly
+        ? Math.max(0, Math.round(hoursToReset)) + "h to weekly reset"
+        : Math.floor(Math.max(0, t.left)) + "d left") + '</span>';
       ul.appendChild(li);
     });
     box.appendChild(ul);
