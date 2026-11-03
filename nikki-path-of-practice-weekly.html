@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Path of Practice Weekly Plan · FaetoPlay</title>
+<meta name="description" content="Infinity Nikki's Path of Practice and the Build on the Land I &amp; II events, cut into a week-by-week checklist to the November 26 deadline.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<style>
+/* Layout: four week blocks in order. Inside each week, the same six headings as the main playbook, holding only that week's tasks. Checkable rows with short how-to dropdowns; checks persist per browser. */
+:root{
+  --bg:#f7f4ef;
+  --panel:#fffdf7;
+  --fg:#2b2a24;
+  --muted:#6b6a5e;
+  --line:#dcd7c6;
+  --forest:#6f5a9e;
+  --forest-soft:#ece7f5;
+  --spore:#d9566b;
+  --spore-soft:#fbe4e8;
+  --gold:#b58a2b;
+  --gold-soft:#f8efd6;
+  --display:"Baloo 2","Nunito",system-ui,sans-serif;
+  --body:"Nunito",system-ui,-apple-system,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#1d1b22;--panel:#26242e;--fg:#ece8dc;--muted:#a9a5b0;--line:#3b3846;
+    --forest:#b9a6e6;--forest-soft:#322b45;--spore:#ff8ea0;--spore-soft:#3d2a30;
+    --gold:#e2bd5e;--gold-soft:#3a3322;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1d1b22;--panel:#26242e;--fg:#ece8dc;--muted:#a9a5b0;--line:#3b3846;
+  --forest:#b9a6e6;--forest-soft:#322b45;--spore:#ff8ea0;--spore-soft:#3d2a30;
+  --gold:#e2bd5e;--gold-soft:#3a3322;color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:760px;margin:0 auto;padding-block:24px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:2.4rem;font-weight:800;color:var(--forest)}
+h2{font-size:1.6rem;font-weight:800}
+h3{font-size:1rem;font-weight:700;margin:20px 0 6px;display:flex;align-items:center;gap:10px}
+h3::after{content:"";flex:1;height:1px;background:var(--line)}
+h3 .tag{font-family:var(--body);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+p{margin:8px 0}
+.lede{font-size:1.1rem;color:var(--muted);max-width:60ch}
+.eyebrow{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--spore)}
+.deadline{display:flex;gap:12px;align-items:center;background:var(--spore-soft);border-left:4px solid var(--spore);padding:12px 14px;border-radius:0 8px 8px 0;margin:20px 0}
+.deadline strong{font-family:var(--display);font-size:1.15rem}
+.progress{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:20px 0;display:flex;align-items:center;gap:12px;font-size:.9rem;flex-wrap:wrap}
+.progress .bar{flex:1;height:8px;background:var(--line);border-radius:4px;overflow:hidden;min-width:120px}
+.progress .bar i{display:block;height:100%;width:0;background:var(--forest);transition:width .3s}
+.progress b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.progress button{font:inherit;font-size:.8rem;background:none;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:4px 8px;cursor:pointer}
+.progress button:focus-visible,input:focus-visible,summary:focus-visible,.toc a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px;padding:0;list-style:none}
+.toc a{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:.9rem;font-weight:600}
+.toc a.final{border-color:var(--spore);color:var(--spore)}
+
+.week{margin-top:44px;padding-top:22px;border-top:4px solid var(--forest);scroll-margin-top:72px}
+.week.final{border-top-color:var(--spore)}
+.week .head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.week .dates{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.week .aim{color:var(--muted);max-width:60ch;margin:6px 0 4px}
+.week .count{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.none{font-size:.9rem;color:var(--muted);font-style:italic;margin:4px 0 0}
+
+.tasks{list-style:none;padding:0;margin:6px 0;display:grid;gap:6px}
+.task{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.task .row{display:flex;gap:12px;align-items:flex-start;padding:10px 12px}
+.task input{margin:4px 0 0;width:18px;height:18px;flex:0 0 18px;accent-color:var(--forest)}
+.task label{flex:1;min-width:0;cursor:pointer}
+.task:has(input:checked) label{color:var(--muted);text-decoration:line-through}
+.chip{display:inline-block;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:middle;white-space:nowrap}
+.chip.ev{color:var(--gold);border-color:var(--gold)}
+.task details{border-top:1px dashed var(--line)}
+.task summary{list-style:none;cursor:pointer;padding:7px 12px 7px 42px;font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--forest);display:flex;align-items:center;gap:8px;user-select:none}
+.task summary::-webkit-details-marker{display:none}
+.task summary::before{content:"";width:7px;height:7px;border-right:2px solid var(--forest);border-bottom:2px solid var(--forest);transform:rotate(-45deg);transition:transform .15s;flex:0 0 7px}
+.task details[open] summary::before{transform:rotate(45deg)}
+.task .steps{margin:0;padding:4px 14px 12px 42px;display:grid;gap:5px;font-size:.92rem;background:var(--forest-soft)}
+.task .steps li::marker{color:var(--forest);font-weight:700}
+.task .note{font-size:.85rem;color:var(--muted);font-style:italic}
+.stretch .task{border-style:dashed;opacity:.85}
+.tip{background:var(--gold-soft);border-left:4px solid var(--gold);padding:10px 14px;border-radius:0 8px 8px 0;margin:14px 0;font-size:.95rem}
+.tip b{color:var(--gold)}
+a{color:var(--forest)}
+@media (prefers-reduced-motion:reduce){.progress .bar i,.task summary::before{transition:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <p style="margin:0 0 18px"><a href="index.html" style="font-size:.9rem;text-decoration:none;font-weight:600">&larr; FaetoPlay</a></p>
+  <div class="eyebrow">Infinity Nikki · Itzaland Expansion</div>
+  <h1>Path of Practice Weekly Plan</h1>
+  <p class="lede">The same guide, cut into weeks. Each week walks the same outline as the playbook: Setup, Daily loop, Build on the Land I, Build on the Land II, Companions, Practical Challenges. Only that week's tasks appear under each heading.</p>
+
+  <div class="deadline">
+    <div><strong>Ends Wednesday, November 26 at 2:49 PM Eastern</strong><br>Collect from your shops at least twice a day. Early storage caps are tiny (2,000 Shroomberry, 5,000 Mud) and anything over the cap is lost.</div>
+  </div>
+
+  <div class="progress"><span>Progress</span><div class="bar"><i id="bar"></i></div><b id="count">0 / 0</b><button type="button" id="expand">Open all</button><button type="button" id="reset">Reset</button></div>
+
+  <ul class="toc">
+    <li><a href="#w1">Week 1 · Nov 2–8</a></li>
+    <li><a href="#w2">Week 2 · Nov 9–15</a></li>
+    <li><a href="#w3">Week 3 · Nov 16–22</a></li>
+    <li><a href="#w4" class="final">Final stretch · Nov 23–26</a></li>
+  </ul>
+
+  <!-- ================= WEEK 1 ================= -->
+  <section class="week" id="w1">
+    <div class="head"><h2>Week 1</h2><span class="dates">Nov 2 – 8 · Setup and Stage I</span></div>
+    <p class="aim">Build everything, finish both Stage I lists, and get the training loop running. This is the heaviest week of hands-on play; after this it's mostly daily collecting.</p>
+    <p class="count" data-week="w1"></p>
+
+    <h3>Setup <span class="tag">Days 1–2</span></h3>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w1-s1"><label for="w1-s1">Finish Itzaland Prologue and Chapter 1.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Quests menu → track the Itzaland main story → play to the Chapter 1 complete screen.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w1-s2"><label for="w1-s2">Complete <b>Grow Big and Strong!</b> and craft Visionary Dreamer.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>World quest list → follow markers.</li><li>Heart of Infinity → claim the free Visionary Dreamer sketch → craft and equip it.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w1-s3"><label for="w1-s3">Build the Drink Shop (1,000 Bling) and Bath (2,000 Bling).</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Wearing Visionary Dreamer, use Itzaland Blueprint: Construction at each site.</li><li>Enter each once so production starts.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w1-s4"><label for="w1-s4">Complete <b>Toward Greater Glory!</b> and build the Salon (5,000 Bling).</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Follow the quest markers. Finishing it unlocks Build on the Land II.</li><li>Heart of Infinity → Construction: Building Exterior → unlock Snail Beauty Salon → build it at its site.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w1-s5"><label for="w1-s5">Complete <b>I Want to Learn Styling!</b> and build Path of Practice (10,000 Bling).</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Spira Stylist's Guild → Hilsetti. Then Snail Ranch → Mollipopo. Then Construction Area → both Shroomlings.</li><li>Heart of Infinity → Construction: Building Exterior → unlock Path of Practice → build it.</li><li>Beat Mollipopo's styling challenge, invite her; invite Marimimi.</li><li>Talk to Marimimi at the Salon. Craft a Gilded Book Stack (1 Brush Beaver Fur) and place it inside. Run Marimimi through one Discovery training event. Place a second book stack. Talk to both to finish.</li></ol></details></li>
+    </ul>
+
+    <h3>Daily loop <span class="tag">Set it up once</span></h3>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w1-d1"><label for="w1-d1">Put a companion in the Drink Shop and start training the other.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Path of Practice → Dispatch → Drink Shop → Marimimi.</li><li>Path of Practice → Training → Mollipopo → a Daily event.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w1-d2"><label for="w1-d2">Path of Practice Lv. 2 (500 Mud) and activate the Deep Learning Set.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Craft Forest Message Bookshelf ×1, Gilded Book Stack ×3, Simple Low Ceramic Flowerpot ×1. Place all inside.</li><li>Scheme Book → activate. +10% EXP on Daily events.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w1-d3"><label for="w1-d3">Twice a day: collect from all three shops, claim training, restart it, talk to visiting Shroomlings.</label></div></li>
+    </ul>
+
+    <h3>Build on the Land I <span class="tag">Stage I · A Handful of Shroomlings</span></h3>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w1-b1"><label for="w1-b1">Craft any item 10 times at the Crafting Table: Expansion.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Cheapest: Plain Wood Stool (1 Thornfruit), Plain Wood Tea Table (1 Tailor Beetle). You'll place them anyway.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w1-b2"><label for="w1-b2">Drink Shop Decoration Value Lv. 3.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Inside the shop, construction mode, place furniture until the meter reads Lv. 3.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w1-b3"><label for="w1-b3">Drink Shop Lv. 5.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>200 → 400 → 700 → 1,100 Shroomberry.</li><li>Lv. 5 needs Fruity Slow Drink Set active: Ripple Ring Vase ×1, Plain Wood Tea Table ×1, Plain Wood Stool ×2.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w1-b4"><label for="w1-b4">Bath Lv. 5.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>300 → 500 → 1,000 → 2,500 Shroomberry + 3,000 Stone.</li><li>Lv. 5 needs Warm Bath Set active: Painted Round Stand ×1, Plain Wood Stool ×1, Simple Low Ceramic Flowerpot ×1.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w1-b5"><label for="w1-b5">Read 3 Customers' Letters.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Drink Shop Lv. 5 letter, Bath Lv. 5 letter, Mollipopo's Bath conversations. Claim each in the letters tab.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w1-b6"><label for="w1-b6">Claim the Stage I bonus Resonite Crystal.</label></div></li>
+    </ul>
+
+    <h3>Build on the Land II <span class="tag">Stage I · Bustling with Shroomlings</span></h3>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w1-c1"><label for="w1-c1">Path of Practice Lv. 3 (3,000 Mud).</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>About 3 hours of Salon production at Lv. 1. Collect before the 5,000 cap.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w1-c2"><label for="w1-c2">Invite 3 companions.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Mollipopo + Marimimi + your first recruit (see Companions below).</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w1-c3"><label for="w1-c3">Read 1 Customer's Letter from Path of Practice.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Talk to your recruited companions inside the building each visit until a letter prompt appears.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w1-c4"><label for="w1-c4">Salon Lv. 2 (500 Shroomberry) and Decoration Value Lv. 2.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Lv. 2 hands you free furniture. Place all of it inside.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w1-c5"><label for="w1-c5">Assign 1 staff to the Drink Shop.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Already done if you followed the Daily loop step above.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w1-c6"><label for="w1-c6">Claim the Stage I bonus.</label></div></li>
+    </ul>
+
+    <h3>Companions <span class="tag">First recruit</span></h3>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w1-r1"><label for="w1-r1">Recruit whoever is recommended first (usually Aricheche).</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Path of Practice → Recommended list. Aricheche is inside the Shroomling Activity Center. Talk, win the styling challenge, invite.</li><li class="note">If no challenge option appears, the companion hasn't been recommended yet or you have no free slot.</li></ol></details></li>
+    </ul>
+
+    <h3>Practical Challenges</h3>
+    <p class="none">Nothing yet. Path of Practice Lv. 3 (above) clears the first of the two gates.</p>
+  </section>
+
+  <!-- ================= WEEK 2 ================= -->
+  <section class="week" id="w2">
+    <div class="head"><h2>Week 2</h2><span class="dates">Nov 9 – 15 · Stage II</span></div>
+    <p class="aim">Push the Drink Shop and Bath to Lv. 10. They fund every other upgrade, so this week is about production first and event tasks second.</p>
+    <p class="count" data-week="w2"></p>
+
+    <h3>Setup</h3>
+    <p class="none">Done. Nothing new this week.</p>
+
+    <h3>Daily loop</h3>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w2-d1"><label for="w2-d1">Path of Practice Lv. 5 and activate the Radiant Inspiration Set.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Lv. 4 = 8,000 Mud. Lv. 5 = 15,000 Mud + 10,000 Stone with Deep Learning Set active.</li><li>Lv. 5 gives you the Radiant Inspiration furniture already crafted. Place it and activate it. You now have 2 scheme slots.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w2-d2"><label for="w2-d2">Move staff to their best shops as you recruit.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Aricheche or Shroomthoven → Salon. Marimimi → Bath. Any Drink Shop-capable companion → Drink Shop.</li></ol></details></li>
+    </ul>
+
+    <h3>Build on the Land I <span class="tag">Stage II · Shroomling Crossing</span></h3>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w2-b1"><label for="w2-b1">Bath Lv. 10, then place and activate 5 Bath schemes at once.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Lv. 10 needs Playful Warm Bath Set active + 8,000 Shroomberry + 20,000 Stone.</li><li>Place every piece of five sets (Refreshing, Tranquil Fragrant, Blissful, Warm, Heartfelt Fragrant) and activate all five in the Scheme Book.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w2-b2"><label for="w2-b2">Bath Decoration Value Lv. 5.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>The scheme furniture counts. Top up with Colorful Parasol (50) or Plain Wood Shelf (50).</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w2-b3"><label for="w2-b3">Drink Shop to the Stage II level (check the event page; likely Lv. 15).</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Lv. 10 needs Honey Drink Dining Set active + 3,600 Shroomberry + 10,000 Stone. Lv. 15 = 7,500 Shroomberry + 30,000 Stone.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w2-b4"><label for="w2-b4">Craft count reaches 20.</label></div></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w2-b5"><label for="w2-b5">Receive 1 Like on a building.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Co-op → invite a friend → they press Like at one of your buildings. r/InfinityNikki co-op threads work if nobody's online.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w2-b6"><label for="w2-b6">Claim the Stage II bonus.</label></div></li>
+    </ul>
+
+    <h3>Build on the Land II <span class="tag">Stage II · A Stream of Shroomlings</span></h3>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w2-c1"><label for="w2-c1">Salon Lv. 10.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Lv. 5 = 3,000 Shroomberry + 3,000 Stone (Silky Shell Beauty Set active). Lv. 10 = 9,000 Shroomberry + 50,000 Stone (Pleasant Dining Set active).</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w2-c2"><label for="w2-c2">Assign 3 staff: one in each shop.</label></div></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w2-c3"><label for="w2-c3">Read 2 Customers' Letters from the Salon.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Salon Lv. 5 letter, plus Marimimi's (or Nakaka's / Urili's / Fussi's) Salon conversations.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w2-c4"><label for="w2-c4">Invite 5 companions.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>The three remaining no-quest companions below get you there.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w2-c5"><label for="w2-c5">Salon Decoration Value and Path of Practice / Salon levels to the Stage II targets (check the event page).</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Place the free furniture from Salon Lv. 4, 5, 8, 10. Path of Practice Lv. 5 from the Daily loop step above likely covers its part.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w2-c6"><label for="w2-c6">Claim the Stage II bonus.</label></div></li>
+    </ul>
+
+    <h3>Companions <span class="tag">The three no-quest recruits</span></h3>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w2-r1"><label for="w2-r1">Fussi <span class="chip">Salon</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Adventurer camp south of Giant Vine Forest. Wait for recommendation → talk → challenge → invite.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w2-r2"><label for="w2-r2">Cadir <span class="chip">Bath</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Near the Great Exploration Camp. Same routine.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w2-r3"><label for="w2-r3">Shroomthoven <span class="chip">Salon</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Woods outside Shroomville. Same routine. Put him on the Salon.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w2-r4"><label for="w2-r4">Keep 3–4 companions training every hour you're online.</label></div></li>
+    </ul>
+
+    <h3>Practical Challenges <span class="tag">Second gate</span></h3>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w2-p1"><label for="w2-p1">Perfect every stylist group under the Sovereign of Sexy.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Itzaland styling challenge map → each group under the Sovereign of Sexy → Perfect rating, not just a win. Level and glow up your Sexy pieces if needed.</li><li>Once done (with Path of Practice at Lv. 3+), the Practical Challenge tab appears.</li></ol></details></li>
+    </ul>
+  </section>
+
+  <!-- ================= WEEK 3 ================= -->
+  <section class="week" id="w3">
+    <div class="head"><h2>Week 3</h2><span class="dates">Nov 16 – 22 · Companions and challenges</span></div>
+    <p class="aim">Fill the roster, clear two Practical Challenges, and knock out the Stage III tasks that don't need Lv. 30 buildings.</p>
+    <p class="count" data-week="w3"></p>
+
+    <h3>Setup</h3>
+    <p class="none">Done.</p>
+
+    <h3>Daily loop</h3>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w3-d1"><label for="w3-d1">Path of Practice Lv. 10 and activate the Vivid Display Set.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Lv. 6–9 = 18k / 21k / 25k / 28k Mud. Lv. 10 = 31,000 Mud + 80,000 Stone with Radiant Inspiration Set active.</li><li>Lv. 10 gives the Vivid Display furniture. Place and activate; 3 scheme slots now.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w3-d2"><label for="w3-d2">Pick your five Lv. 10 candidates and keep them training around the clock.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Start a session right before you log off every night. Reach Decoration Rating Lv. 1 inside Path of Practice for +50% on Daily events.</li></ol></details></li>
+    </ul>
+
+    <h3>Build on the Land I <span class="tag">Stage III · the reachable parts</span></h3>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w3-b1"><label for="w3-b1">Craft count reaches 30.</label></div></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w3-b2"><label for="w3-b2">Read 8 Customers' Letters total.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Level letters: Drink Shop Lv. 10 and 25, Bath Lv. 15 and 25. Conversation letters from Domibaba, Wilhelm, Shroomkrates, Abutata, Lumira, Mihututu, Roucoco, Bilbobo and others. Salon and Path of Practice letters count.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w3-b3"><label for="w3-b3">Drink Shop and Bath toward Lv. 20.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Drink Shop Lv. 20 = 13k Shroomberry + 50k Stone. Bath Lv. 20 = 19.5k + 60k. Run production schemes in both.</li></ol></details></li>
+    </ul>
+
+    <h3>Build on the Land II <span class="tag">Stage III · the reachable parts</span></h3>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w3-c1"><label for="w3-c1">Invite 8 companions.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>The four quest-locked companions below. Level Path of Practice toward 10–15 if slots run out.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w3-c2"><label for="w3-c2">Complete Practical Challenges from 2 stylist groups.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Path of Practice → Practical Challenge → bring Meyaya, Pachichi, Aricheche, and Tallie or Fussi → clear one group, then a second.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w3-c3"><label for="w3-c3">Salon toward Lv. 15–20.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Lv. 15 = 19k Shroomberry + 80k Stone. Lv. 20 = 33k + 120k.</li></ol></details></li>
+    </ul>
+
+    <h3>Companions <span class="tag">The four quest-locked recruits</span></h3>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w3-r1"><label for="w3-r1">Tallie <span class="chip">Drink Shop</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>World quest <b>Set off! From Pots to Spira</b> → wait for recommendation → find her in Pottsville.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w3-r2"><label for="w3-r2">Meyaya <span class="chip">Drink Shop</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Random quest <b>Teenage Shroomling's Rainy Season: Ultimate Headwear</b> → Shroomling Market entrance. Best challenge companion in the game; prioritize her.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w3-r3"><label for="w3-r3">Pachichi <span class="chip">Drink Shop</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Random quest <b>Stepping-Stone Graffiti Challenge</b> → beside the Shroomling Wall.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w3-r4"><label for="w3-r4">Jimena <span class="chip">Bath</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Random quest <b>Forced Perspective: Burning Titan Firepit</b> → beside the Coliseum.</li></ol></details></li>
+    </ul>
+
+    <h3>Practical Challenges</h3>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w3-p1"><label for="w3-p1">Run Practical Challenges with companions; this also opens Face It! Wild Surge Returns.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Face It! pays Resonite Crystals for re-challenging defeated stylist groups with companions. Do it alongside the two-group task above.</li></ol></details></li>
+    </ul>
+  </section>
+
+  <!-- ================= FINAL ================= -->
+  <section class="week final" id="w4">
+    <div class="head"><h2>Final stretch</h2><span class="dates">Nov 23 – 26 · ends 2:49 PM Eastern</span></div>
+    <p class="aim">Three and a half days. Finish what's close, then claim everything. Unclaimed rewards vanish at the cutoff.</p>
+    <p class="count" data-week="w4"></p>
+
+    <h3>Setup</h3>
+    <p class="none">Done.</p>
+
+    <h3>Daily loop</h3>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w4-d1"><label for="w4-d1">Land the last training sessions so 5 companions reach Lv. 10.</label></div></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w4-d2"><label for="w4-d2">Spend every remaining Shroomberry, Stone, and Mud on whichever building is nearest its next milestone.</label></div></li>
+    </ul>
+
+    <h3>Build on the Land I</h3>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w4-b1"><label for="w4-b1"><b>Nov 26 morning:</b> claim every reward in Build on the Land I, stage by stage.</label></div></li>
+    </ul>
+    <div class="stretch"><ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w4-b2"><label for="w4-b2">Stretch: Bath Lv. 30, Drink Shop Lv. 30, Drink Shop Decoration Lv. 8.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Lv. 30 = 42k Shroomberry + 120k Stone (Bath) and 28k + 100k (Drink Shop). Only realistic if you were already partway when you started this plan.</li></ol></details></li>
+    </ul></div>
+
+    <h3>Build on the Land II</h3>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w4-c1"><label for="w4-c1">Raise 5 companions to Lv. 10 (confirm the task ticks).</label></div></li>
+      <li class="task"><div class="row"><input type="checkbox" id="w4-c2"><label for="w4-c2"><b>Nov 26 morning:</b> claim every reward in Build on the Land II.</label></div></li>
+    </ul>
+    <div class="stretch"><ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w4-c3"><label for="w4-c3">Stretch: Salon Lv. 30 and Path of Practice Lv. 25.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Salon Lv. 30 = 54k Shroomberry + 180k Stone. Path of Practice Lv. 25 = 100k Mud + 200k Stone. Treat as bonuses, not targets.</li></ol></details></li>
+    </ul></div>
+
+    <h3>Companions</h3>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w4-r1"><label for="w4-r1">Recruit anyone still showing as recommended. Path of Practice is permanent, so the remaining two can wait past the deadline.</label></div></li>
+    </ul>
+
+    <h3>Practical Challenges</h3>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="w4-p1"><label for="w4-p1">Run any remaining Face It! Wild Surge Returns challenges for Resonite Crystals and claim them.</label></div></li>
+    </ul>
+
+    <div class="tip"><b>After the 26th:</b> Path of Practice, the companions, and Practical Challenges all stay. Keep leveling at your own pace for the Lv. 15 headwear (Dappled Capture) and Lv. 25 shoes (Midnight Walk).</div>
+  </section>
+</div>
+
+<script>
+(function(){
+  var KEY='pop-weekly-v1';
+  var boxes=Array.prototype.slice.call(document.querySelectorAll('.task input[type=checkbox]'));
+  var dets=Array.prototype.slice.call(document.querySelectorAll('.task details'));
+  var bar=document.getElementById('bar'),count=document.getElementById('count'),expand=document.getElementById('expand');
+  var saved={};
+  try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){saved={};}
+  boxes.forEach(function(b){ if(saved[b.id]) b.checked=true; });
+  function update(){
+    var done=boxes.filter(function(b){return b.checked;}).length;
+    count.textContent=done+' / '+boxes.length;
+    bar.style.width=(boxes.length?Math.round(done/boxes.length*100):0)+'%';
+    document.querySelectorAll('.count[data-week]').forEach(function(el){
+      var w=el.getAttribute('data-week');
+      var mine=boxes.filter(function(b){return b.id.indexOf(w+'-')===0;});
+      var d=mine.filter(function(b){return b.checked;}).length;
+      el.textContent=d+' of '+mine.length+' done this week';
+    });
+    var o={};boxes.forEach(function(b){ if(b.checked) o[b.id]=1; });
+    try{localStorage.setItem(KEY,JSON.stringify(o));}catch(e){}
+  }
+  boxes.forEach(function(b){ b.addEventListener('change',update); });
+  document.getElementById('reset').addEventListener('click',function(){
+    boxes.forEach(function(b){ b.checked=false; }); update();
+  });
+  var allOpen=false;
+  expand.addEventListener('click',function(){
+    allOpen=!allOpen;
+    dets.forEach(function(d){ d.open=allOpen; });
+    expand.textContent=allOpen?'Close all':'Open all';
+  });
+  update();
+})();
+</script>
+
+</body>
+</html>
