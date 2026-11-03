@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Path of Practice Weekly Plan · FaetoPlay</title>
-<meta name="description" content="Infinity Nikki's Path of Practice and the Build on the Land I &amp; II events, cut into a week-by-week checklist to the November 26 deadline.">
+<meta name="description" content="Infinity Nikki's Path of Practice and the Build on the Land I &amp; II events as a week-by-week checklist, plus a fastest-possible two-week sprint for fresh starts.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap">
@@ -60,6 +60,23 @@ p{margin:8px 0}
 .progress b{font-variant-numeric:tabular-nums;white-space:nowrap}
 .progress button{font:inherit;font-size:.8rem;background:none;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:4px 8px;cursor:pointer}
 .progress button:focus-visible,input:focus-visible,summary:focus-visible,.toc a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.tabs{display:flex;gap:6px;margin:20px 0 0;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.tabs button{flex:1;min-width:0;font:inherit;font-family:var(--display);font-weight:700;font-size:1rem;padding:10px 12px;border:0;border-radius:9px;background:none;color:var(--muted);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--forest);color:var(--bg)}
+.tabs button small{display:block;font-family:var(--body);font-weight:600;font-size:.75rem;letter-spacing:.04em;opacity:.85}
+.tabs button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.sprint{margin-top:36px;padding-top:20px;border-top:4px solid var(--spore);scroll-margin-top:72px}
+.sprint .head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.sprint .dates{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.sprint .aim{color:var(--muted);max-width:60ch;margin:6px 0 4px}
+.sprint .count{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:14px 0}
+.rules div{background:var(--spore-soft);border:1px solid var(--line);border-radius:10px;padding:12px;min-width:0}
+.rules h4{font-size:1rem;margin-bottom:4px;color:var(--spore)}
+.rules p{font-size:.9rem;margin:0}
+.nope{margin-top:36px;border:2px dashed var(--line);border-radius:12px;padding:14px 16px}
+.nope h3::after{display:none}
+.nope ul{margin:6px 0 0;padding-left:20px;font-size:.93rem;color:var(--muted)}
 .toc{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px;padding:0;list-style:none}
 .toc a{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:.9rem;font-weight:600}
 .toc a.final{border-color:var(--spore);color:var(--spore)}
@@ -107,8 +124,14 @@ a{color:var(--forest)}
     <div><strong>Ends Wednesday, November 26 at 2:49 PM Eastern</strong><br>Collect from your shops at least twice a day. Early storage caps are tiny (2,000 Shroomberry, 5,000 Mud) and anything over the cap is lost.</div>
   </div>
 
+  <div class="tabs" role="tablist">
+    <button type="button" role="tab" id="tab-full-btn" aria-selected="true" aria-controls="tab-full">Full plan<small>Four weeks, every task</small></button>
+    <button type="button" role="tab" id="tab-fast-btn" aria-selected="false" aria-controls="tab-fast">Fastest possible<small>Currency first, two-week sprint</small></button>
+  </div>
+
   <div class="progress"><span>Progress</span><div class="bar"><i id="bar"></i></div><b id="count">0 / 0</b><button type="button" id="expand">Open all</button><button type="button" id="reset">Reset</button></div>
 
+<div id="tab-full" role="tabpanel">
   <ul class="toc">
     <li><a href="#w1">Week 1 · Nov 2–8</a></li>
     <li><a href="#w2">Week 2 · Nov 9–15</a></li>
@@ -349,21 +372,140 @@ a{color:var(--forest)}
 
     <div class="tip"><b>After the 26th:</b> Path of Practice, the companions, and Practical Challenges all stay. Keep leveling at your own pace for the Lv. 15 headwear (Dappled Capture) and Lv. 25 shoes (Midnight Walk).</div>
   </section>
-</div>
+</div><!-- /tab-full -->
+
+<div id="tab-fast" role="tabpanel" hidden>
+  <p class="lede" style="margin-top:18px">Built for a fresh start. The goal is every pull currency that expires on the 26th, plus the permanent Diamond letters and Resonite Crystals that fall out along the way. Stage I and II of both events are done by about day 12; the rest of the month is buffer. Nothing here needs Lv. 30 buildings.</p>
+
+  <div class="rules">
+    <div><h4>Bath first</h4><p>Hot Spring Stone is the bottleneck for every building. Each Bath level is a permanent raise to the slowest resource.</p></div>
+    <div><h4>Collect every 3–4 hours</h4><p>Until Lv. 5, caps are 2,000 Shroomberry and 5,000 Mud. Anything over the cap is lost.</p></div>
+    <div><h4>Train while you sleep</h4><p>Companion EXP only accrues during a running session. Start one every time you log off.</p></div>
+    <div><h4>Schemes immediately</h4><p>Activate every production scheme the moment you get it. Warm Bath Set alone is +75% public bath gain.</p></div>
+  </div>
+
+  <!-- SPRINT 1 -->
+  <section class="sprint" id="f1">
+    <div class="head"><h2>Day 1</h2><span class="dates">One long session · all four buildings</span></div>
+    <p class="aim">Everything below is quests and Bling. Do it in one sitting so production starts tonight.</p>
+    <p class="count" data-week="f1"></p>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="f1-1"><label for="f1-1">Itzaland Prologue + Chapter 1, then <b>Grow Big and Strong!</b> → craft Visionary Dreamer.</label></div></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f1-2"><label for="f1-2">Build Drink Shop (1,000) and Bath (2,000). Enter each once.</label></div></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f1-3"><label for="f1-3"><b>Toward Greater Glory!</b> → unlock and build the Salon (5,000).</label></div></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f1-4"><label for="f1-4"><b>I Want to Learn Styling!</b> → build Path of Practice (10,000), recruit Mollipopo and Marimimi, place 2 Gilded Book Stacks, finish.</label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Hilsetti at the Spira Guild → Snail Ranch → Construction Area → Heart of Infinity node → build → Mollipopo challenge → invite both → Marimimi at the Salon → craft/place book stack → one Discovery training with Marimimi → second book stack → talk to both.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f1-5"><label for="f1-5">Marimimi → Bath staff. Mollipopo → start a Daily training session.</label></div></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f1-6"><label for="f1-6">Craft 10 cheap pieces and dump them in the Drink Shop (Decoration Lv. 3). <span class="chip ev">BotL I</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Plain Wood Stool (1 Thornfruit) or Plain Wood Tea Table (1 Tailor Beetle). Ten of them covers the craft count and most of the decoration bar.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f1-7"><label for="f1-7">Set a reminder to collect from all three shops every 3–4 hours.</label></div></li>
+    </ul>
+  </section>
+
+  <!-- SPRINT 2 -->
+  <section class="sprint" id="f2">
+    <div class="head"><h2>Days 2 – 5</h2><span class="dates">Bath rush · both Stage I lists</span></div>
+    <p class="aim">All Shroomberry goes to the Bath until it hits Lv. 5, then alternate. Mud goes straight into Path of Practice.</p>
+    <p class="count" data-week="f2"></p>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="f2-1"><label for="f2-1">Bath Lv. 5 (Warm Bath Set active first). <span class="chip ev">BotL I</span> <span class="chip">10 Diamonds</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>300 → 500 → 1,000 → 2,500 Shroomberry + 3,000 Stone. Warm Bath Set: Painted Round Stand, Plain Wood Stool, Simple Low Ceramic Flowerpot.</li><li>Lv. 5 raises Stone to 10/min, the cap to 30,000, and unlocks the “Some Insight After the Bath” letter.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f2-2"><label for="f2-2">Drink Shop Lv. 5 (Fruity Slow Drink Set active first). <span class="chip ev">BotL I</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>200 → 400 → 700 → 1,100 Shroomberry. Set: Ripple Ring Vase, Plain Wood Tea Table, Plain Wood Stool ×2. Cap jumps to 30,000 so you can stop collecting every 3 hours.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f2-3"><label for="f2-3">Path of Practice Lv. 2 → place Deep Learning Set → Lv. 3. <span class="chip ev">BotL II</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>500 Mud, then 3,000 Mud. Deep Learning Set: Forest Message Bookshelf, Gilded Book Stack ×3, Simple Low Ceramic Flowerpot.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f2-4"><label for="f2-4">Salon Lv. 2 and place the free furniture (Decoration Lv. 2). <span class="chip ev">BotL II</span></label></div></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f2-5"><label for="f2-5">Recruit the first recommended companion (usually Aricheche) → Salon staff. <span class="chip ev">BotL II</span></label></div></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f2-6"><label for="f2-6">Move a companion into the Drink Shop and read 3 letters + 1 Path of Practice letter. <span class="chip ev">Both</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Letters: Drink Shop Lv. 5, Bath Lv. 5, Mollipopo's Bath conversations. Path of Practice: talk to Aricheche inside each visit.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f2-7"><label for="f2-7">Claim both Stage I bonuses. <span class="chip">2 Resonite</span></label></div></li>
+    </ul>
+  </section>
+
+  <!-- SPRINT 3 -->
+  <section class="sprint" id="f3">
+    <div class="head"><h2>Days 6 – 12</h2><span class="dates">Everything to Lv. 10 · both Stage II lists</span></div>
+    <p class="aim">Bath to 10 first, then Drink Shop, then Salon, then Path of Practice to 5. Each Lv. 10 is a Resonite Crystal on its own.</p>
+    <p class="count" data-week="f3"></p>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="f3-1"><label for="f3-1">Bath Lv. 10 → activate 5 schemes → Decoration Lv. 5. <span class="chip ev">BotL I</span> <span class="chip">1 Resonite</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Lv. 10 needs Playful Warm Bath Set active, 8,000 Shroomberry, 20,000 Stone. Stone goes to 20/min.</li><li>Five sets: Refreshing, Tranquil Fragrant, Blissful, Warm, Heartfelt Fragrant. Place every piece, activate all five.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f3-2"><label for="f3-2">Drink Shop Lv. 10, then Lv. 15. <span class="chip ev">BotL I</span> <span class="chip">1 Resonite + 10 Diamonds</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Lv. 10: Honey Drink Dining Set active, 3,600 Shroomberry, 10,000 Stone. Letter “I'll Make Drinks That Satisfy Everyone”.</li><li>Lv. 15: 7,500 Shroomberry, 30,000 Stone. Check the event page for the exact Stage II target.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f3-3"><label for="f3-3">Salon Lv. 5, then Lv. 10. <span class="chip ev">BotL II</span> <span class="chip">1 Resonite + 10 Diamonds</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Lv. 5: 3,000 Shroomberry + 3,000 Stone (Silky Shell Beauty Set). Letter “Snails Are the Shroomlings' Best Friends”.</li><li>Lv. 10: 9,000 Shroomberry + 50,000 Stone (Pleasant Dining Set).</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f3-4"><label for="f3-4">Path of Practice Lv. 5 → place Radiant Inspiration Set. <span class="chip ev">BotL II</span> <span class="chip">10 Diamonds</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Lv. 4 = 8,000 Mud. Lv. 5 = 15,000 Mud + 10,000 Stone, Deep Learning Set active. Letter “Impress All Shroomlings With My Design”.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f3-5"><label for="f3-5">Recruit Fussi, Cadir, Shroomthoven → 5 companions, one in each shop. <span class="chip ev">BotL II</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Camp south of Giant Vine Forest; near the Great Exploration Camp; woods outside Shroomville. Each needs a recommendation and a free slot.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f3-6"><label for="f3-6">Craft count 20, one co-op Like, 2 Salon letters. <span class="chip ev">Both</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Salon letters: Lv. 5 plus Marimimi's (or Fulwawa &amp; Fulpapa's, which also pays 10 Diamonds) conversations.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f3-7"><label for="f3-7">Perfect every Sovereign of Sexy stylist group. Practical Challenges unlock.</label></div></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f3-8"><label for="f3-8">Claim both Stage II bonuses. <span class="chip">2 Resonite</span></label></div></li>
+    </ul>
+  </section>
+
+  <!-- SPRINT 4 -->
+  <section class="sprint" id="f4">
+    <div class="head"><h2>Days 13 – 24</h2><span class="dates">Currency sweep · ends Nov 26, 2:49 PM ET</span></div>
+    <p class="aim">Events are banked. Now farm what expires and pick up the permanent Diamonds that are close.</p>
+    <p class="count" data-week="f4"></p>
+    <ul class="tasks">
+      <li class="task"><div class="row"><input type="checkbox" id="f4-1"><label for="f4-1">Run <b>Face It! Wild Surge Returns</b> until it's dry. <span class="chip">Resonite · expires</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Path of Practice → Practical Challenge → re-challenge defeated stylist groups with companions. Bring Aricheche, Pachichi, Meyaya, and Tallie or Fussi as you get them.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f4-2"><label for="f4-2">Clear Practical Challenges from 2 stylist groups. <span class="chip ev">BotL II</span></label></div></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f4-3"><label for="f4-3">Do the four companion quests → 8 companions. <span class="chip ev">BotL II</span> <span class="chip">10 Diamonds</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Set off! From Pots to Spira (Tallie), Teenage Shroomling's Rainy Season: Ultimate Headwear (Meyaya), Stepping-Stone Graffiti Challenge (Pachichi), Forced Perspective: Burning Titan Firepit (Jimena). Jimena's repeated conversations pay the “Ever-Glowing Ember” letter.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f4-4"><label for="f4-4">Two side quests for two letters. <span class="chip">20 Diamonds</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li><b>Reunion of Wind and Leaves</b> → Bath letter. <b>Leader Showdown! Child of the Wolf Pack</b> → Path of Practice letter.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f4-5"><label for="f4-5">Bath Lv. 15 and Salon Lv. 15. <span class="chip">20 Diamonds</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Bath Lv. 15 = 12k Shroomberry + 40k Stone. Salon Lv. 15 = 19k + 80k. Both drop a Diamond letter.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f4-6"><label for="f4-6">Path of Practice Lv. 10, then toward 15. <span class="chip">1 Resonite (+10 Diamonds at 15)</span></label></div>
+        <details><summary>How to</summary><ol class="steps"><li>Lv. 10 = 31k Mud + 80k Stone, Radiant Inspiration Set active. Lv. 15 = 55k Mud + 120k Stone and the Dappled Capture headwear.</li></ol></details></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f4-7"><label for="f4-7">Keep 5 companions training around the clock for the Lv. 10 task. <span class="chip ev">BotL II</span></label></div></li>
+      <li class="task"><div class="row"><input type="checkbox" id="f4-8"><label for="f4-8"><b>Nov 26 morning:</b> claim every event reward in both events.</label></div></li>
+    </ul>
+
+    <div class="nope">
+      <h3>Not reachable from a fresh start</h3>
+      <ul>
+        <li>Bath Lv. 30, Drink Shop Lv. 30, Salon Lv. 30, Path of Practice Lv. 25 (Stage III): together about 1.6 million Stone. The whole system makes roughly a third of that in 24 days at max output.</li>
+        <li>Salon Lv. 25 letter (10 Diamonds) and the Lv. 20/25 Resonite milestones: permanent, so they'll still be there in December.</li>
+      </ul>
+    </div>
+  </section>
+</div><!-- /tab-fast -->
 
 <script>
 (function(){
-  var KEY='pop-weekly-v1';
+  var KEY='pop-weekly-v1', TABKEY='pop-weekly-tab';
   var boxes=Array.prototype.slice.call(document.querySelectorAll('.task input[type=checkbox]'));
   var dets=Array.prototype.slice.call(document.querySelectorAll('.task details'));
   var bar=document.getElementById('bar'),count=document.getElementById('count'),expand=document.getElementById('expand');
+  var panels={full:document.getElementById('tab-full'),fast:document.getElementById('tab-fast')};
+  var tabBtns={full:document.getElementById('tab-full-btn'),fast:document.getElementById('tab-fast-btn')};
+  var active='full';
+  function showTab(name){
+    if(!panels[name]) name='full';
+    active=name;
+    Object.keys(panels).forEach(function(k){
+      panels[k].hidden=(k!==name);
+      tabBtns[k].setAttribute('aria-selected',k===name?'true':'false');
+    });
+    try{localStorage.setItem(TABKEY,name);}catch(e){}
+    update();
+  }
+  tabBtns.full.addEventListener('click',function(){showTab('full');});
+  tabBtns.fast.addEventListener('click',function(){showTab('fast');});
   var saved={};
   try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){saved={};}
   boxes.forEach(function(b){ if(saved[b.id]) b.checked=true; });
+  function visibleBoxes(){ return boxes.filter(function(b){return panels[active].contains(b);}); }
   function update(){
-    var done=boxes.filter(function(b){return b.checked;}).length;
-    count.textContent=done+' / '+boxes.length;
-    bar.style.width=(boxes.length?Math.round(done/boxes.length*100):0)+'%';
+    var vis=visibleBoxes();
+    var done=vis.filter(function(b){return b.checked;}).length;
+    count.textContent=done+' / '+vis.length;
+    bar.style.width=(vis.length?Math.round(done/vis.length*100):0)+'%';
     document.querySelectorAll('.count[data-week]').forEach(function(el){
       var w=el.getAttribute('data-week');
       var mine=boxes.filter(function(b){return b.id.indexOf(w+'-')===0;});
@@ -375,15 +517,19 @@ a{color:var(--forest)}
   }
   boxes.forEach(function(b){ b.addEventListener('change',update); });
   document.getElementById('reset').addEventListener('click',function(){
-    boxes.forEach(function(b){ b.checked=false; }); update();
+    visibleBoxes().forEach(function(b){ b.checked=false; }); update();
   });
   var allOpen=false;
   expand.addEventListener('click',function(){
     allOpen=!allOpen;
-    dets.forEach(function(d){ d.open=allOpen; });
+    dets.forEach(function(d){ if(panels[active].contains(d)) d.open=allOpen; });
     expand.textContent=allOpen?'Close all':'Open all';
   });
-  update();
+  var startTab='full';
+  if(location.hash==='#fast') startTab='fast';
+  else if(location.hash==='#full') startTab='full';
+  else { try{ startTab=localStorage.getItem(TABKEY)||'full'; }catch(e){} }
+  showTab(startTab);
 })();
 </script>
 
