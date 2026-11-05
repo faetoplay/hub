@@ -1587,12 +1587,22 @@ function card(g){
   name.className = "name"; name.textContent = g.name;
   const when = document.createElement("span");
   when.className = "when" + (!g.soft && g.slack <= 3 ? " hot" : "");
-  when.textContent = g.soft ? "permanent"
-    : g.slack <= 0 ? "start now"
-    : g.deadlineAt > +bannerEnd ? "ends " + fmt(new Date(g.deadlineAt))   // runs past the update
-    : g.deadlineAt >= +bannerEnd
-      ? "start by " + Math.max(0, Math.min(...g.live.map(t => t.startBy))) + "d left"
-      : "ends " + fmt(new Date(g.deadlineAt));
+  // Header marker: the earliest deadline among what's still unticked ("first task
+  // ends …" when the card holds more than one task), or the start-by runway when
+  // everything simply ends with the update. "start now" is prefixed when overdue.
+  if (g.soft) when.textContent = "permanent";
+  else {
+    const open = g.live.filter(t => !done[t.title]);
+    const pool = open.length ? open : g.live;
+    const nextT = pool.reduce((a,t) => +t.deadlineAt < +a.deadlineAt ? t : a, pool[0]);
+    const parts = [];
+    if (pool.some(t => t.slack <= 0)) parts.push("start now");
+    if (+nextT.deadlineAt !== +bannerEnd)
+      parts.push((g.live.length > 1 ? "first task ends " : "ends ") + fmt(nextT.deadlineAt));
+    else if (!parts.length)
+      parts.push("start by " + Math.max(0, Math.min(...pool.map(t => t.startBy))) + "d left");
+    when.textContent = parts.join(" · ");
+  }
   // Collapsible. Open by default; the header keeps a done count so a closed card
   // still tells you where it stands.
   const open = !((ui.closed || {})[g.name]);
