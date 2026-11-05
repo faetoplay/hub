@@ -232,6 +232,11 @@
 
   /* Expired */
   .card.weekly{border-left:3px solid var(--gold)}
+  .card.weekly > header{cursor:default}
+  .card.weekly .weeklyright{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;margin-left:auto}
+  .card.weekly .weeklyright .of{font-family:'DM Mono',monospace;font-size:12.5px;color:var(--dim)}
+  .card.weekly .weeklyright .disclose{margin-left:0}
+  .card.weekly.closed{padding-bottom:2px}
   .card.weekly li.task:first-child{border-top:0}
   .optional{
     font-family:'DM Mono',monospace;font-size:11.5px;font-weight:400;
@@ -1155,10 +1160,24 @@ function renderWeekly(col){
   when.textContent = "resets Mon 7 AM · " + (hoursToReset < 24
     ? Math.max(0, Math.round(hoursToReset)) + "h left"
     : Math.floor(hoursToReset / 24) + "d " + Math.floor(hoursToReset % 24) + "h left");
-  head.append(name, when);
-  sec.appendChild(head);
-
+  // Dropdown: closed by default, remembered per browser. The header carries a
+  // done count so a closed card still says whether the week's work is finished.
+  const open = !!ui.weeklyOpen;
+  const nDone = WEEKLY.filter(weeklyDone).length;
+  const tally = document.createElement("span");
+  tally.className = "of";
+  tally.textContent = nDone + " / " + WEEKLY.length;
   const ul = document.createElement("ul");
+  ul.hidden = !open;
+  const btn = discloser(ul);
+  btn.onclick = () => { ui.weeklyOpen = ul.hidden; saveUI(); renderAll(); };
+  const right = document.createElement("span");
+  right.className = "weeklyright";
+  right.append(tally, when, btn);
+  head.append(name, right);
+  sec.appendChild(head);
+  sec.classList.toggle("closed", !open);
+
   WEEKLY.forEach(t => {
     const li = document.createElement("li");
     li.className = "task" + (weeklyDone(t) ? " done" : "");
