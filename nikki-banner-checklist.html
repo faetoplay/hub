@@ -514,14 +514,16 @@ const TASKS = [
   // ==========================================================================
 
   // --- Random quests — 187 permanent, by area [wiki] -------------------------
+  // Six cards, Kahako's grouping; one collapsible row per area inside each.
   // The wiki's permanent list runs through 2.6, so anything added in 2.7–2.11 is
-  // missing. The 53 event-only random quests are left out: they're gone already.
+  // missing — which is why Heaven's Reach is empty. The 53 event-only random
+  // quests are left out: they're gone already.
   { title:"Memorial Mountains",
-    group:"Random quests", soft:true,
+    group:"Random quests · Wishfield", soft:true,
     items:["Expeditions: Wishfield","Observation: Ancient Statue","Risky Photography: Octopack"] },
 
   { title:"Florawish",
-    group:"Random quests", soft:true,
+    group:"Random quests · Wishfield", soft:true,
     items:["Bubbler","Busted for Slacking Off!!","Find Fragrance: Citrus Burst","First Go at the Surprise-O-Matic",
       "Folklore Guide","Forced Perspective: Caged Bird","Forced Perspective: Capturing the Thief",
       "Forced Perspective: Flowers in Three Vases","Forced Perspective: Ship in a Bottle","In Love with Dolls",
@@ -532,7 +534,7 @@ const TASKS = [
       "Sovereign's Return! Unstoppable Coolness","Statue's Wish","Whispers on the Terrace","Wishes Secret Training"] },
 
   { title:"Breezy Meadow",
-    group:"Random quests", soft:true,
+    group:"Random quests · Wishfield", soft:true,
     items:["Find Fragrance: Forest Whisper","Find Fragrance: Sprouting Melody","Forced Perspective: Catching a Big Fish",
       "Forced Perspective: Light up the Bridge Lamps","Forced Perspective: Long-Eared Bunny","Kindled Inspiration: Animal Traces",
       "Kindled Inspiration: Deft Exuberance","Kindled Inspiration: Fortune's Favor","Kindled Inspiration: Natural Design",
@@ -544,14 +546,14 @@ const TASKS = [
       "Risky Photography: Sssack","Sovereign's Return! Elegant Dance","The Luck of a Ring"] },
 
   { title:"Stoneville",
-    group:"Random quests", soft:true,
+    group:"Random quests · Stoneville", soft:true,
     items:["Bowler by the Statue","Find Fragrance: Viney Infusion","Flower Crate Arrangement","Flower Crates in Order",
       "Forced Perspective: Flying Buntings","Kindled Inspiration: Goodnight Signal","Kindled Inspiration: Transformation",
       "Observation: Making Wishes","Photo Investigation: Lost Item","Photo Investigation: Lost Sheep",
       "Risky Photography: Bitey Bag","Risky Photography: Hard Sack","The Secret Under the Stonetree"] },
 
   { title:"Abandoned District",
-    group:"Random quests", soft:true,
+    group:"Random quests · Stoneville", soft:true,
     items:["Find Fragrance: Mossy Hush","Find Fragrance: Summer Fragrance","Find Fragrance: Verdant Aroma",
       "Forced Perspective: Happy Bear","Forced Perspective: Thuddy Snowman","Help the Volunteer Corps",
       "Kindled Inspiration: Fragrant Reward","Kindled Inspiration: Perfect Pair","Meow-Meow and Cappy",
@@ -561,7 +563,7 @@ const TASKS = [
       "Roll, Barrels!","Save the Unsold Detergent"] },
 
   { title:"Wishing Woods",
-    group:"Random quests", soft:true,
+    group:"Random quests · Stoneville", soft:true,
     items:["Find Fragrance: Herbal Aroma","Find Fragrance: Meadow Zest","Find Fragrance: Midsummer Breeze",
       "Flower Crates and Flower Beds","Forced Perspective: Burning with Anger","Forced Perspective: Catching a Waterfall!",
       "Forced Perspective: Empty Flowerpot","Kindled Inspiration: Glimpse of Sunset","Kindled Inspiration: Super Waterproof",
@@ -572,55 +574,59 @@ const TASKS = [
       "Risky Photography: Paired Trap Sharks","Risky Photography: Stunned Harsh Sssack","Risky Photography: Trick-o-Bag",
       "What's the Big News?"] },
 
-  { title:"Firework Isles",
-    group:"Random quests", soft:true,
-    items:["Another Night of Fireworks","Find Fragrance: Budding Medley","Find Fragrance: Grace of Leaves",
-      "Soar to the fireworks!","The Guard and the Mysterious Stranger","Whirling on the Pony's Back"] },
-
-  { title:"Serenity Island",
-    group:"Random quests", soft:true,
-    items:["Find Fragrance: Blossom Essence","Find Fragrance: Dewdrop Essence","Grand Patch Stage Awaits!",
-      "Set off on an adventure riding the bubbles!","Styling Challenge: Bubble's Inspiration",
-      "Styling Challenge: Refreshing Moment","Styling Challenge: Show Your Style!"] },
-
-  { title:"Danqing Island",
-    group:"Random quests", soft:true,
-    items:["A Delicate Heart Knows to Treasure","A Scroll of Fleeting Life","Find Fragrance: Petal Fragrance",
-      "Find Fragrance: Rain Chill","Heart Beyond, Soul Within","Journey Back to Loong Pagoda",
-      "Styling Challenge: Grace in Confidence","Styling Challenge: My Dream World","Styling Challenge: Village Star",
-      "The Pleasure of Five-In-A-Row"] },
-
-  { title:"Sea of Stars",
-    group:"Random quests", soft:true,
-    items:["Reflections of a Past Wish","The Fading of Painting","The Goddess's Parting Gift (Unbound Wharf)"] },
-
-  { title:"Elderwood Forest (Itzaland)",
-    group:"Random quests", soft:true,
+  { title:"Elderwood Forest",
+    group:"Random quests · Elderwood Forest / Spira", soft:true,
     items:["Challenge: Coliseum","Challenge: Mothershroom's Dream","Give Me My Telescope, Sky Monarch!",
       "Inspiration Journey: Crystal Beach","Inspiration Journey: Forest of Slumber","Inspiration Journey: Giant Spear Station",
       "Inspiration Journey: Great Exploration Camp","Inspiration Journey: Lofty Fig","Inspiration Journey: Shroomville",
       "New Challenge! Brent!","New Challenge! Colossistump!","Surprise, Here It Comes!",
       "The Sovereign Returns! Reignite the Sexy Dance Steps"] },
 
-  { title:"Spira (Itzaland)",
-    group:"Random quests", soft:true,
+  { title:"Spira",
+    group:"Random quests · Elderwood Forest / Spira", soft:true,
     items:["Challenge: Shiny Vault","Customers, Rush In!","Forced Perspective: Big Fish Kissing Little Fish",
       "Forced Perspective: Dizzy & Woozy","Forced Perspective: Giant Lollipop","Help the Trapped Rabitata!","Junk Treasures",
       "Longings Carried by the Sand","Shroomling's Deep Longing","Shroomling's Love Poem","Shroomling's Seat",
       "Shroomling's Secret Feelings","Simmering Flavors of Reunion","Spotlight Showdown",
       "Teenage Shroomling's Rainy Season: Trendy Legwear","The Virtue Guild's New Beginning!","Your Meal Is Coming!"] },
 
-  { title:"Wanxiang Realm (Itzaland)",
-    group:"Random quests", soft:true,
-    items:["Deciphering Shadows","Here Comes Fortune","Hotpot Rescue","Into the Garden of Eternal Daylight",
-      "New Year's Hotpot Party!","Warm Hearts, Hot Pots"] },
-
-  { title:"Boneyard (Itzaland)",
-    group:"Random quests", soft:true,
+  { title:"Boneyard",
+    group:"Random quests · Boneyard", soft:true,
     items:["Challenge: Realm of the Past","Challenge: Soul Tide","O Boss! Forever Our Boss!",
       "Plumeveils, What Are You Trying to Say?","Something Important Lost at Sea",
       "The Past of Dragons and You: A Final Wish for the Future","The Past of Dragons and You: May Rebirth Touch All Things",
       "The Past of Dragons and You: Protection of the Newborn"] },
+
+  { title:"Heaven's Reach",
+    group:"Random quests · Heaven's Reach", soft:true,
+    note:"Opened in 2.8, after the wiki's list stops. Add the quests from your log; nothing verified yet." },
+
+  { title:"Wanxiang Realm",
+    group:"Random quests · Misc Maps", soft:true,
+    items:["Deciphering Shadows","Here Comes Fortune","Hotpot Rescue","Into the Garden of Eternal Daylight",
+      "New Year's Hotpot Party!","Warm Hearts, Hot Pots"] },
+
+  { title:"Firework Isles",
+    group:"Random quests · Misc Maps", soft:true,
+    items:["Another Night of Fireworks","Find Fragrance: Budding Medley","Find Fragrance: Grace of Leaves",
+      "Soar to the fireworks!","The Guard and the Mysterious Stranger","Whirling on the Pony's Back"] },
+
+  { title:"Serenity Island",
+    group:"Random quests · Misc Maps", soft:true,
+    items:["Find Fragrance: Blossom Essence","Find Fragrance: Dewdrop Essence","Grand Patch Stage Awaits!",
+      "Set off on an adventure riding the bubbles!","Styling Challenge: Bubble's Inspiration",
+      "Styling Challenge: Refreshing Moment","Styling Challenge: Show Your Style!"] },
+
+  { title:"Danqing Island",
+    group:"Random quests · Misc Maps", soft:true,
+    items:["A Delicate Heart Knows to Treasure","A Scroll of Fleeting Life","Find Fragrance: Petal Fragrance",
+      "Find Fragrance: Rain Chill","Heart Beyond, Soul Within","Journey Back to Loong Pagoda",
+      "Styling Challenge: Grace in Confidence","Styling Challenge: My Dream World","Styling Challenge: Village Star",
+      "The Pleasure of Five-In-A-Row"] },
+
+  { title:"Sea of Stars",
+    group:"Random quests · Misc Maps", soft:true,
+    items:["Reflections of a Past Wish","The Fading of Painting","The Goddess's Parting Gift (Unbound Wharf)"] },
 
   // --- World quests (K) — no list here; the in-game log has one -------------
   { title:"World quests — clear the World tab of your quest log, region by region",
