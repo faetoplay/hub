@@ -72,22 +72,6 @@
   .reminder .title{font-weight:600}
   .reminder .cadence{font-family:'DM Mono',monospace;font-size:13px;color:var(--alarm)}
 
-  /* Do first — only rendered when something is actually behind schedule. */
-  .dofirst{
-    border:1px solid rgba(226,142,92,.55);border-radius:12px;
-    background:rgba(226,142,92,.07);padding:16px 19px;margin-top:20px;
-  }
-  .dofirst.clear{border-color:var(--line);background:var(--card)}
-  .dofirst h2{margin:0 0 8px;color:var(--alarm)}
-  .dofirst.clear h2{color:var(--dim)}
-  .dofirst ul{margin:0}
-  .dofirst li{
-    font-size:15px;padding:5px 0 5px 16px;position:relative;color:var(--cream);
-  }
-  .dofirst li::before{content:"";position:absolute;left:0;top:14px;width:6px;height:1px;background:var(--alarm)}
-  .dofirst li span{font-family:'DM Mono',monospace;font-size:12.5px;color:var(--alarm);margin-left:8px}
-  .dofirst p{margin:0;font-size:15px;color:var(--dim)}
-
   /* Two-column body: story spine on the left, everything else on the right. */
   .cols{display:grid;grid-template-columns:290px minmax(0,1fr);gap:26px;margin-top:44px;align-items:start}
   .cols.nostory{grid-template-columns:minmax(0,1fr)}   /* nothing in STORY_GROUP → one column */
@@ -232,11 +216,11 @@
 
   /* Expired */
   .card.weekly{border-left:3px solid var(--gold)}
-  .card.weekly > header{cursor:default}
-  .card.weekly .weeklyright{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;margin-left:auto}
-  .card.weekly .weeklyright .of{font-family:'DM Mono',monospace;font-size:12.5px;color:var(--dim)}
-  .card.weekly .weeklyright .disclose{margin-left:0}
-  .card.weekly.closed{padding-bottom:2px}
+  .card .cardright{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;margin-left:auto}
+  .card .cardright .of{font-family:'DM Mono',monospace;font-size:12.5px;color:var(--dim)}
+  .card .cardright .disclose{margin-left:0}
+  .card.closed{padding-bottom:2px}
+  .card.closed > header{padding-bottom:13px}
   .card.weekly li.task:first-child{border-top:0}
   .optional{
     font-family:'DM Mono',monospace;font-size:11.5px;font-weight:400;
@@ -285,7 +269,6 @@
   </div>
 
   <div id="reminders"></div>
-  <div id="dofirst"></div>
 
   <div class="cols">
     <section id="storyCol"></section>
@@ -352,7 +335,7 @@ const STORY_LEDE  = "Do these in order. 3.0's story will pick up where this ends
               clear before the box becomes clickable.
      soft     true for a permanent goal with no deadline — map cleanup, dew farming,
               anything that will still be there after the update. Soft tasks never
-              expire, never enter the Do-first strip, and their cards sort after
+              expire, and their cards sort after
               every dated card. startBy is ignored on them.
      target   a number, for grinds. Adds a counter under the row: type what you've
               collected and a bar fills toward the target. Saved with the checkmarks.
@@ -372,8 +355,7 @@ const STORY_LEDE  = "Do these in order. 3.0's story will pick up where this ends
      title    (required) what to remember
      cadence  (required) how often, shown in parentheses beside the title  */
 const REMINDERS = [
-  { title:"Raised Your Shroomling Today?", cadence:"twice daily" },
-  { title:"Hold your Diamonds until the 3.0 preview stream shows the banners", cadence:"every pull decision" }
+  // Nothing pinned for the Before-3.0 run.
 ];
 
 /* Weekly tasks. Checkbox like a normal task, but the tick is stored against the
@@ -384,7 +366,7 @@ const REMINDERS = [
      title    (required)
      note     one line of context
      optional set true for anything you can skip without losing progress. Optional
-              tasks are labelled and stay out of the Do-first strip. */
+              tasks are labelled. */
 const WEEKLY = [
   { title:"Mira Crown — Arena",
     note:"Materials for the Miracle outfit come from here." },
@@ -844,13 +826,13 @@ if (pruned) save();
 
 /* --- urgency ---
    slack = days left on this task's deadline − the runway it needs.
-   It no longer drives page order on its own; it drives the Do-first strip, the
-   per-card marker, and the tiebreak between cards that share a deadline. */
+   It no longer drives page order on its own; it drives the per-card marker and
+   the tiebreak between cards that share a deadline. */
 const enriched = TASKS.map((t,i) => {
   const left = t.deadline ? daysUntil(t.deadline) : bannerDaysLeft;
   const startBy = t.startBy ?? 0;
-  // Soft tasks have no clock: infinite slack keeps them out of Do-first, an infinite
-  // deadline sorts their cards last, and they can't expire.
+  // Soft tasks have no clock: an infinite deadline sorts their cards last, and
+  // they can't expire.
   if (t.soft) return {...t, i, left, startBy:0, slack:Infinity, deadlineAt:Infinity, expired:false};
   return {...t, i, left, startBy, slack: left - startBy,
           deadlineAt: t.deadline ? new Date(t.deadline) : bannerEnd,
@@ -1172,7 +1154,7 @@ function renderWeekly(col){
   const btn = discloser(ul);
   btn.onclick = () => { ui.weeklyOpen = ul.hidden; saveUI(); renderAll(); };
   const right = document.createElement("span");
-  right.className = "weeklyright";
+  right.className = "cardright";
   right.append(tally, when, btn);
   head.append(name, right);
   sec.appendChild(head);
@@ -1256,8 +1238,23 @@ function card(g){
     : g.deadlineAt >= +bannerEnd
       ? "start by " + Math.max(0, Math.min(...g.live.map(t => t.startBy))) + "d left"
       : "ends " + fmt(new Date(g.deadlineAt));
-  head.append(name, when);
-  sec.appendChild(head);
+  // Collapsible. Open by default; the header keeps a done count so a closed card
+  // still tells you where it stands.
+  const open = !((ui.closed || {})[g.name]);
+  const tally = document.createElement("span");
+  tally.className = "of";
+  tally.textContent = g.live.filter(t => done[t.title]).length + " / " + g.live.length;
+  const bodyEl = document.createElement("div");
+  bodyEl.className = "cardbody";
+  bodyEl.hidden = !open;
+  const btn = discloser(bodyEl);
+  btn.onclick = () => { (ui.closed = ui.closed || {})[g.name] = !bodyEl.hidden; saveUI(); renderAll(); };
+  const right = document.createElement("span");
+  right.className = "cardright";
+  right.append(tally, when, btn);
+  head.append(name, right);
+  sec.append(head, bodyEl);
+  sec.classList.toggle("closed", !open);
 
   // Tabs: distinct labels in written order. Rows with no tab sit under the first.
   const tabs = [...new Set(g.all.filter(t => t.tab).map(t => t.tab))];
@@ -1298,15 +1295,15 @@ function card(g){
     pane.appendChild(ul);
     if (hidden.length) pane.appendChild(lockedLines(hidden));
     tabbed.append(strip, pane);
-    sec.appendChild(tabbed);
+    bodyEl.appendChild(tabbed);
     return sec;
   }
 
   const ul = document.createElement("ul");
   visible.forEach(t => ul.appendChild(row(t)));
-  sec.appendChild(ul);
+  bodyEl.appendChild(ul);
 
-  if (hidden.length) sec.appendChild(lockedLines(hidden));
+  if (hidden.length) bodyEl.appendChild(lockedLines(hidden));
   return sec;
 }
 
@@ -1360,46 +1357,6 @@ function pendingLine(g){
   return d;
 }
 
-/* ============ do first ============ */
-
-function renderDoFirst(){
-  const el = document.getElementById("dofirst");
-  el.textContent = "";
-  const late = enriched
-    .filter(t => !t.expired && !done[t.title] && isUnlocked(t) && t.slack <= 3)
-    .sort((a,b) => a.slack - b.slack);
-
-  // In the last day of the week, an untouched weekly cap is genuinely urgent.
-  const weeklyLate = hoursToReset <= 24
-    ? WEEKLY.filter(t => !t.optional && !weeklyDone(t))
-            .map(t => ({title:t.title, left:hoursToReset / 24, weekly:true}))
-    : [];
-  late.push(...weeklyLate);
-
-  const box = document.createElement("div");
-  box.className = "dofirst" + (late.length ? "" : " clear");
-  const h = document.createElement("h2");
-  h.textContent = late.length ? "Do first · " + late.length : "Do first";
-  box.appendChild(h);
-
-  if (!late.length){
-    const p = document.createElement("p");
-    p.textContent = "Nothing is behind schedule. Work down the list at your own pace.";
-    box.appendChild(p);
-  } else {
-    const ul = document.createElement("ul");
-    late.forEach(t => {
-      const li = document.createElement("li");
-      li.innerHTML = t.title + '<span>' + (t.weekly
-        ? Math.max(0, Math.round(hoursToReset)) + "h to weekly reset"
-        : Math.floor(Math.max(0, t.left)) + "d left") + '</span>';
-      ul.appendChild(li);
-    });
-    box.appendChild(ul);
-  }
-  el.appendChild(box);
-}
-
 /* ============ expired ============
    Individual tasks, not whole groups — a group can outlive some of its rows. */
 
@@ -1435,7 +1392,6 @@ function renderExpired(){
 function renderAll(){
   document.getElementById("doneCount").firstChild.textContent =
     TASKS.filter(t => done[t.title]).length + " / " + TASKS.length;
-  renderDoFirst();
   renderStory();
   renderGroups();
   renderExpired();
