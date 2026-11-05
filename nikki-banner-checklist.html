@@ -355,7 +355,8 @@ const STORY_LEDE  = "Do these in order. 3.0's story will pick up where this ends
      title    (required) what to remember
      cadence  (required) how often, shown in parentheses beside the title  */
 const REMINDERS = [
-  // Nothing pinned for the Before-3.0 run.
+  { title:"Before maintenance: claim any Deep Echoes rewards and spend leftover event currencies — Wish Snowflakes especially. Cherished Rose converts to Resonite Crystals 1:1 on its own.",
+    cadence:"by 12:29 PM ET on Nov 26" }
 ];
 
 /* Weekly tasks. Checkbox like a normal task, but the tick is stored against the
@@ -510,16 +511,6 @@ const TASKS = [
   { title:"Pinnacle Contest — Phase II",
     group:"Mira Crown", type:"mid", startBy:3, unlockDay:19, deadline:"2026-12-01T05:59-05:00",
     note:"Runs past the update. Ends Dec 1, 5:59 AM ET." },
-
-  // --- Before maintenance ---------------------------------------------------
-  { title:"Deep Echoes — claim \"Snowfall, Softly Sung\" rewards",
-    group:"Before maintenance", type:"unique", startBy:2,
-    note:"Only if you pulled on it. Resonances close at 12:29 PM ET on the 26th." },
-
-  { title:"Spend leftover event currencies",
-    group:"Before maintenance", type:"unique", startBy:2,
-    note:"Wish Snowflakes especially. Cherished Rose converts to Resonite Crystals 1:1 on its own, so that one can wait." },
-
 
   // ==========================================================================
   //  STILL THERE AFTER 3.0 — permanent goals. No deadline. The reason to do them
