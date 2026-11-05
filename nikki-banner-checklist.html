@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Golden Dust Checklist · FaetoPlay</title>
-<meta name="description" content="A banner-by-banner TODO checklist for Infinity Nikki, grouped by event and sorted by which deadline lands first.">
+<title>Before 3.0 Checklist · FaetoPlay</title>
+<meta name="description" content="What to wrap up in Infinity Nikki before Version 3.0 lands: expiring 2.11 content first, then the permanent cleanup worth doing before a new region opens.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Karla:wght@400;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -132,6 +132,31 @@
   li.task.locked input:disabled{cursor:not-allowed;opacity:.4;border-style:dashed;border-color:var(--alarm)}
   li.task.locked input:disabled:hover{border-color:var(--alarm)}
 
+  /* Counters — for open-ended grinds where one checkbox says nothing. */
+  .count{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}
+  .count input[type=number]{
+    appearance:textfield;-moz-appearance:textfield;width:76px;
+    font:500 14px 'DM Mono',monospace;color:var(--cream);background:rgba(0,0,0,.18);
+    border:1px solid var(--line);border-radius:7px;padding:5px 8px;
+  }
+  .count input[type=number]::-webkit-inner-spin-button,
+  .count input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+  .count input[type=number]:focus{border-color:var(--gold)}
+  .count .of{font-family:'DM Mono',monospace;font-size:13px;color:var(--dim)}
+  .count .bar{flex:1 1 120px;height:3px;background:rgba(211,175,101,.16);border-radius:2px;overflow:hidden;min-width:80px}
+  .count .bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold-bright))}
+  li.task.done .count{opacity:.38}
+
+  .maplink{
+    font:600 12.5px Karla,sans-serif;color:var(--gold);text-decoration:none;
+    border:1px solid var(--line);border-radius:999px;padding:2px 10px;white-space:nowrap;
+  }
+  .maplink:hover{color:var(--gold-bright);border-color:var(--gold)}
+
+  /* Permanent goals — no deadline, so no urgency colouring anywhere on the card. */
+  .card.soft > header .when{color:var(--dim);opacity:.8}
+  .card.soft{border-style:dashed}
+
   /* Collapsed lock line — replaces a run of locked rows with one summary. */
   .locked-line{
     border-top:1px solid var(--line);padding:12px 0 6px;
@@ -205,8 +230,8 @@
   <p class="sub" id="bannerDates"></p>
 
   <div class="status">
-    <div class="big" id="daysLeft">—<small>Days left in banner</small></div>
-    <div class="stat" id="endsOn">—<small>Banner ends</small></div>
+    <div class="big" id="daysLeft">—<small id="daysLabel">Days left in banner</small></div>
+    <div class="stat" id="endsOn">—<small id="endLabel">Banner ends</small></div>
     <div class="stat" id="doneCount">—<small>Tasks done</small></div>
     <div class="track"><i id="track" style="width:0%"></i></div>
   </div>
@@ -236,16 +261,24 @@
    ============================================================ */
 
 const BANNER = {
-  id:    "2026-07-golden-dust",        // change this every banner; it resets checkmarks
-  name:  "Golden Dust",
-  start: "2026-07-16T23:00-04:00",     // day 1, with timezone offset (-04:00 = EDT)
-  end:   "2026-08-26T14:00-04:00",     // est. maintenance start; see README
-  resetNote: "Daily reset 7:00 AM ET"  // set to "" to hide
+  id:    "2026-11-before-3-0",         // change this every banner; it resets checkmarks
+  name:  "Before 3.0",
+  start: "2026-10-29T22:00-05:00",     // 2.11 went live Oct 29, 20:00 UTC-7 (-05:00 = EST, in force since Nov 1)
+  end:   "2026-11-26T12:30-05:00",     // 3.0 maintenance: Nov 26, 10:30 UTC-7, per the 2.11 notice (moved earlier from 12:50)
+  resetNote: "Daily reset 7:00 AM ET", // set to "" to hide
+  // Optional wording. Leave these out and the page goes back to banner language.
+  kind:      "before-3.0 checklist",   // sits in the subtitle: "Infinity Nikki <kind> · dates"
+  daysLabel: "Days until 3.0",
+  endLabel:  "3.0 maintenance starts"
 };
+
+/* Interactive map used by the permanent-goal rows. Swap for your preferred one. */
+const MAP = "https://interactivemap.app/infinity-nikki/maps/miraland";
 
 /* The group whose tasks run down the left column as a sequence rather than a
    set. One per banner — the main story chain. Every other group is a card. */
 const STORY_GROUP = "Main story";
+const STORY_LEDE  = "Do these in order. 3.0's story will pick up where this ends.";
 
 /* Task fields:
      title    (required) what to do
@@ -269,13 +302,23 @@ const STORY_GROUP = "Main story";
               stays disabled until that day has arrived, worked out from the banner
               start and the 7 AM ET reset. Combines with gate/requires — both must
               clear before the box becomes clickable.
+     soft     true for a permanent goal with no deadline — map cleanup, dew farming,
+              anything that will still be there after the update. Soft tasks never
+              expire, never enter the Do-first strip, and their cards sort after
+              every dated card. startBy is ignored on them.
+     target   a number, for grinds. Adds a counter under the row: type what you've
+              collected and a bar fills toward the target. Saved with the checkmarks.
+              The checkbox stays manual — hitting the target doesn't tick it, since
+              "done enough" is a judgment call.
+     link     optional {href, label}. Small pill link on the row, e.g. to the map.
 */
 /* Pinned reminders. These are NOT tasks — no checkbox, no saved state, and they
    don't count toward the tally. They render above everything and stay put.
      title    (required) what to remember
      cadence  (required) how often, shown in parentheses beside the title  */
 const REMINDERS = [
-  { title:"Raised Your Shroomling Today?", cadence:"twice daily" }
+  { title:"Raised Your Shroomling Today?", cadence:"twice daily" },
+  { title:"Hold your Diamonds until the 3.0 preview stream shows the banners", cadence:"every pull decision" }
 ];
 
 /* Weekly tasks. Checkbox like a normal task, but the tick is stored against the
@@ -301,135 +344,228 @@ const WEEKLY = [
     note:"8,000 points is the weekly cap." }
 ];
 
+/* Sources for this list, so the sourcing rule holds:
+     [2.11]  Oct 29 "Version 2.11 Update Notice", infinitynikki.infoldgames.com/en/news/631
+             — every end time below, the 3.0 maintenance move, Snowgrove, Mira Building
+             phases, Dreamland Showcase, Starlit Shop tabs, Pinnacle Phase II.
+     [2.10]  Sept 23 "Version 2.10 Update Notice", .../news/595 — the Little Prince
+             planets being a limited-time area that closes with 2.11.
+     [2.8]   July 16 "Version 2.8 Update Notice", .../news/560 — how Dews and Whimstars
+             turn into outfits (Existence Paradox, Heart of Infinity sketches).
+     [map]   interactivemap.app/infinity-nikki — the marker counts on the targets.
+             Those are map-wide totals, not "what you're missing"; set them to your own.
+   Times: the game posts UTC-7. Eastern is +2h in November (EST). 10:29 UTC-7 = 12:29 PM ET.
+   Rows marked (K) are Kahako's own categories with no source beyond that — prompts,
+   not facts. Delete the ones that don't apply. */
 const TASKS = [
 
-  // --- New Story: Itzaland chapters 10–14 -------------------------------------
-  // The left column. Strictly sequential, and the thing most other tasks wait on.
-  // Chapters are permanent; the 50-Diamond reward for each expires with the banner.
-  // Two days budgeted per chapter, counting backward from the banner end.
+  // --- Main story: Itzaland chapters 10–14 ----------------------------------
+  // The left column. 2.9, 2.10 and 2.11 added no main chapters, so Ch. 14 is still
+  // the end of the line [2.9][2.10][2.11]. Expect 3.0's story to pick up after it.
+  // The per-chapter Diamond rewards expired with Golden Dust; this is just catch-up.
+  // Two days budgeted per chapter, counting backward from the update.
   { title:"Ch. 10 — Beyond the Haven Veil",
     group:STORY_GROUP, id:"ch10", short:"Ch. 10", type:"unique", startBy:10,
-    note:"Itzaland main storyline. Limited-time reward: 50 Diamonds." },
+    note:"Itzaland main storyline. Earlier chapters assumed done." },
 
   { title:"Ch. 11 — Winding Toward the End of Happiness",
     group:STORY_GROUP, id:"ch11", short:"Ch. 11", type:"unique", startBy:8,
-    gate:"Itzaland main storyline, Chapter 10", requires:"ch10",
-    note:"Limited-time reward: 50 Diamonds." },
+    gate:"Itzaland main storyline, Chapter 10", requires:"ch10" },
 
   { title:"Ch. 12 — Echoing in the Depths of the Soul",
     group:STORY_GROUP, id:"ch12", short:"Ch. 12", type:"unique", startBy:6,
-    gate:"Itzaland main storyline, Chapter 11", requires:"ch11",
-    note:"Limited-time reward: 50 Diamonds." },
+    gate:"Itzaland main storyline, Chapter 11", requires:"ch11" },
 
   { title:"Ch. 13 — The Knell and Eternal Dreams",
     group:STORY_GROUP, id:"ch13", short:"Ch. 13", type:"unique", startBy:4,
-    gate:"Itzaland main storyline, Chapter 12", requires:"ch12",
-    note:"Limited-time reward: 50 Diamonds." },
+    gate:"Itzaland main storyline, Chapter 12", requires:"ch12" },
 
   { title:"Ch. 14 — Dust and the City of Gold",
     group:STORY_GROUP, id:"ch14", short:"Ch. 14", type:"unique", startBy:2,
     gate:"Itzaland main storyline, Chapter 13", requires:"ch13",
-    note:"Limited-time reward: 50 Diamonds." },
+    note:"Last chapter before 3.0." },
 
-  // --- Time to Collect --------------------------------------------------------
-  { title:"48 Whimstars",
-    group:"Time to Collect", type:"unique", startBy:14 },
+  // ==========================================================================
+  //  GONE AT 3.0 — dated cards. Everything here closes with 2.11 or sooner.
+  // ==========================================================================
 
-  // --- Login Gifts ------------------------------------------------------------
-  { title:"Claim all 7 days",
-    group:"Login Gifts", type:"unique", startBy:7, deadline:"2026-08-06T07:00-04:00",
-    note:"Invitation from the Golden City. One claim per day, so seven separate logins." },
+  // --- Starlight Contest — ends Nov 12, 18:59 UTC-7 → 8:59 PM ET [2.11] ------
+  { title:"Submit an entry for \"Snow-Covered Legend\"",
+    group:"Starlight Contest", type:"unique", startBy:2, deadline:"2026-11-12T20:59-05:00" },
 
-  // --- Fun to Play ------------------------------------------------------------
-  // Activities are permanent; only the Diamond rewards shown expire with the banner.
-  { title:"Jolly Shroomfair — use the Wonder Coin Machine once",
-    group:"Fun to Play", type:"unique", startBy:3,
-    gate:"Complete Itzaland main storyline, Chapter 11", requires:"ch11",
-    note:"Dawn Market. Limited-time reward: 30 Diamonds." },
+  // --- Check-in — ends Nov 12, 18:59 UTC-7 → 8:59 PM ET [2.11] ---------------
+  // The notice doesn't say how many days it has. startBy 7 assumes the usual seven;
+  // fix it once you've seen the tile.
+  { title:"As the Pages Unfold — claim every day",
+    group:"Check-in", type:"unique", startBy:7, deadline:"2026-11-12T20:59-05:00",
+    note:"One claim per day. The Flight to Freedom and Daydream Weaver reruns close at the same moment." },
 
-  { title:"Jolly Shroomfair — take part in Master Mechanic once",
-    group:"Fun to Play", type:"unique", startBy:3,
-    gate:"Complete Itzaland main storyline, Chapter 11", requires:"ch11",
-    note:"Dawn Market. Limited-time reward: 30 Diamonds." },
+  // --- Dreamland Showcase — ends Nov 23, 04:00 server → 6:00 AM ET [2.11] ----
+  { title:"Spend your Memory Stones",
+    group:"Dreamland Showcase", type:"unique", startBy:3, deadline:"2026-11-23T06:00-05:00",
+    note:"Leftovers convert to Astralites when the rerun ends." },
 
-  { title:"Jolly Shroomfair — play Shroom-Ring Toss once",
-    group:"Fun to Play", type:"unique", startBy:3,
-    gate:"Complete Itzaland main storyline, Chapter 11", requires:"ch11",
-    note:"Dawn Market. Limited-time reward: 30 Diamonds." },
+  // --- Snowgrove — closes with 2.11 [2.11] -----------------------------------
+  // Reached by a limited-time teleport point in Elderwood Forest. The notice only
+  // calls the teleport limited-time, but with no way in, treat the whole area as gone.
+  { title:"The Snow Remembers — exclusive quest",
+    group:"Snowgrove", id:"snow", short:"The Snow Remembers", type:"unique", startBy:6,
+    note:"Opens the Touring Sleigh and the rest of the town. Gone at 3.0." },
 
-  { title:"Wanted: Coocoo Copter — collect Crystal of Blessing in the Center District",
-    group:"Fun to Play", type:"unique", startBy:3,
-    gate:"Progress to Itzaland main storyline, Chapter 10", requires:"ch10",
-    note:"Limited-time reward: 50 Diamonds." },
+  { title:"Touring Sleigh — ride it",
+    group:"Snowgrove", type:"unique", startBy:3,
+    gate:"Progress The Snow Remembers", requires:"snow" },
 
-  { title:"Everbloom Mystery — collect Crystal of Blessing in Everbloom Garden",
-    group:"Fun to Play", type:"unique", startBy:3,
-    gate:"Progress to Itzaland main storyline, Chapter 10", requires:"ch10",
-    note:"Limited-time reward: 50 Diamonds." },
+  { title:"Snow-Covered Tales — Winter Prologue world quests",
+    group:"Snowgrove", type:"unique", startBy:5,
+    note:"Diamonds, the Pikas' Wishes headwear, growth materials." },
 
-  { title:"Skyline Rush — take part in Skyward Race once",
-    group:"Fun to Play", type:"unique", startBy:3,
-    gate:"Progress to Itzaland main storyline, Chapter 11", requires:"ch11",
-    note:"Heaven's Reach. Limited-time reward: 50 Diamonds." },
+  { title:"Snow-Covered Tales — Snowlit Encounters random quests",
+    group:"Snowgrove", type:"unique", startBy:4 },
 
-  // --- Starlit Shop -----------------------------------------------------------
-  // 13 Limited-Time tiles totalling 1,245 Starlit Crystals. At 54/day from the Sea of
-  // Stars daily that's a 24-day grind, so startBy 26 leaves the usual two-day buffer.
-  // Tiles read 39d, i.e. they close with the banner — no deadline of its own.
-  { title:"Buy out the Limited-Time tab (1,245 Starlit Crystals)",
-    group:"Starlit Shop", type:"unique", startBy:26 },
+  { title:"Snowborne Sprigs — finish the task sets, spend the Wish Snowflakes",
+    group:"Snowgrove", type:"unique", startBy:4,
+    note:"Four tasks unlock at a time. Nothing says what happens to leftover Snowflakes — assume they vanish." },
 
-  // --- Rainbow-Colored Gift ---------------------------------------------------
-  // Tile read 39d 18h, i.e. closes with the banner — no deadline of its own.
-  { title:"Complete all tasks",
-    group:"Rainbow-Colored Gift", type:"unique", startBy:14 },
+  // --- The Little Prince — limited-time area since 2.10, closes with 2.11 [2.10][2.11]
+  { title:"For the Child You Once Were — collab quest",
+    group:"The Little Prince", id:"prince", short:"the collab quest", type:"unique", startBy:6,
+    note:"The four planets came in 2.10 and leave with 2.11." },
 
-  // --- Mira Crown: Pinnacle Contest -------------------------------------------
-  // Refreshes on the 15th and the last day of each month, 24 stars each cycle. Three
-  // cycles touch this banner, so three rows — a checkbox that had to be un-ticked twice
-  // would lose the record of the earlier hauls. Cycles 2 and 3 open mid-banner and use
-  // unlockDay to stay locked until they do. See PLANNING-README for the boundary math.
-  { title:"Pinnacle Contest — 24 stars (cycle ending Jul 31)",
-    group:"Mira Crown", type:"unique", startBy:3, deadline:"2026-07-31T07:00-04:00" },
+  { title:"Clear the four planets of anything you still want",
+    group:"The Little Prince", type:"unique", startBy:5,
+    gate:"Accept For the Child You Once Were", requires:"prince",
+    note:"The Lamplighter's Planet, The Businessman's Planet, The King's Planet, Asteroid B-612." },
 
-  { title:"Pinnacle Contest — 24 stars (cycle ending Aug 15)",
-    group:"Mira Crown", type:"mid", startBy:3, unlockDay:16, deadline:"2026-08-15T07:00-04:00" },
+  { title:"Adventure Among Stars — finish the collab event",
+    group:"The Little Prince", type:"unique", startBy:4 },
 
-  { title:"Pinnacle Contest — 24 stars (cycle ending Aug 31)",
-    group:"Mira Crown", type:"mid", startBy:3, unlockDay:31 },
+  { title:"Interstellar Encounters & The Migration of Wild Birds",
+    group:"The Little Prince", type:"unique", startBy:4,
+    note:"2.10 events that run to the end of 2.11. Skip if you already finished them." },
 
-  // --- Current Adventures -----------------------------------------------------
-  // Starlight Contest read 19d 0h on Jul 18, so it dies well before the banner does.
-  { title:"Starlight Contest — complete \"True, As I Am\"",
-    group:"Current Adventures", type:"unique", startBy:3, deadline:"2026-08-06T07:00-04:00" },
+  { title:"Deep Echoes — claim \"A Story Dedicated to Children\" rewards",
+    group:"The Little Prince", type:"unique", startBy:2,
+    note:"Only if you pulled on the collab Resonance." },
 
-  // Tales of Itzaland III: five days, each opening a fresh set of tasks. The day
-  // number is the only thing knowable ahead of time — hence one checkbox per day
-  // rather than per task. Days 4 and 5 need their notes filled in once they open.
-  { title:"Tales of Itzaland III — Day 1",
-    group:"Current Adventures", type:"unique", startBy:2, unlockDay:1,
-    gate:"Unlock Heaven's Reach (mid Chapter 10)", requires:"ch10",
-    note:"Poem of Motive Power and Gears. Four tasks, 100 event points each." },
+  // --- Mira Building Open Day — three phases, all end with 2.11 [2.11] -------
+  // Phase 2 opened Nov 5, 05:00 UTC-7 = 7 AM ET = event day 8. Phase 3 is Nov 13 = day 16.
+  { title:"Phase 1 — floors 1–10",
+    group:"Mira Building Open Day", type:"unique", startBy:4,
+    note:"Exchange projects and the employee challenge." },
 
-  { title:"Tales of Itzaland III — Day 2",
-    group:"Current Adventures", type:"unique", startBy:2, unlockDay:2,
-    gate:"Unlock Heaven's Reach (mid Chapter 10)", requires:"ch10",
-    note:"Secrets of the Mechanical City. Four tasks, 100 event points each." },
+  { title:"Phase 2",
+    group:"Mira Building Open Day", type:"mid", startBy:4, unlockDay:8 },
 
-  { title:"Tales of Itzaland III — Day 3",
-    group:"Current Adventures", type:"unique", startBy:2, unlockDay:3,
-    gate:"Unlock Heaven's Reach (mid Chapter 10)", requires:"ch10",
-    note:"Ingenuity and Inspiration. Four tasks, 100 event points each." },
+  { title:"Phase 3",
+    group:"Mira Building Open Day", type:"mid", startBy:4, unlockDay:16 },
 
-  { title:"Tales of Itzaland III — Day 4",
-    group:"Current Adventures", type:"unique", startBy:2, unlockDay:4,
-    gate:"Unlock Heaven's Reach (mid Chapter 10)", requires:"ch10",
-    note:"Tasks unknown until the day opens. Four tasks, 100 event points each." },
+  // --- Current Adventures — all end with 2.11 [2.11] -------------------------
+  { title:"Tales of Itzaland I, II and III — finish and claim",
+    group:"Current Adventures", type:"unique", startBy:5 },
 
-  { title:"Tales of Itzaland III — Day 5",
-    group:"Current Adventures", type:"unique", startBy:2, unlockDay:5,
-    gate:"Unlock Heaven's Reach (mid Chapter 10)", requires:"ch10",
-    note:"Tasks unknown until the day opens. Four tasks, 100 event points each." }
+  { title:"Build on the Land I & II — claim every stage reward",
+    group:"Current Adventures", type:"unique", startBy:3,
+    link:{ href:"nikki-path-of-practice-weekly.html", label:"Weekly plan" },
+    note:"Path of Practice. The weekly plan is cut to the same Nov 26 deadline." },
+
+  { title:"Face It! Wild Surge Returns",
+    group:"Current Adventures", type:"unique", startBy:3 },
+
+  // --- Mira Journey — new phase ends with 2.11, cap 90 [2.11] ----------------
+  { title:"Reach level 90 and claim everything",
+    group:"Mira Journey", type:"unique", startBy:10,
+    note:"Journey Overture, Distant Anthem, Miracle Epic. 8,000 points a week — the weekly box tracks the cap." },
+
+  // --- Starlit Shop — both rotating tabs close with 2.11 [2.11] --------------
+  { title:"Limited-Time tab — buy what you want",
+    group:"Starlit Shop", type:"unique", startBy:3,
+    note:"Includes the 5-star headwear Candy Daydream." },
+
+  { title:"Returning Stars tab — buy what you want",
+    group:"Starlit Shop", type:"unique", startBy:3 },
+
+  // --- Mira Crown: Pinnacle Contest [2.11] -----------------------------------
+  // Phase II is Nov 16, 04:00 – Dec 1, 03:59 server time, so it outlives 3.0 — it is
+  // the one thing on this page you can still do after maintenance. Phase I's end is
+  // inferred from Phase II's start. unlockDay 19 opens it at 7 AM ET, an hour late.
+  { title:"Pinnacle Contest — Phase I",
+    group:"Mira Crown", type:"unique", startBy:3, deadline:"2026-11-16T05:59-05:00" },
+
+  { title:"Pinnacle Contest — Phase II",
+    group:"Mira Crown", type:"mid", startBy:3, unlockDay:19, deadline:"2026-12-01T05:59-05:00",
+    note:"Runs past the update. Ends Dec 1, 5:59 AM ET." },
+
+  // --- Before maintenance ---------------------------------------------------
+  { title:"Deep Echoes — claim \"Snowfall, Softly Sung\" rewards",
+    group:"Before maintenance", type:"unique", startBy:2,
+    note:"Only if you pulled on it. Resonances close at 12:29 PM ET on the 26th." },
+
+  { title:"Spend leftover event currencies",
+    group:"Before maintenance", type:"unique", startBy:2,
+    note:"Wish Snowflakes especially. Cherished Rose converts to Resonite Crystals 1:1 on its own, so that one can wait." },
+
+  { title:"Pre-download 3.0",
+    group:"Before maintenance", type:"unique", startBy:1,
+    note:"Not announced yet. 2.9, 2.10 and 2.11 each opened pre-download at 5 AM ET the day before, so expect Nov 25 — confirm on the 3.0 notice." },
+
+  // ==========================================================================
+  //  STILL THERE AFTER 3.0 — permanent goals. No deadline, counters instead.
+  //  The reason to do them now: a new region drops on the 26th and the backlog
+  //  only gets longer. Targets are map-wide totals [map]; set them to what you
+  //  actually have left.
+  // ==========================================================================
+
+  // --- Side quests (K) -------------------------------------------------------
+  { title:"World quests — clear the World tab of your quest log, region by region",
+    group:"Side quests", soft:true,
+    note:"Miraland, Firework Isles & Sea of Stars, Serenity Island, Danqing Island & Realm, Itzaland." },
+
+  { title:"Random quests",
+    group:"Side quests", soft:true, target:119, link:{ href:MAP, label:"Map" },
+    note:"119 marked on the interactive map." },
+
+  // --- Dews of Inspiration (K) -----------------------------------------------
+  { title:"Dews of Inspiration",
+    group:"Dews of Inspiration", soft:true, target:665, link:{ href:MAP, label:"Map" },
+    note:"665 on the map. Each region has its own exchange — Kilo in Florawish, and so on — paying out sketches, Bling and outfits." },
+
+  { title:"Faewish Sprites",
+    group:"Dews of Inspiration", soft:true, link:{ href:MAP, label:"Map" } },
+
+  { title:"Curio Domains",
+    group:"Dews of Inspiration", soft:true, link:{ href:MAP, label:"Map" } },
+
+  // --- Chests (K) ------------------------------------------------------------
+  { title:"Basic Crates",
+    group:"Chests & crates", soft:true, target:254, link:{ href:MAP, label:"Map" },
+    note:"254 on the map. The map lists other chest types without totals — add rows for the ones you track." },
+
+  // --- Whimstars & Warp Spires (K) -------------------------------------------
+  { title:"Whimstars",
+    group:"Whimstars", soft:true, target:356, link:{ href:MAP, label:"Map" },
+    note:"356 on the map. They unlock Heart of Infinity nodes — ability outfits and Miracle-outfit sketches." },
+
+  { title:"Warp Spires",
+    group:"Warp Spires", soft:true, target:110, link:{ href:MAP, label:"Map" },
+    note:"110 on the map. The cheapest exploration upgrade there is." },
+
+  // --- Outfit gathering (K) --------------------------------------------------
+  { title:"Dew-exchange outfits — trade for any 4-star you haven't yet",
+    group:"Outfit gathering", soft:true,
+    note:"2.8's Existence Paradox worked this way: Dews plus a world quest." },
+
+  { title:"Heart of Infinity — unlock the ability-outfit sketches you're missing",
+    group:"Outfit gathering", soft:true,
+    note:"Paid in Whimstars." },
+
+  { title:"Craft the sketches sitting in your bag",
+    group:"Outfit gathering", soft:true,
+    note:"Bling, Shiny Bubbles, Threads of Purity. Anything you're short on is a farming target." },
+
+  { title:"Compendium — push collection levels for the Diamond rewards",
+    group:"Outfit gathering", soft:true,
+    note:"2.11 added the Spiritual Dreamweaver title and the Forest-Spirit Symbiosis card at certain levels." }
 
 ];
 
@@ -448,10 +584,14 @@ const totalDays = Math.max(1, (bannerEnd - bannerStart) / DAY);
 
 /* --- event day counter ---
    Day 1 starts with the banner; every later day starts at the next 7 AM ET reset, not
-   24h after launch. Golden Dust opened at 11 PM ET, so Day 1 is a short one.
-   ET is hardcoded to -04:00 to match the literal offsets on the dates above — it does
-   not follow DST, so change it alongside them after Nov 1, 2026. */
-const ET_OFFSET = -4 * 3600000;
+   24h after launch. 2.11 opened at 10 PM ET, so Day 1 is a short one.
+   The ET offset is read off BANNER.end (-05:00 in winter, -04:00 in summer), so the
+   reset math follows whatever offset the dates above are written in. It still won't
+   track a DST change that falls inside one banner; that costs an hour for a day or two. */
+const ET_OFFSET = (() => {
+  const m = /([+-])(\d\d):?(\d\d)$/.exec(BANNER.end);
+  return m ? (m[1] === "-" ? -1 : 1) * (+m[2] * 3600000 + +m[3] * 60000) : -5 * 3600000;
+})();
 function eventDayStart(n){
   if (n <= 1) return bannerStart;
   const etMs = +bannerStart + ET_OFFSET;                 // banner start on an ET clock
@@ -481,9 +621,11 @@ const hoursToReset = (weekEnd - now) / 3600000;
 document.title = BANNER.name + " Checklist · FaetoPlay";
 document.getElementById("bannerName").textContent = BANNER.name;
 document.getElementById("bannerDates").textContent =
-  "Infinity Nikki banner checklist · " + fmt(bannerStart) + " – " + fmt(bannerEnd) +
+  "Infinity Nikki " + (BANNER.kind || "banner checklist") + " · " + fmt(bannerStart) + " – " + fmt(bannerEnd) +
   " · " + Math.round(totalDays) + " days total" +
   (BANNER.resetNote ? " · " + BANNER.resetNote : "");
+if (BANNER.daysLabel) document.getElementById("daysLabel").textContent = BANNER.daysLabel;
+if (BANNER.endLabel)  document.getElementById("endLabel").textContent  = BANNER.endLabel;
 document.getElementById("daysLeft").firstChild.textContent = Math.floor(bannerDaysLeft);
 document.getElementById("endsOn").firstChild.textContent =
   bannerEnd.toLocaleDateString(undefined,{month:"short",day:"numeric"}) + ", " +
@@ -513,10 +655,14 @@ if (pruned) save();
 const enriched = TASKS.map((t,i) => {
   const left = t.deadline ? daysUntil(t.deadline) : bannerDaysLeft;
   const startBy = t.startBy ?? 0;
+  // Soft tasks have no clock: infinite slack keeps them out of Do-first, an infinite
+  // deadline sorts their cards last, and they can't expire.
+  if (t.soft) return {...t, i, left, startBy:0, slack:Infinity, deadlineAt:Infinity, expired:false};
   return {...t, i, left, startBy, slack: left - startBy,
           deadlineAt: t.deadline ? new Date(t.deadline) : bannerEnd,
           expired: left <= 0};
 });
+const countKey = t => "count:" + t.title;
 
 const byId = id => TASKS.find(x => x.id === id);
 const label = t => t && (t.short || t.title);
@@ -612,14 +758,54 @@ function row(t, opts){
     g.className = "note"; g.textContent = "Needs first: " + lockDetail(t);
     body.appendChild(g);
   }
+  if (t.target){
+    // Counter: a number box, "/ target", and a bar. Typing saves on the spot.
+    const wrap = document.createElement("div");
+    wrap.className = "count";
+    const num = document.createElement("input");
+    num.type = "number"; num.min = 0; num.max = t.target; num.step = 1;
+    num.inputMode = "numeric";
+    num.value = Math.max(0, +done[countKey(t)] || 0);
+    num.setAttribute("aria-label", t.title + " collected, out of " + t.target);
+    const of = document.createElement("span");
+    of.className = "of"; of.textContent = "/ " + t.target;
+    const bar = document.createElement("div");
+    bar.className = "bar";
+    const fill = document.createElement("i");
+    bar.appendChild(fill);
+    const paint = () => {
+      const v = Math.max(0, Math.min(t.target, Math.floor(+num.value) || 0));
+      fill.style.width = (v / t.target * 100) + "%";
+    };
+    paint();
+    num.oninput = () => { paint(); };
+    num.onchange = () => {
+      const v = Math.max(0, Math.min(t.target, Math.floor(+num.value) || 0));
+      num.value = v; done[countKey(t)] = v; save(); paint();
+    };
+    wrap.append(num, of, bar);
+    body.appendChild(wrap);
+  }
+
   if (!opts.hideMeta){
     const meta = document.createElement("div");
     meta.className = "meta";
-    const startTxt = t.startBy >= 999 ? "start day 1" : "start by " + t.startBy + "d remaining";
-    meta.innerHTML =
-      '<span' + (t.slack <= 0 ? ' class="hot"' : '') + '>' + startTxt + '</span>' +
-      ' · <span>' + Math.floor(Math.max(0,t.left)) + 'd left</span>' +
-      (t.deadline ? ' <span>(ends ' + fmt(t.deadline) + ')</span>' : '');
+    if (t.soft){
+      meta.textContent = "permanent · no deadline";
+    } else {
+      const startTxt = t.startBy >= 999 ? "start day 1" : "start by " + t.startBy + "d remaining";
+      meta.innerHTML =
+        '<span' + (t.slack <= 0 ? ' class="hot"' : '') + '>' + startTxt + '</span>' +
+        ' · <span>' + Math.floor(Math.max(0,t.left)) + 'd left</span>' +
+        (t.deadline ? ' <span>(ends ' + fmt(t.deadline) + ')</span>' : '');
+    }
+    if (t.link && t.link.href){
+      const a = document.createElement("a");
+      a.className = "maplink"; a.href = t.link.href;
+      a.textContent = (t.link.label || "Link") + " ↗";
+      if (/^https?:/.test(t.link.href)){ a.target = "_blank"; a.rel = "noopener"; }
+      meta.append("  ", a);
+    }
     body.appendChild(meta);
   }
 
@@ -658,7 +844,7 @@ function renderStory(){
 
   const lede = document.createElement("p");
   lede.className = "spinefoot";
-  lede.textContent = "Do these in order. Most of the other tasks wait on them.";
+  lede.textContent = STORY_LEDE;
   col.appendChild(lede);
 
   const next = storyTasks.find(t => !done[t.title]);
@@ -695,14 +881,19 @@ function buildGroups(){
     const basis = live.length ? live : all;
     return {
       name, all, live,
+      soft: all.every(t => t.soft),
       visible: live.filter(t => isUnlocked(t) || done[t.title]),
       hidden:  live.filter(t => !isUnlocked(t) && !done[t.title]),
       deadlineAt: Math.min(...basis.map(t => +t.deadlineAt)),
-      slack: Math.min(...basis.map(t => t.slack))
+      slack: Math.min(...basis.map(t => t.slack)),
+      order: groupOrder.indexOf(name)
     };
   }).filter(g => g.live.length)
-    .sort((a,b) => a.deadlineAt - b.deadlineAt || a.slack - b.slack);
+    // Infinity − Infinity is NaN, which would scramble the sort, so compare in steps.
+    // Soft cards share an infinite deadline and fall back to the order they're written in.
+    .sort((a,b) => cmp(a.deadlineAt, b.deadlineAt) || cmp(a.slack, b.slack) || a.order - b.order);
 }
+function cmp(a, b){ return a === b ? 0 : a < b ? -1 : 1; }
 
 /* ============ weekly ============
    Pinned above the event cards. It isn't sorted with them: its deadline is the same
@@ -784,6 +975,7 @@ function renderGroups(){
   const note = document.createElement("p");
   note.className = "colnote";
   note.textContent = "Grouped by where you find it in game · soonest deadline first" +
+    (groups.some(g => g.soft) ? " · permanent goals last" : "") +
     (WEEKLY.length ? " · " + weeklyLeft + " weekly left" : "");
   col.appendChild(note);
 
@@ -794,14 +986,16 @@ function renderGroups(){
 
 function card(g){
   const sec = document.createElement("section");
-  sec.className = "card";
+  sec.className = "card" + (g.soft ? " soft" : "");
 
   const head = document.createElement("header");
   const name = document.createElement("span");
   name.className = "name"; name.textContent = g.name;
   const when = document.createElement("span");
-  when.className = "when" + (g.slack <= 3 ? " hot" : "");
-  when.textContent = g.slack <= 0 ? "start now"
+  when.className = "when" + (!g.soft && g.slack <= 3 ? " hot" : "");
+  when.textContent = g.soft ? "permanent"
+    : g.slack <= 0 ? "start now"
+    : g.deadlineAt > +bannerEnd ? "ends " + fmt(new Date(g.deadlineAt))   // runs past the update
     : g.deadlineAt >= +bannerEnd
       ? "start by " + Math.max(0, Math.min(...g.live.map(t => t.startBy))) + "d left"
       : "ends " + fmt(new Date(g.deadlineAt));
@@ -962,7 +1156,7 @@ REMINDERS.forEach(r => {
 renderAll();
 
 document.getElementById("uncheck").onclick = () => {
-  if (!confirm("Clear every checkmark for this banner?")) return;
+  if (!confirm("Clear every checkmark and counter on this page?")) return;
   done = {}; save(); location.reload();
 };
 </script>

@@ -22,6 +22,8 @@ Checkmarks are also tied to the banner they belong to. When a new banner starts,
 
 ## Changelog
 
+- **2026-11 — Before 3.0.** The checklist is running as a pre-update list rather than a banner list until Version 3.0 lands on November 26. Expiring 2.11 content (Snowgrove, the Little Prince planets, rotating shops, events) sits in dated cards; permanent cleanup (side quests, Dews, chests, Whimstars, Warp Spires, outfit gathering) sits in dashed "permanent" cards with counters and links to the interactive map. Three new task fields — `soft`, `target`, `link` — and the page's wording (`kind`, `daysLabel`, `endLabel`) are set in the config block; leave them out and it goes back to banner language.
+
 ## AI usage and reuse disclosure
 AI was used to assist in building this site and the checklist. Every task on the list comes from in-game screenshots, but the timing behind it does not: the "start by" runway on each task is my own estimate of how long that task takes at a pace I'd call comfortable. That reflects how I play, which introduces a natural bias — a faster player will find some of it early, and a more casual one may find it tight. Treat the ordering as a suggestion, not a schedule. I am open to suggestions on changes, but note they may not be implemented.
 
