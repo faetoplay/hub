@@ -317,6 +317,10 @@ const MAP = "http://pearpal.infoldgames.com/tools/map?language=en&lat=331495.47&
 /* The group whose tasks run down the left column as a sequence rather than a
    set. One per banner — the main story chain. Every other group is a card. */
 const STORY_GROUP = "Main story";
+
+/* Cards listed here render first, in this order, ahead of the dated ones. The point
+   of this run is 100% Itzaland before 3.0, so the quest cards lead. */
+const PINNED_GROUPS = ["Random quests", "World quests"];
 const STORY_LEDE  = "Do these in order. 3.0's story will pick up where this ends.";
 
 /* Task fields:
@@ -1527,13 +1531,16 @@ function renderGroups(){
   const weeklyLeft = WEEKLY.filter(t => !weeklyDone(t) && !t.optional).length;
   const note = document.createElement("p");
   note.className = "colnote";
-  note.textContent = "Grouped by where you find it in game · soonest deadline first" +
+  note.textContent = "Quests first · then grouped by where you find it in game · soonest deadline first" +
     (groups.some(g => g.soft) ? " · permanent goals last" : "") +
     (WEEKLY.length ? " · " + weeklyLeft + " weekly left" : "");
   col.appendChild(note);
 
+  const pinned = PINNED_GROUPS.map(n => active.find(g => g.name === n)).filter(Boolean);
+  const rest   = active.filter(g => !PINNED_GROUPS.includes(g.name));
+  pinned.forEach(g => col.appendChild(card(g)));
   renderWeekly(col);
-  active.forEach(g => col.appendChild(card(g)));
+  rest.forEach(g => col.appendChild(card(g)));
   pending.forEach(g => col.appendChild(pendingLine(g)));
 }
 
