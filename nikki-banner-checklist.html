@@ -647,39 +647,30 @@ const TASKS = [
     note:"Wishfield, Firework Isles & Sea of Stars, Serenity Island, Danqing Island, Wanxiang Realm, Itzaland." },
 
   // --- Dews of Inspiration — what they buy [wiki] ----------------------------
-  // Kilo's costs sum to 1,793 Dews against 1,964 in Wishfield, so there is slack.
-  // The wiki has no costs for Ian's levels 1–13. 2.8's Existence Paradox is in the
-  // wiki's craftable list but not yet on Ian's page; it sits here on the strength
-  // of the 2.8 notice ("Dews plus a world quest").
-  { title:"Kilo the Cadenceborn — Wishfield (36 levels, 1,793 Dews)",
-    group:"Dews of Inspiration", soft:true, link:{ href:MAP, label:"Map" },
-    note:"Stylist's Guild Memorial, after the world quest \"Hello, Cadenceborn!\". 1,964 Dews across Wishfield.",
-    items:["Rebirth Wish — levels 1–8 (233 Dews)","Momo's Cloak: Sunny Day — level 8",
-      "Hometown Breeze — levels 9–16 (380 Dews)","Momo's Cloak: Gentle Breeze — level 16",
-      "Starwish Echoes — levels 17–24 (400 Dews)","Momo's Cloak: Light Veil — level 24",
-      "Levels 25–35 — Shiny Bubbles, Threads of Purity, Diamonds, Resonite (780 Dews)",
-      "Kilo's Admirer — level 36"] },
+  // Tabbed by region. Kilo's costs sum to 1,793 Dews against 1,964 in Wishfield,
+  // so there is slack. The wiki has no costs for Ian's levels 1–13. 2.8's Existence
+  // Paradox is in the wiki's craftable list but not yet on Ian's page; it sits here
+  // on the strength of the 2.8 notice ("Dews plus a world quest"). The island
+  // exchanges pay crystals and materials, never outfits, so they're one row.
+  { title:"Kilo the Cadenceborn — 36 levels, 1,793 Dews",
+    group:"Dews of Inspiration", tab:"Wishfield", soft:true, link:{ href:MAP, label:"Map" },
+    note:"Stylist's Guild Memorial, after \"Hello, Cadenceborn!\". 1,964 Dews in the region.",
+    items:["Rebirth Wish — Lv. 1–8 (233 Dews)","Momo's Cloak: Sunny Day — Lv. 8",
+      "Hometown Breeze — Lv. 9–16 (380 Dews)","Momo's Cloak: Gentle Breeze — Lv. 16",
+      "Starwish Echoes — Lv. 17–24 (400 Dews)","Momo's Cloak: Light Veil — Lv. 24",
+      "Lv. 25–35 — bubbles, threads, Diamonds, Resonite (780 Dews)","Kilo's Admirer — Lv. 36"] },
 
-  { title:"Ian the Cadenceborn — Itzaland (16 levels)",
-    group:"Dews of Inspiration", soft:true, link:{ href:MAP, label:"Map" },
-    items:["Deepwood Dream — levels 1–8","Heart of Shield — level 8","Feathery Song — levels 9–16 (levels 14–16 cost 60 each)",
+  { title:"Ian the Cadenceborn — 16 levels",
+    group:"Dews of Inspiration", tab:"Itzaland", soft:true, link:{ href:MAP, label:"Map" },
+    items:["Deepwood Dream — Lv. 1–8","Heart of Shield — Lv. 8","Feathery Song — Lv. 9–16",
       "Existence Paradox — Dews plus a world quest (2.8)"] },
 
-  { title:"Vita — Dews of Firework (8 levels, 240 of 261)",
-    group:"Dews of Inspiration", soft:true, target:240, link:{ href:MAP, label:"Map" },
-    note:"Fireworks Workshop: Sparklight Treasures. Resonite Crystals, Glitter Bubbles, Bling — no outfit." },
-
-  { title:"Pouchy — Serenity Dewdrops (8 levels, 240)",
-    group:"Dews of Inspiration", soft:true, target:240, link:{ href:MAP, label:"Map" },
-    note:"Treasure Pouch, Serenity Island. Resonite Crystals, prisms, Iridescent Thoughts — no outfit." },
-
-  { title:"Zhou Suchan — Danqing Jade Souls (8 levels, 240)",
-    group:"Dews of Inspiration", soft:true, target:240, link:{ href:MAP, label:"Map" },
-    note:"Danqing Treasures, Danqing Island. Same reward table as Serenity — no outfit." },
-
-  { title:"Faewish Sprites & Curio Domains",
-    group:"Dews of Inspiration", soft:true, link:{ href:MAP, label:"Map" },
-    note:"The other Dew sources. No list here — the map has them." },
+  { title:"Resonite exchanges — 8 levels × 30 each, no outfits",
+    group:"Dews of Inspiration", tab:"Islands", soft:true, link:{ href:MAP, label:"Map" },
+    note:"Resonite Crystals, prisms, Glitter Bubbles, Bling. Tick each once it's maxed.",
+    items:["Vita — Dews of Firework, Firework Isles (240 of 261)",
+      "Pouchy — Serenity Dewdrops, Serenity Island (240)",
+      "Zhou Suchan — Danqing Jade Souls, Danqing Island (240)"] },
 
   // --- Chests (K) ------------------------------------------------------------
   { title:"Basic Crates",
@@ -1015,7 +1006,7 @@ function row(t, opts){
     const meta = document.createElement("div");
     meta.className = "meta";
     if (t.soft){
-      meta.textContent = "permanent · no deadline";
+      if (!(t.link && t.link.href)) { li.append(box, body); return li; }
     } else {
       const startTxt = t.startBy >= 999 ? "start day 1" : "start by " + t.startBy + "d remaining";
       meta.innerHTML =
