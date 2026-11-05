@@ -1212,7 +1212,12 @@ function row(t, opts){
   // Never disable a box that's already ticked — that would strand the checkmark.
   box.disabled = (opts.frozen || !open) && !box.checked;
   if (!open) box.title = "Locked until: " + lockDetail(t);
-  box.onchange = () => { done[t.title] = box.checked; save(); renderAll(); };
+  box.onchange = () => {
+    done[t.title] = box.checked;
+    // A row with a sub-list is "all of these": its box drives every item.
+    (t.items || []).forEach(n => { done[itemKey(t, n)] = box.checked; });
+    save(); renderAll();
+  };
 
   const body = document.createElement("div");
   body.className = "body";
@@ -1297,8 +1302,9 @@ function row(t, opts){
       box.setAttribute("aria-label", n);
       li.className = box.checked ? "on" : "";
       box.onchange = () => {
-        done[itemKey(t, n)] = box.checked; save();
-        li.className = box.checked ? "on" : ""; paint();
+        done[itemKey(t, n)] = box.checked;
+        done[t.title] = t.items.every(i => done[itemKey(t, i)]);
+        save(); renderAll();
       };
       const txt = document.createElement("span");
       txt.textContent = n;
