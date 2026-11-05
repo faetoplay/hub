@@ -9,19 +9,23 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Karla:wght@400;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  /* Palette sampled from the Golden Dust event splash */
+  /* Palette sampled from the "Tales Woven in Time" event splash (2.11): a snowy
+     night-blue ground, evergreen for the tab panes, ribbon gold and candle-cream
+     for accents, holly red for urgency. Token names are historical — every colour
+     on the page derives from them, so retheming is just this block. */
   :root{
-    --bronze-deep:#150E05;
-    --bronze:#241A0D;
-    --bronze-lift:#3A2A12;
-    --card:rgba(211,175,101,.07);
-    --gold-dim:#88632D;
-    --gold:#D3AF65;
-    --gold-bright:#FDED8E;
-    --cream:#F7EBCE;
-    --dim:#B18A46;
-    --alarm:#E28E5C;
-    --line:rgba(211,175,101,.2);
+    --bronze-deep:#0E1626;     /* night sky */
+    --bronze:#172339;
+    --bronze-lift:#213350;
+    --pane:#1B3530;            /* evergreen: tab panes and the active tab */
+    --card:rgba(246,227,180,.07);
+    --gold-dim:#8E6F3C;
+    --gold:#D9B46A;            /* ribbon gold */
+    --gold-bright:#F7E6BC;     /* candlelight */
+    --cream:#F7F0E6;           /* snow */
+    --dim:#B3AC9B;
+    --alarm:#E2635B;           /* holly red */
+    --line:rgba(217,180,106,.22);
   }
   *{box-sizing:border-box}
   body{
@@ -146,11 +150,11 @@
   }
   .tabs button:hover{color:var(--gold-bright);border-color:var(--gold)}
   .tabs button[aria-selected=true]{
-    color:var(--cream);background:var(--bronze-lift);border-color:var(--gold);
+    color:var(--cream);background:var(--pane);border-color:var(--gold);
     padding-bottom:9px;margin-bottom:-1px;
   }
   .tabs button small{font:400 11.5px 'DM Mono',monospace;opacity:.75}
-  .tabpane{border:1px solid var(--gold);border-radius:0 10px 10px 10px;background:var(--bronze-lift);padding:4px 18px 8px}
+  .tabpane{border:1px solid var(--gold);border-radius:0 10px 10px 10px;background:var(--pane);padding:4px 18px 8px}
   .tabbar{display:flex;justify-content:flex-end;padding:8px 0 2px}
   .tabbar + ul li.task:first-child{border-top:0}
   .pageall{margin-left:auto;letter-spacing:0;text-transform:none}
