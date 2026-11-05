@@ -641,36 +641,217 @@ const TASKS = [
     group:"Random quests", tab:"Misc Maps", soft:true,
     items:["Reflections of a Past Wish","The Fading of Painting","The Goddess's Parting Gift (Unbound Wharf)"] },
 
-  // --- World quests (K) — no list here; the in-game log has one -------------
-  { title:"World quests — clear the World tab of your quest log, region by region",
-    group:"World quests", soft:true,
-    note:"Wishfield, Firework Isles & Sea of Stars, Serenity Island, Danqing Island, Wanxiang Realm, Itzaland." },
+  // --- World quests — 96 permanent, by area [wiki] ----------------------------
+  // Same seven tabs as Random quests. The wiki's permanent list runs through 2.6;
+  // the 66 limited-time world quests are left out.
 
-  // --- Dews of Inspiration — what they buy [wiki] ----------------------------
-  // Tabbed by region. Kilo's costs sum to 1,793 Dews against 1,964 in Wishfield,
-  // so there is slack. The wiki has no costs for Ian's levels 1–13. 2.8's Existence
-  // Paradox is in the wiki's craftable list but not yet on Ian's page; it sits here
-  // on the strength of the 2.8 notice ("Dews plus a world quest"). The island
-  // exchanges pay crystals and materials, never outfits, so they're one row.
-  { title:"Kilo the Cadenceborn — 36 levels, 1,793 Dews",
+  { title:"Memorial Mountains",
+    group:"World quests", tab:"Wishfield", soft:true,
+    items:["Chirpy Repaying The Debt",
+      "Fly Farther",
+      "Hello, Cadenceborn!"] },
+
+  { title:"Florawish",
+    group:"World quests", tab:"Wishfield", soft:true,
+    items:["Blackout Crisis",
+      "Challenge: Ancient Queen's Palace Ruins",
+      "Challenge: Beauty Lab",
+      "Challenge: Dream Warehouse",
+      "Challenge: Ghost Train",
+      "Challenge: Ripple Wine Cellar",
+      "Challenge: Swordsmith Ruins",
+      "Follow the Guidance of the \"Eye\"",
+      "I'm The Wishing One. Give me Blings",
+      "Jump! Jump Now!",
+      "Nature's Whisper Woven in Patterns",
+      "New Guidance: Realm of Escalation",
+      "New Start: Mira Crown Merit Arena!",
+      "Purify! The Scent in the Cavern",
+      "Rewind: Across Time and Space",
+      "Shiny Wish",
+      "Showdown at Dusk",
+      "Sovereign's Challenge! The Night of Elegance",
+      "Sovereign's Challenge! Ultimate Showdown",
+      "Sovereign's Medal: Moment of Glory",
+      "The Mira Crown Styling Contest",
+      "Where Do Daisies Grow?"] },
+
+  { title:"Breezy Meadow",
+    group:"World quests", tab:"Wishfield", soft:true,
+    items:["All Fish Sing at Night",
+      "Challenge: Serpentine Ruins",
+      "Deep into the Forest",
+      "Goodnight Meadow, My Heart Sets Sail",
+      "Left for Home, Right for Wishes",
+      "Need 99 Pearl Wings...",
+      "Stop! Florist Sheep",
+      "Thanks! Fish Knight",
+      "The Fearless Adventurers Falling Apart",
+      "The Girl Who Disappeared",
+      "This Year's Graduation Thesis Is..."] },
+
+  { title:"Stoneville",
+    group:"World quests", tab:"Stoneville", soft:true,
+    items:["A New Life",
+      "Beretsant King"] },
+
+  { title:"Abandoned District",
+    group:"World quests", tab:"Stoneville", soft:true,
+    items:["Home on the Rails",
+      "Junior Conductor, Set Off!",
+      "Miss Detective, I Want to Become a Columnist!",
+      "Repair the Ripple Estate Skypass",
+      "Repair the Stellar Fishing Ground Skypass",
+      "Repair the Windrider Mill Skypass",
+      "Soaring Above the Starry Sky",
+      "Sovereign's Challenge! Ignite the Sexy Night",
+      "Sunset and Best Friend"] },
+
+  { title:"Wishing Woods",
+    group:"World quests", tab:"Wishing Woods", soft:true,
+    items:["Fifteen Years, Echoes of Wishes",
+      "Fresh, Freshday!",
+      "Puffy and Shiny",
+      "Quick-Flight Commission: Missing Da-friend",
+      "Quick-Flight Commission: The Bizarre Wish Bet",
+      "Sovereign's Challenge! Ultimate Freshness"] },
+
+  { title:"Elderwood Forest",
+    group:"World quests", tab:"Elderwood Forest / Spira", soft:true,
+    items:["A Gift from Afar and a Farewell at Dusk",
+      "Baths Plan!",
+      "Battle Companion: First Summon of the Phantom Companion",
+      "Clang Clang, Who's There?",
+      "Hello, Ian the Cadenceborn",
+      "Incredible Mystery: An Enchanted Night in the Forest",
+      "Incredible Mystery: Feast of the Returned",
+      "Incredible Mystery: Puppet House",
+      "Leader Showdown! Risk-Taking Adventurer",
+      "Leader Showdown! Shroomling with a Heart for Giants",
+      "New Challenge! Elio!",
+      "New Training: Warp Spire Realm",
+      "Risky Photography: Common Behemoth",
+      "Searching for the \"Eye\"",
+      "Set off! From Pots to Spira",
+      "Sovereign Challenge! Unbound, Rhythmic Moves",
+      "The Lost Messenger: Adrift",
+      "The Lost Messenger: In Peril",
+      "Toward Greater Glory!"] },
+
+  { title:"Spira",
+    group:"World quests", tab:"Elderwood Forest / Spira", soft:true,
+    items:["Fake Shroomcap, True Friendship",
+      "Grow Big and Strong!",
+      "I Want to Learn Styling!",
+      "Incredible Mystery: Grinning Shroomling",
+      "Leader Showdown! Child of the Wolf Pack",
+      "Reunion of Wind and Leaves",
+      "The Lost Messenger: An Audience"] },
+
+  { title:"Boneyard",
+    group:"World quests", tab:"Boneyard", soft:true,
+    items:["A Market Set for Farewell",
+      "Goodbye, Until We Meet Again",
+      "Who Are You, Who Am I?"] },
+
+  { title:"Heaven's Reach",
+    group:"World quests", tab:"Heaven's Reach", soft:true,
+    note:"Opened in 2.8, after the wiki's list stops. Add the quests from your log; nothing verified yet." },
+
+  { title:"Wanxiang Realm",
+    group:"World quests", tab:"Misc Maps", soft:true,
+    items:["A Millennium in Colors",
+      "The Stage Awaits"] },
+
+  { title:"Serenity Island",
+    group:"World quests", tab:"Misc Maps", soft:true,
+    items:["Battle for the Sauna King!",
+      "Best buddy, woof!",
+      "I Know Why Bubbles Float"] },
+
+  { title:"Danqing Island",
+    group:"World quests", tab:"Misc Maps", soft:true,
+    items:["A Mysterious Resident of the Bamboo Grove",
+      "A Place of Rest, a Knot of Fate",
+      "Never Bound by One Place",
+      "Of Tuan Shan, Rong Hua and Xiang Bao"] },
+
+  { title:"Sea of Stars",
+    group:"World quests", tab:"Misc Maps", soft:true,
+    items:["Illuminate the Dream Star Isles!",
+      "Not Only the Starlight Knows",
+      "Sea of Stars Revelation: The Secret of Ability Outfits",
+      "Set Off for a Warm Place"] },
+
+  { title:"Home",
+    group:"World quests", tab:"Misc Maps", soft:true,
+    items:["Life in a Warm Place"] },
+
+  // --- Dews of Inspiration — what they buy, level by level [wiki] -------------
+  // One tab per exchange; one row per outfit set (or reward block); one item per
+  // level, named for the piece it gives. Kilo's costs sum to 1,793 against 1,964
+  // Dews in Wishfield. The wiki has no costs for Ian's levels 1–13. Existence
+  // Paradox is on Ian's tab from the 2.8 notice ("Dews plus a world quest"), not
+  // the wiki. The island exchanges pay crystals and materials, never outfits.
+  { title:"Rebirth Wish — Lv. 1–8 (233 Dews)",
     group:"Dews of Inspiration", tab:"Wishfield", soft:true, link:{ href:MAP, label:"Map" },
-    note:"Stylist's Guild Memorial, after \"Hello, Cadenceborn!\". 1,964 Dews in the region.",
-    items:["Rebirth Wish — Lv. 1–8 (233 Dews)","Momo's Cloak: Sunny Day — Lv. 8",
-      "Hometown Breeze — Lv. 9–16 (380 Dews)","Momo's Cloak: Gentle Breeze — Lv. 16",
-      "Starwish Echoes — Lv. 17–24 (400 Dews)","Momo's Cloak: Light Veil — Lv. 24",
-      "Lv. 25–35 — bubbles, threads, Diamonds, Resonite (780 Dews)","Kilo's Admirer — Lv. 36"] },
+    note:"Kilo, at the Stylist's Guild Memorial, after \"Hello, Cadenceborn!\". 1,964 Dews in the region.",
+    items:["1 · Weaving Spring (3)","2 · Paper Crane's Flight (30)","3 · Blooming Path (30)","4 · Cradle of Wish (30)",
+      "5 · A New Dawn (30)","6 · Through the Storm (30)","7 · Bright Tomorrow (40)","8 · Tomorrow's Vows + Momo's Cloak: Sunny Day (40)"] },
 
-  { title:"Ian the Cadenceborn — 16 levels",
+  { title:"Hometown Breeze — Lv. 9–16 (380 Dews)",
+    group:"Dews of Inspiration", tab:"Wishfield", soft:true,
+    items:["9 · Windswept Wheat (40)","10 · Hopeful Knot (40)","11 · Harvest's Blessing (50)","12 · Wishbird Return (50)",
+      "13 · Languid Windmill (50)","14 · Breezy Cotton (50)","15 · Homeland's Nostalgia (50)","16 · Song of Harvest + Momo's Cloak: Gentle Breeze (50)"] },
+
+  { title:"Starwish Echoes — Lv. 17–24 (400 Dews)",
+    group:"Dews of Inspiration", tab:"Wishfield", soft:true,
+    items:["17 · Wishing Heart (50)","18 · Eternal Hope (50)","19 · Wishing Star (50)","20 · Tomorrow's Dream (50)",
+      "21 · Wishwoven Threads (50)","22 · Circling Thoughts (50)","23 · Tomorrow's Wish (50)","24 · Momo's Cloak: Light Veil + Resonite (50)"] },
+
+  { title:"Lv. 25–36 — materials, then Kilo's Admirer (780 Dews)",
+    group:"Dews of Inspiration", tab:"Wishfield", soft:true,
+    note:"Every level pays 160 Shiny Bubbles plus one of: 160 Threads of Purity, 40 Diamonds, or a Resonite Crystal.",
+    items:["25 · Threads (60)","26 · Diamonds (60)","27 · Threads (60)","28 · Resonite (60)","29 · Threads (60)","30 · Diamonds (60)",
+      "31 · Threads (70)","32 · Resonite (70)","33 · Threads (70)","34 · Diamonds (70)","35 · Threads (70)","36 · Kilo's Admirer + Resonite (70)"] },
+
+  { title:"Deepwood Dream — Lv. 1–8",
     group:"Dews of Inspiration", tab:"Itzaland", soft:true, link:{ href:MAP, label:"Map" },
-    items:["Deepwood Dream — Lv. 1–8","Heart of Shield — Lv. 8","Feathery Song — Lv. 9–16",
-      "Existence Paradox — Dews plus a world quest (2.8)"] },
+    note:"Ian the Cadenceborn. Level costs for 1–13 aren't on the wiki.",
+    items:["1 · Verdant Radiance","2 · Celestial Journey","3 · Bell Song","4 · Sincere Embrace",
+      "5 · Heart Melody","6 · Dream Dance","7 · Unbound Resonance","8 · Woodland Whispers + Heart of Shield"] },
 
-  { title:"Resonite exchanges — 8 levels × 30 each, no outfits",
-    group:"Dews of Inspiration", tab:"Islands", soft:true, link:{ href:MAP, label:"Map" },
-    note:"Resonite Crystals, prisms, Glitter Bubbles, Bling. Tick each once it's maxed.",
-    items:["Vita — Dews of Firework, Firework Isles (240 of 261)",
-      "Pouchy — Serenity Dewdrops, Serenity Island (240)",
-      "Zhou Suchan — Danqing Jade Souls, Danqing Island (240)"] },
+  { title:"Feathery Song — Lv. 9–16",
+    group:"Dews of Inspiration", tab:"Itzaland", soft:true,
+    items:["9 · Distant Call","10 · Dawn Sonata","11 · Will of the Wind","12 · Forest Trip",
+      "13 · Silent Echo","14 · Windborne Steps (60)","15 · Legendary Legacy (60)","16 · Night Overture (60)"] },
+
+  { title:"Existence Paradox — Dews plus a world quest",
+    group:"Dews of Inspiration", tab:"Itzaland", soft:true,
+    note:"From the 2.8 notice. Not on the wiki's Ian page yet, so no level numbers." },
+
+  { title:"Vita — Fireworks Workshop: Sparklight Treasures (8 × 30, of 261 Dews of Firework)",
+    group:"Dews of Inspiration", tab:"Firework Isles", soft:true, link:{ href:MAP, label:"Map" },
+    note:"Every level includes a Resonite Crystal.",
+    items:["1 · 60 Glitter Bubbles: Elegant, 20k Bling","2 · 75 Threads of Purity, 20k Bling","3 · 75 Shiny Bubbles, 20k Bling",
+      "4 · 20 Shining Particles, 1 Glowing Thoughts, 20k Bling","5 · 60 Glitter Bubbles: Sweet, 20k Bling",
+      "6 · 75 Threads of Purity, 30k Bling","7 · 75 Shiny Bubbles, 30k Bling","8 · 20 Shining Particles, 30k Bling"] },
+
+  { title:"Pouchy — Treasure Pouch (8 × 30 Serenity Dewdrops)",
+    group:"Dews of Inspiration", tab:"Serenity Island", soft:true, link:{ href:MAP, label:"Map" },
+    note:"Every level includes a Resonite Crystal.",
+    items:["1 · 10 Radiant Prism, 75 Threads of Purity, 20k Bling","2 · 30 Glitter Bubbles: Fresh, 25 Luminous Prism, 20k Bling",
+      "3 · 50 Shining Particles, 25 Rainbow Prism, 20k Bling","4 · 1 Iridescent Thoughts, 75 Threads of Purity, 20k Bling",
+      "5 · 10 Radiant Prism, 75 Threads of Purity, 30k Bling","6 · 30 Glitter Bubbles: Fresh, 25 Luminous Prism, 30k Bling",
+      "7 · 50 Shining Particles, 25 Rainbow Prism, 30k Bling","8 · 10 Radiant Prism, 30 Glitter Bubbles: Fresh, 30k Bling"] },
+
+  { title:"Zhou Suchan — Danqing Treasures (8 × 30 Danqing Jade Souls)",
+    group:"Dews of Inspiration", tab:"Danqing Island", soft:true, link:{ href:MAP, label:"Map" },
+    note:"Same table as Serenity. Every level includes a Resonite Crystal.",
+    items:["1 · 10 Radiant Prism, 75 Threads of Purity, 20k Bling","2 · 30 Glitter Bubbles: Fresh, 25 Luminous Prism, 20k Bling",
+      "3 · 50 Shining Particles, 25 Rainbow Prism, 20k Bling","4 · 1 Iridescent Thoughts, 75 Threads of Purity, 20k Bling",
+      "5 · 10 Radiant Prism, 75 Threads of Purity, 30k Bling","6 · 30 Glitter Bubbles: Fresh, 25 Luminous Prism, 30k Bling",
+      "7 · 50 Shining Particles, 25 Rainbow Prism, 30k Bling","8 · 10 Radiant Prism, 30 Glitter Bubbles: Fresh, 30k Bling"] },
 
   // --- Chests (K) ------------------------------------------------------------
   { title:"Basic Crates",
@@ -1266,7 +1447,7 @@ function card(g){
       const rows = g.all.filter(t => (t.tab || tabs[0]) === name);
       const n = rows.reduce((a,t) => a + (t.items ? t.items.length : 0), 0);
       if (n){
-        const k = rows.reduce((a,t) => a + t.items.filter(i => done[itemKey(t, i)]).length, 0);
+        const k = rows.reduce((a,t) => a + (t.items || []).filter(i => done[itemKey(t, i)]).length, 0);
         const sm = document.createElement("small");
         sm.textContent = k + "/" + n;
         b.appendChild(sm);
