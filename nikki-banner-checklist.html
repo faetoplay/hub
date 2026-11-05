@@ -153,6 +153,7 @@
   .tabpane{border:1px solid var(--gold);border-radius:0 10px 10px 10px;background:var(--bronze-lift);padding:4px 18px 8px}
   .tabbar{display:flex;justify-content:flex-end;padding:8px 0 2px}
   .tabbar + ul li.task:first-child{border-top:0}
+  .pageall{margin-left:auto;letter-spacing:0;text-transform:none}
   .checkall{color:var(--dim)}
   .checkall:hover{color:var(--gold-bright)}
   .tabpane li.task:first-child{border-top:0}
@@ -1510,6 +1511,17 @@ function renderGroups(){
   const h = document.createElement("h2");
   h.innerHTML = 'Everything else <span class="count">' +
     live.filter(t => done[t.title]).length + " / " + live.length + '</span>';
+  // Page-wide Show all / Hide all: flips every card, the weekly one included.
+  const names = groups.map(g => g.name);
+  const anyOpen = (WEEKLY.length && ui.weeklyOpen) || names.some(n => !((ui.closed || {})[n]));
+  const all = document.createElement("button");
+  all.type = "button"; all.className = "disclose pageall";
+  all.textContent = anyOpen ? "Hide all" : "Show all";
+  all.onclick = () => {
+    ui.closed = {}; names.forEach(n => { ui.closed[n] = anyOpen; });
+    ui.weeklyOpen = !anyOpen; saveUI(); renderAll();
+  };
+  h.appendChild(all);
   col.appendChild(h);
 
   const weeklyLeft = WEEKLY.filter(t => !weeklyDone(t) && !t.optional).length;
