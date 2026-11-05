@@ -148,6 +148,18 @@
   .count .bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold-bright))}
   li.task.done .count{opacity:.38}
 
+  /* Tab strip inside a card. */
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;padding:4px 0 12px}
+  .tabs button{
+    font:600 13px Karla,sans-serif;background:transparent;color:var(--dim);
+    border:1px solid var(--line);border-radius:999px;padding:6px 13px;cursor:pointer;
+    display:flex;gap:7px;align-items:baseline;
+  }
+  .tabs button:hover{color:var(--gold-bright);border-color:var(--gold)}
+  .tabs button[aria-selected=true]{color:var(--bronze-deep);background:var(--gold);border-color:var(--gold)}
+  .tabs button small{font:400 11.5px 'DM Mono',monospace;opacity:.8}
+  .tabs + ul li.task:first-child{border-top:1px solid var(--line)}
+
   /* Item lists — sub-checkboxes behind a disclosure. */
   .items{margin-top:6px}
   .items > .itemhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -334,6 +346,10 @@ const STORY_LEDE  = "Do these in order. 3.0's story will pick up where this ends
               The checkbox stays manual — hitting the target doesn't tick it, since
               "done enough" is a judgment call.
      link     optional {href, label}. Small pill link on the row, e.g. to the map.
+     tab      optional label. When any row in a card has one, the card grows a tab
+              strip and shows only the rows of the active tab. Tabs appear in the
+              order their first row is written; the chosen tab is remembered per
+              browser. Rows without a tab go under the first one.
      items    optional array of names. The row grows a "Show N" disclosure with one
               small checkbox per name, saved alongside the checkmarks, and a bar that
               fills as they're ticked. The row's own checkbox stays manual.
@@ -514,16 +530,17 @@ const TASKS = [
   // ==========================================================================
 
   // --- Random quests — 187 permanent, by area [wiki] -------------------------
-  // Six cards, Kahako's grouping; one collapsible row per area inside each.
+  // One card, seven tabs (Kahako's grouping), one collapsible row per area under
+  // each tab. Tabs appear in the order their first row is written.
   // The wiki's permanent list runs through 2.6, so anything added in 2.7–2.11 is
   // missing — which is why Heaven's Reach is empty. The 53 event-only random
   // quests are left out: they're gone already.
   { title:"Memorial Mountains",
-    group:"Random quests · Wishfield", soft:true,
+    group:"Random quests", tab:"Wishfield", soft:true,
     items:["Expeditions: Wishfield","Observation: Ancient Statue","Risky Photography: Octopack"] },
 
   { title:"Florawish",
-    group:"Random quests · Wishfield", soft:true,
+    group:"Random quests", tab:"Wishfield", soft:true,
     items:["Bubbler","Busted for Slacking Off!!","Find Fragrance: Citrus Burst","First Go at the Surprise-O-Matic",
       "Folklore Guide","Forced Perspective: Caged Bird","Forced Perspective: Capturing the Thief",
       "Forced Perspective: Flowers in Three Vases","Forced Perspective: Ship in a Bottle","In Love with Dolls",
@@ -534,7 +551,7 @@ const TASKS = [
       "Sovereign's Return! Unstoppable Coolness","Statue's Wish","Whispers on the Terrace","Wishes Secret Training"] },
 
   { title:"Breezy Meadow",
-    group:"Random quests · Wishfield", soft:true,
+    group:"Random quests", tab:"Wishfield", soft:true,
     items:["Find Fragrance: Forest Whisper","Find Fragrance: Sprouting Melody","Forced Perspective: Catching a Big Fish",
       "Forced Perspective: Light up the Bridge Lamps","Forced Perspective: Long-Eared Bunny","Kindled Inspiration: Animal Traces",
       "Kindled Inspiration: Deft Exuberance","Kindled Inspiration: Fortune's Favor","Kindled Inspiration: Natural Design",
@@ -546,14 +563,14 @@ const TASKS = [
       "Risky Photography: Sssack","Sovereign's Return! Elegant Dance","The Luck of a Ring"] },
 
   { title:"Stoneville",
-    group:"Random quests · Stoneville", soft:true,
+    group:"Random quests", tab:"Stoneville", soft:true,
     items:["Bowler by the Statue","Find Fragrance: Viney Infusion","Flower Crate Arrangement","Flower Crates in Order",
       "Forced Perspective: Flying Buntings","Kindled Inspiration: Goodnight Signal","Kindled Inspiration: Transformation",
       "Observation: Making Wishes","Photo Investigation: Lost Item","Photo Investigation: Lost Sheep",
       "Risky Photography: Bitey Bag","Risky Photography: Hard Sack","The Secret Under the Stonetree"] },
 
   { title:"Abandoned District",
-    group:"Random quests · Stoneville", soft:true,
+    group:"Random quests", tab:"Stoneville", soft:true,
     items:["Find Fragrance: Mossy Hush","Find Fragrance: Summer Fragrance","Find Fragrance: Verdant Aroma",
       "Forced Perspective: Happy Bear","Forced Perspective: Thuddy Snowman","Help the Volunteer Corps",
       "Kindled Inspiration: Fragrant Reward","Kindled Inspiration: Perfect Pair","Meow-Meow and Cappy",
@@ -563,7 +580,7 @@ const TASKS = [
       "Roll, Barrels!","Save the Unsold Detergent"] },
 
   { title:"Wishing Woods",
-    group:"Random quests · Stoneville", soft:true,
+    group:"Random quests", tab:"Wishing Woods", soft:true,
     items:["Find Fragrance: Herbal Aroma","Find Fragrance: Meadow Zest","Find Fragrance: Midsummer Breeze",
       "Flower Crates and Flower Beds","Forced Perspective: Burning with Anger","Forced Perspective: Catching a Waterfall!",
       "Forced Perspective: Empty Flowerpot","Kindled Inspiration: Glimpse of Sunset","Kindled Inspiration: Super Waterproof",
@@ -575,7 +592,7 @@ const TASKS = [
       "What's the Big News?"] },
 
   { title:"Elderwood Forest",
-    group:"Random quests · Elderwood Forest / Spira", soft:true,
+    group:"Random quests", tab:"Elderwood Forest / Spira", soft:true,
     items:["Challenge: Coliseum","Challenge: Mothershroom's Dream","Give Me My Telescope, Sky Monarch!",
       "Inspiration Journey: Crystal Beach","Inspiration Journey: Forest of Slumber","Inspiration Journey: Giant Spear Station",
       "Inspiration Journey: Great Exploration Camp","Inspiration Journey: Lofty Fig","Inspiration Journey: Shroomville",
@@ -583,7 +600,7 @@ const TASKS = [
       "The Sovereign Returns! Reignite the Sexy Dance Steps"] },
 
   { title:"Spira",
-    group:"Random quests · Elderwood Forest / Spira", soft:true,
+    group:"Random quests", tab:"Elderwood Forest / Spira", soft:true,
     items:["Challenge: Shiny Vault","Customers, Rush In!","Forced Perspective: Big Fish Kissing Little Fish",
       "Forced Perspective: Dizzy & Woozy","Forced Perspective: Giant Lollipop","Help the Trapped Rabitata!","Junk Treasures",
       "Longings Carried by the Sand","Shroomling's Deep Longing","Shroomling's Love Poem","Shroomling's Seat",
@@ -591,41 +608,41 @@ const TASKS = [
       "Teenage Shroomling's Rainy Season: Trendy Legwear","The Virtue Guild's New Beginning!","Your Meal Is Coming!"] },
 
   { title:"Boneyard",
-    group:"Random quests · Boneyard", soft:true,
+    group:"Random quests", tab:"Boneyard", soft:true,
     items:["Challenge: Realm of the Past","Challenge: Soul Tide","O Boss! Forever Our Boss!",
       "Plumeveils, What Are You Trying to Say?","Something Important Lost at Sea",
       "The Past of Dragons and You: A Final Wish for the Future","The Past of Dragons and You: May Rebirth Touch All Things",
       "The Past of Dragons and You: Protection of the Newborn"] },
 
   { title:"Heaven's Reach",
-    group:"Random quests · Heaven's Reach", soft:true,
+    group:"Random quests", tab:"Heaven's Reach", soft:true,
     note:"Opened in 2.8, after the wiki's list stops. Add the quests from your log; nothing verified yet." },
 
   { title:"Wanxiang Realm",
-    group:"Random quests · Misc Maps", soft:true,
+    group:"Random quests", tab:"Misc Maps", soft:true,
     items:["Deciphering Shadows","Here Comes Fortune","Hotpot Rescue","Into the Garden of Eternal Daylight",
       "New Year's Hotpot Party!","Warm Hearts, Hot Pots"] },
 
   { title:"Firework Isles",
-    group:"Random quests · Misc Maps", soft:true,
+    group:"Random quests", tab:"Misc Maps", soft:true,
     items:["Another Night of Fireworks","Find Fragrance: Budding Medley","Find Fragrance: Grace of Leaves",
       "Soar to the fireworks!","The Guard and the Mysterious Stranger","Whirling on the Pony's Back"] },
 
   { title:"Serenity Island",
-    group:"Random quests · Misc Maps", soft:true,
+    group:"Random quests", tab:"Misc Maps", soft:true,
     items:["Find Fragrance: Blossom Essence","Find Fragrance: Dewdrop Essence","Grand Patch Stage Awaits!",
       "Set off on an adventure riding the bubbles!","Styling Challenge: Bubble's Inspiration",
       "Styling Challenge: Refreshing Moment","Styling Challenge: Show Your Style!"] },
 
   { title:"Danqing Island",
-    group:"Random quests · Misc Maps", soft:true,
+    group:"Random quests", tab:"Misc Maps", soft:true,
     items:["A Delicate Heart Knows to Treasure","A Scroll of Fleeting Life","Find Fragrance: Petal Fragrance",
       "Find Fragrance: Rain Chill","Heart Beyond, Soul Within","Journey Back to Loong Pagoda",
       "Styling Challenge: Grace in Confidence","Styling Challenge: My Dream World","Styling Challenge: Village Star",
       "The Pleasure of Five-In-A-Row"] },
 
   { title:"Sea of Stars",
-    group:"Random quests · Misc Maps", soft:true,
+    group:"Random quests", tab:"Misc Maps", soft:true,
     items:["Reflections of a Past Wish","The Fading of Painting","The Goddess's Parting Gift (Unbound Wharf)"] },
 
   // --- World quests (K) — no list here; the in-game log has one -------------
@@ -827,6 +844,10 @@ const enriched = TASKS.map((t,i) => {
           expired: left <= 0};
 });
 const countKey = t => "count:" + t.title;
+const UIKEY = KEY + ".ui";
+let ui = {};
+try { ui = JSON.parse(localStorage.getItem(UIKEY)) || {}; } catch(e){ ui = {}; }
+const saveUI = () => { try { localStorage.setItem(UIKEY, JSON.stringify(ui)); } catch(e){} };
 const itemKey  = (t, name) => "sub:" + t.title + "|" + name;
 
 const byId = id => TASKS.find(x => x.id === id);
@@ -1211,11 +1232,42 @@ function card(g){
   head.append(name, when);
   sec.appendChild(head);
 
+  // Tabs: distinct labels in written order. Rows with no tab sit under the first.
+  const tabs = [...new Set(g.all.filter(t => t.tab).map(t => t.tab))];
+  let visible = g.visible, hidden = g.hidden;
+  if (tabs.length){
+    const want = (ui.tabs || {})[g.name];
+    const active = tabs.includes(want) ? want : tabs[0];
+    const strip = document.createElement("div");
+    strip.className = "tabs";
+    strip.setAttribute("role", "tablist");
+    tabs.forEach(name => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.setAttribute("role", "tab");
+      b.setAttribute("aria-selected", String(name === active));
+      b.textContent = name;
+      const rows = g.all.filter(t => (t.tab || tabs[0]) === name);
+      const n = rows.reduce((a,t) => a + (t.items ? t.items.length : 0), 0);
+      if (n){
+        const k = rows.reduce((a,t) => a + t.items.filter(i => done[itemKey(t, i)]).length, 0);
+        const sm = document.createElement("small");
+        sm.textContent = k + "/" + n;
+        b.appendChild(sm);
+      }
+      b.onclick = () => { (ui.tabs = ui.tabs || {})[g.name] = name; saveUI(); renderAll(); };
+      strip.appendChild(b);
+    });
+    sec.appendChild(strip);
+    visible = g.visible.filter(t => (t.tab || tabs[0]) === active);
+    hidden  = g.hidden.filter(t => (t.tab || tabs[0]) === active);
+  }
+
   const ul = document.createElement("ul");
-  g.visible.forEach(t => ul.appendChild(row(t)));
+  visible.forEach(t => ul.appendChild(row(t)));
   sec.appendChild(ul);
 
-  if (g.hidden.length) sec.appendChild(lockedLines(g.hidden));
+  if (hidden.length) sec.appendChild(lockedLines(hidden));
   return sec;
 }
 
