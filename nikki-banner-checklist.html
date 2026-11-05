@@ -141,17 +141,23 @@
   /* Folder tabs inside a card: a strip of tabs sitting on a bordered pane, the
      active tab fused to the pane so they read as one sheet. */
   .tabbed{margin:6px 0 10px}
-  .tabs{display:flex;gap:4px;flex-wrap:wrap;align-items:flex-end;padding:0 10px;position:relative;z-index:1}
+  .tabs{
+    display:flex;gap:3px;flex-wrap:nowrap;overflow-x:auto;align-items:flex-end;
+    padding:2px 10px 0;margin-bottom:-1px;position:relative;z-index:1;
+    scrollbar-width:thin;scrollbar-color:var(--gold-dim) transparent;
+  }
+  .tabs::-webkit-scrollbar{height:4px}
+  .tabs::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:2px}
   .tabs button{
-    font:600 13.5px Karla,sans-serif;background:rgba(0,0,0,.18);color:var(--dim);
-    border:1px solid var(--line);border-bottom:0;border-radius:10px 10px 0 0;
-    padding:8px 14px 7px;cursor:pointer;display:flex;gap:8px;align-items:baseline;
-    margin-bottom:0;
+    flex:0 0 auto;white-space:nowrap;
+    font:600 13px Karla,sans-serif;background:rgba(0,0,0,.18);color:var(--dim);
+    border:1px solid var(--line);border-bottom:1px solid var(--gold);border-radius:10px 10px 0 0;
+    padding:7px 10px 6px;cursor:pointer;display:flex;gap:6px;align-items:baseline;
   }
   .tabs button:hover{color:var(--gold-bright);border-color:var(--gold)}
   .tabs button[aria-selected=true]{
     color:var(--cream);background:var(--pane);border-color:var(--gold);
-    padding-bottom:9px;margin-bottom:-1px;
+    border-bottom-color:var(--pane);padding-bottom:7px;
   }
   .tabs button small{font:400 11.5px 'DM Mono',monospace;opacity:.75}
   .tabpane{border:1px solid var(--gold);border-radius:0 10px 10px 10px;background:var(--pane);padding:4px 18px 8px}
@@ -1725,6 +1731,12 @@ function renderAll(){
   renderStory();
   renderGroups();
   renderExpired();
+  // Narrow screens scroll the tab strip; keep the active tab in view.
+  document.querySelectorAll(".tabs button[aria-selected=true]").forEach(b => {
+    const strip = b.parentElement;
+    if (strip.scrollWidth > strip.clientWidth)
+      strip.scrollLeft = Math.max(0, b.offsetLeft - (strip.clientWidth - b.offsetWidth) / 2);
+  });
 }
 
 /* --- pinned reminders, drawn once --- */
