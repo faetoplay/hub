@@ -151,6 +151,10 @@
   }
   .tabs button small{font:400 11.5px 'DM Mono',monospace;opacity:.75}
   .tabpane{border:1px solid var(--gold);border-radius:0 10px 10px 10px;background:var(--bronze-lift);padding:4px 18px 8px}
+  .tabbar{display:flex;justify-content:flex-end;padding:8px 0 2px}
+  .tabbar + ul li.task:first-child{border-top:0}
+  .checkall{color:var(--dim)}
+  .checkall:hover{color:var(--gold-bright)}
   .tabpane li.task:first-child{border-top:0}
   .tabpane .items ul{padding-left:30px}   /* quests sit visibly under their area */
 
@@ -1387,6 +1391,32 @@ function buildGroups(){
 }
 function cmp(a, b){ return a === b ? 0 : a < b ? -1 : 1; }
 
+/* Check-all. A row counts as "checkable" if its box is open or already ticked;
+   locked rows are skipped on the way up and left alone on the way down. Items
+   follow their row. Returns true when nothing checkable is still unticked. */
+function allDone(tasks){
+  return tasks.every(t =>
+    (!isUnlocked(t) && !done[t.title] ? true : !!done[t.title]) &&
+    (t.items || []).every(n => done[itemKey(t, n)]));
+}
+function setAll(tasks, on){
+  tasks.forEach(t => {
+    if (on && !isUnlocked(t) && !done[t.title]) return;
+    done[t.title] = on;
+    (t.items || []).forEach(n => { done[itemKey(t, n)] = on; });
+  });
+  save(); renderAll();
+}
+function checkAllButton(tasks, label){
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "disclose checkall";
+  const full = allDone(tasks);
+  b.textContent = (full ? "Uncheck all" : "Check all") + (label ? " · " + label : "");
+  b.onclick = () => setAll(tasks, !full);
+  return b;
+}
+
 /* ============ weekly ============
    Pinned above the event cards. It isn't sorted with them: its deadline is the same
    every week, and it's the thing most likely to be why you opened the page today. */
@@ -1420,9 +1450,14 @@ function renderWeekly(col){
   ul.hidden = !open;
   const btn = discloser(ul);
   btn.onclick = () => { ui.weeklyOpen = ul.hidden; saveUI(); renderAll(); };
+  const wAll = WEEKLY.every(weeklyDone);
+  const wBtn = document.createElement("button");
+  wBtn.type = "button"; wBtn.className = "disclose checkall";
+  wBtn.textContent = wAll ? "Uncheck all" : "Check all";
+  wBtn.onclick = () => { WEEKLY.forEach(t => { done[weekKey(t)] = !wAll; }); save(); renderAll(); };
   const right = document.createElement("span");
   right.className = "cardright";
-  right.append(tally, when, btn);
+  right.append(tally, when, wBtn, btn);
   head.append(name, right);
   sec.appendChild(head);
   sec.classList.toggle("closed", !open);
@@ -1518,7 +1553,7 @@ function card(g){
   btn.onclick = () => { (ui.closed = ui.closed || {})[g.name] = !bodyEl.hidden; saveUI(); renderAll(); };
   const right = document.createElement("span");
   right.className = "cardright";
-  right.append(tally, when, btn);
+  right.append(tally, when, checkAllButton(g.live), btn);
   head.append(name, right);
   sec.append(head, bodyEl);
   sec.classList.toggle("closed", !open);
@@ -1557,6 +1592,11 @@ function card(g){
     const pane = document.createElement("div");
     pane.className = "tabpane";
     pane.setAttribute("role", "tabpanel");
+    const tabRows = g.live.filter(t => (t.tab || tabs[0]) === active);
+    const bar = document.createElement("div");
+    bar.className = "tabbar";
+    bar.appendChild(checkAllButton(tabRows, active));
+    pane.appendChild(bar);
     const ul = document.createElement("ul");
     visible.forEach(t => ul.appendChild(row(t)));
     pane.appendChild(ul);
