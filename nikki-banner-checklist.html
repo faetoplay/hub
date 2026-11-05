@@ -90,6 +90,7 @@
 
   /* Two-column body: story spine on the left, everything else on the right. */
   .cols{display:grid;grid-template-columns:290px minmax(0,1fr);gap:26px;margin-top:44px;align-items:start}
+  .cols.nostory{grid-template-columns:minmax(0,1fr)}   /* nothing in STORY_GROUP → one column */
 
   h2{
     font-family:Karla,sans-serif;font-weight:600;font-size:12px;
@@ -146,6 +147,28 @@
   .count .bar{flex:1 1 120px;height:3px;background:rgba(211,175,101,.16);border-radius:2px;overflow:hidden;min-width:80px}
   .count .bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold-bright))}
   li.task.done .count{opacity:.38}
+
+  /* Item lists — sub-checkboxes behind a disclosure. */
+  .items{margin-top:6px}
+  .items > .itemhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .items .bar{flex:1 1 120px;height:3px;background:rgba(211,175,101,.16);border-radius:2px;overflow:hidden;min-width:80px}
+  .items .bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold-bright))}
+  .items .of{font-family:'DM Mono',monospace;font-size:13px;color:var(--dim)}
+  .items .disclose{margin-left:0}
+  .items ul{margin:8px 0 2px;columns:2 220px;column-gap:28px}
+  .items li{
+    break-inside:avoid;display:flex;gap:9px;align-items:flex-start;
+    font-size:14px;padding:4px 0;color:var(--cream);border:0;
+  }
+  .items li input{
+    appearance:none;-webkit-appearance:none;flex:0 0 auto;width:16px;height:16px;margin:3px 0 0;
+    border:1px solid var(--gold-dim);border-radius:4px;background:transparent;cursor:pointer;
+  }
+  .items li input:hover{border-color:var(--gold)}
+  .items li input:checked{background:var(--gold);border-color:var(--gold)}
+  .items li input:checked::after{content:"✓";display:block;color:var(--bronze-deep);font-size:11px;line-height:14px;text-align:center;font-weight:700}
+  .items li.on span{opacity:.45;text-decoration:line-through}
+  li.task.done .items{opacity:.38}
 
   .maplink{
     font:600 12.5px Karla,sans-serif;color:var(--gold);text-decoration:none;
@@ -311,6 +334,9 @@ const STORY_LEDE  = "Do these in order. 3.0's story will pick up where this ends
               The checkbox stays manual — hitting the target doesn't tick it, since
               "done enough" is a judgment call.
      link     optional {href, label}. Small pill link on the row, e.g. to the map.
+     items    optional array of names. The row grows a "Show N" disclosure with one
+              small checkbox per name, saved alongside the checkmarks, and a bar that
+              fills as they're ticked. The row's own checkbox stays manual.
 */
 /* Pinned reminders. These are NOT tasks — no checkbox, no saved state, and they
    don't count toward the tally. They render above everything and stay put.
@@ -359,31 +385,9 @@ const WEEKLY = [
    not facts. Delete the ones that don't apply. */
 const TASKS = [
 
-  // --- Main story: Itzaland chapters 10–14 ----------------------------------
-  // The left column. 2.9, 2.10 and 2.11 added no main chapters, so Ch. 14 is still
-  // the end of the line [2.9][2.10][2.11]. Expect 3.0's story to pick up after it.
-  // The per-chapter Diamond rewards expired with Golden Dust; this is just catch-up.
-  // Two days budgeted per chapter, counting backward from the update.
-  { title:"Ch. 10 — Beyond the Haven Veil",
-    group:STORY_GROUP, id:"ch10", short:"Ch. 10", type:"unique", startBy:10,
-    note:"Itzaland main storyline. Earlier chapters assumed done." },
-
-  { title:"Ch. 11 — Winding Toward the End of Happiness",
-    group:STORY_GROUP, id:"ch11", short:"Ch. 11", type:"unique", startBy:8,
-    gate:"Itzaland main storyline, Chapter 10", requires:"ch10" },
-
-  { title:"Ch. 12 — Echoing in the Depths of the Soul",
-    group:STORY_GROUP, id:"ch12", short:"Ch. 12", type:"unique", startBy:6,
-    gate:"Itzaland main storyline, Chapter 11", requires:"ch11" },
-
-  { title:"Ch. 13 — The Knell and Eternal Dreams",
-    group:STORY_GROUP, id:"ch13", short:"Ch. 13", type:"unique", startBy:4,
-    gate:"Itzaland main storyline, Chapter 12", requires:"ch12" },
-
-  { title:"Ch. 14 — Dust and the City of Gold",
-    group:STORY_GROUP, id:"ch14", short:"Ch. 14", type:"unique", startBy:2,
-    gate:"Itzaland main storyline, Chapter 13", requires:"ch13",
-    note:"Last chapter before 3.0." },
+  // --- Main story ---------------------------------------------------------
+  // Empty for the Before-3.0 run; the left column hides itself when nothing is
+  // in STORY_GROUP. Put the 3.0 chapters here when the next banner starts.
 
   // ==========================================================================
   //  GONE AT 3.0 — dated cards. Everything here closes with 2.11 or sooner.
@@ -477,14 +481,6 @@ const TASKS = [
     group:"Mira Journey", type:"unique", startBy:10,
     note:"Journey Overture, Distant Anthem, Miracle Epic. 8,000 points a week — the weekly box tracks the cap." },
 
-  // --- Starlit Shop — both rotating tabs close with 2.11 [2.11] --------------
-  { title:"Limited-Time tab — buy what you want",
-    group:"Starlit Shop", type:"unique", startBy:3,
-    note:"Includes the 5-star headwear Candy Daydream." },
-
-  { title:"Returning Stars tab — buy what you want",
-    group:"Starlit Shop", type:"unique", startBy:3 },
-
   // --- Mira Crown: Pinnacle Contest [2.11] -----------------------------------
   // Phase II is Nov 16, 04:00 – Dec 1, 03:59 server time, so it outlives 3.0 — it is
   // the one thing on this page you can still do after maintenance. Phase I's end is
@@ -505,66 +501,228 @@ const TASKS = [
     group:"Before maintenance", type:"unique", startBy:2,
     note:"Wish Snowflakes especially. Cherished Rose converts to Resonite Crystals 1:1 on its own, so that one can wait." },
 
-  { title:"Pre-download 3.0",
-    group:"Before maintenance", type:"unique", startBy:1,
-    note:"Not announced yet. 2.9, 2.10 and 2.11 each opened pre-download at 5 AM ET the day before, so expect Nov 25 — confirm on the 3.0 notice." },
 
   // ==========================================================================
-  //  STILL THERE AFTER 3.0 — permanent goals. No deadline, counters instead.
-  //  The reason to do them now: a new region drops on the 26th and the backlog
-  //  only gets longer. Targets are map-wide totals [map]; set them to what you
-  //  actually have left.
+  //  STILL THERE AFTER 3.0 — permanent goals. No deadline. The reason to do them
+  //  now: a new region drops on the 26th and the backlog only gets longer.
+  //  Lists below are from the Infinity Nikki Wiki (infinity-nikki.fandom.com),
+  //  read Nov 5, 2026: pages "Random Quests", "Dew of Inspiration (Wishfield)",
+  //  "Dew of Inspiration (Itzaland)", "Dew of Firework", "Serenity Dewdrop",
+  //  "Danqing Jade Soul", "Shard: Wishfield", "Shard: Sea of Stars",
+  //  "Shard: Itzaland", "Sketches". Names are verbatim. An `items` list makes a
+  //  row collapsible, one sub-checkbox per name.
   // ==========================================================================
 
-  // --- Side quests (K) -------------------------------------------------------
+  // --- Random quests — 187 permanent, by area [wiki] -------------------------
+  // The wiki's permanent list runs through 2.6, so anything added in 2.7–2.11 is
+  // missing. The 53 event-only random quests are left out: they're gone already.
+  { title:"Memorial Mountains",
+    group:"Random quests", soft:true,
+    items:["Expeditions: Wishfield","Observation: Ancient Statue","Risky Photography: Octopack"] },
+
+  { title:"Florawish",
+    group:"Random quests", soft:true,
+    items:["Bubbler","Busted for Slacking Off!!","Find Fragrance: Citrus Burst","First Go at the Surprise-O-Matic",
+      "Folklore Guide","Forced Perspective: Caged Bird","Forced Perspective: Capturing the Thief",
+      "Forced Perspective: Flowers in Three Vases","Forced Perspective: Ship in a Bottle","In Love with Dolls",
+      "Kindled Inspiration: Blossom Walk","Kindled Inspiration: Camouflage","Kindled Inspiration: Yesteryear's She",
+      "Leaf Litter Cleanup","Lost Diary","Observation: Great Wishtree","Observation: Land of Stored Wishes",
+      "Photo Investigation: Animal Trail","Photo Investigation: Faewish Sprite","Photo Investigation: Faewish Sprite Group",
+      "Photo Investigation: Family Search","Return my Pear-Pal!","Risky Photography: Bouldy","Risky Photography: Sad Sack",
+      "Sovereign's Return! Unstoppable Coolness","Statue's Wish","Whispers on the Terrace","Wishes Secret Training"] },
+
+  { title:"Breezy Meadow",
+    group:"Random quests", soft:true,
+    items:["Find Fragrance: Forest Whisper","Find Fragrance: Sprouting Melody","Forced Perspective: Catching a Big Fish",
+      "Forced Perspective: Light up the Bridge Lamps","Forced Perspective: Long-Eared Bunny","Kindled Inspiration: Animal Traces",
+      "Kindled Inspiration: Deft Exuberance","Kindled Inspiration: Fortune's Favor","Kindled Inspiration: Natural Design",
+      "Kindled Inspiration: Warm Protection","Listen to the Sound of Wishfield","Observation: Abandoned Camp",
+      "Observation: Activity Center","Observation: Border Outpost","Observation: Meadow Wharf","Observation: Palace Ruins",
+      "Observation: Shimmer Pond","Observation: Swan Gazebo","Photo Investigation: Danger Workup",
+      "Photo Investigation: Daytime Insects","Photo Investigation: Faewish Sprite's Test","Photo Investigation: Nighttime Insects",
+      "Risky Photography: Greedy Pouch","Risky Photography: Jellyfish Bafflebag","Risky Photography: Sankious",
+      "Risky Photography: Sssack","Sovereign's Return! Elegant Dance","The Luck of a Ring"] },
+
+  { title:"Stoneville",
+    group:"Random quests", soft:true,
+    items:["Bowler by the Statue","Find Fragrance: Viney Infusion","Flower Crate Arrangement","Flower Crates in Order",
+      "Forced Perspective: Flying Buntings","Kindled Inspiration: Goodnight Signal","Kindled Inspiration: Transformation",
+      "Observation: Making Wishes","Photo Investigation: Lost Item","Photo Investigation: Lost Sheep",
+      "Risky Photography: Bitey Bag","Risky Photography: Hard Sack","The Secret Under the Stonetree"] },
+
+  { title:"Abandoned District",
+    group:"Random quests", soft:true,
+    items:["Find Fragrance: Mossy Hush","Find Fragrance: Summer Fragrance","Find Fragrance: Verdant Aroma",
+      "Forced Perspective: Happy Bear","Forced Perspective: Thuddy Snowman","Help the Volunteer Corps",
+      "Kindled Inspiration: Fragrant Reward","Kindled Inspiration: Perfect Pair","Meow-Meow and Cappy",
+      "Observation: Choo-Choo Train","Observation: Stellar Fishing Ground","Observation: Windrider Mill",
+      "Photo Investigation: Blurry Journey","Photo Investigation: Hide and Seek","Photo Investigation: Hide and Seek Again",
+      "Recreate the Ripple Estate Soiree!","Risky Photography: Caged Greed","Risky Photography: Radical Octopack",
+      "Roll, Barrels!","Save the Unsold Detergent"] },
+
+  { title:"Wishing Woods",
+    group:"Random quests", soft:true,
+    items:["Find Fragrance: Herbal Aroma","Find Fragrance: Meadow Zest","Find Fragrance: Midsummer Breeze",
+      "Flower Crates and Flower Beds","Forced Perspective: Burning with Anger","Forced Perspective: Catching a Waterfall!",
+      "Forced Perspective: Empty Flowerpot","Kindled Inspiration: Glimpse of Sunset","Kindled Inspiration: Super Waterproof",
+      "Kindled Inspiration: Weave Fantasy","Major Treetop Renovation!","Observation: Guardian Statue",
+      "Observation: Timis's Beauty Lab","Observation: Wish Celebration Center","Observation: Wish Transport Pipeline",
+      "Photo Investigation: Lost Dad","Photo Investigation: Sol Fruit","Photo Investigation: Stellar Fruit",
+      "Photo Investigation: Truant Ascetics","Repair the Confetti Cannon","Risky Photography: Desperate Vines & Chigda",
+      "Risky Photography: Paired Trap Sharks","Risky Photography: Stunned Harsh Sssack","Risky Photography: Trick-o-Bag",
+      "What's the Big News?"] },
+
+  { title:"Firework Isles",
+    group:"Random quests", soft:true,
+    items:["Another Night of Fireworks","Find Fragrance: Budding Medley","Find Fragrance: Grace of Leaves",
+      "Soar to the fireworks!","The Guard and the Mysterious Stranger","Whirling on the Pony's Back"] },
+
+  { title:"Serenity Island",
+    group:"Random quests", soft:true,
+    items:["Find Fragrance: Blossom Essence","Find Fragrance: Dewdrop Essence","Grand Patch Stage Awaits!",
+      "Set off on an adventure riding the bubbles!","Styling Challenge: Bubble's Inspiration",
+      "Styling Challenge: Refreshing Moment","Styling Challenge: Show Your Style!"] },
+
+  { title:"Danqing Island",
+    group:"Random quests", soft:true,
+    items:["A Delicate Heart Knows to Treasure","A Scroll of Fleeting Life","Find Fragrance: Petal Fragrance",
+      "Find Fragrance: Rain Chill","Heart Beyond, Soul Within","Journey Back to Loong Pagoda",
+      "Styling Challenge: Grace in Confidence","Styling Challenge: My Dream World","Styling Challenge: Village Star",
+      "The Pleasure of Five-In-A-Row"] },
+
+  { title:"Sea of Stars",
+    group:"Random quests", soft:true,
+    items:["Reflections of a Past Wish","The Fading of Painting","The Goddess's Parting Gift (Unbound Wharf)"] },
+
+  { title:"Elderwood Forest (Itzaland)",
+    group:"Random quests", soft:true,
+    items:["Challenge: Coliseum","Challenge: Mothershroom's Dream","Give Me My Telescope, Sky Monarch!",
+      "Inspiration Journey: Crystal Beach","Inspiration Journey: Forest of Slumber","Inspiration Journey: Giant Spear Station",
+      "Inspiration Journey: Great Exploration Camp","Inspiration Journey: Lofty Fig","Inspiration Journey: Shroomville",
+      "New Challenge! Brent!","New Challenge! Colossistump!","Surprise, Here It Comes!",
+      "The Sovereign Returns! Reignite the Sexy Dance Steps"] },
+
+  { title:"Spira (Itzaland)",
+    group:"Random quests", soft:true,
+    items:["Challenge: Shiny Vault","Customers, Rush In!","Forced Perspective: Big Fish Kissing Little Fish",
+      "Forced Perspective: Dizzy & Woozy","Forced Perspective: Giant Lollipop","Help the Trapped Rabitata!","Junk Treasures",
+      "Longings Carried by the Sand","Shroomling's Deep Longing","Shroomling's Love Poem","Shroomling's Seat",
+      "Shroomling's Secret Feelings","Simmering Flavors of Reunion","Spotlight Showdown",
+      "Teenage Shroomling's Rainy Season: Trendy Legwear","The Virtue Guild's New Beginning!","Your Meal Is Coming!"] },
+
+  { title:"Wanxiang Realm (Itzaland)",
+    group:"Random quests", soft:true,
+    items:["Deciphering Shadows","Here Comes Fortune","Hotpot Rescue","Into the Garden of Eternal Daylight",
+      "New Year's Hotpot Party!","Warm Hearts, Hot Pots"] },
+
+  { title:"Boneyard (Itzaland)",
+    group:"Random quests", soft:true,
+    items:["Challenge: Realm of the Past","Challenge: Soul Tide","O Boss! Forever Our Boss!",
+      "Plumeveils, What Are You Trying to Say?","Something Important Lost at Sea",
+      "The Past of Dragons and You: A Final Wish for the Future","The Past of Dragons and You: May Rebirth Touch All Things",
+      "The Past of Dragons and You: Protection of the Newborn"] },
+
+  // --- World quests (K) — no list here; the in-game log has one -------------
   { title:"World quests — clear the World tab of your quest log, region by region",
-    group:"Side quests", soft:true,
-    note:"Miraland, Firework Isles & Sea of Stars, Serenity Island, Danqing Island & Realm, Itzaland." },
+    group:"World quests", soft:true,
+    note:"Wishfield, Firework Isles & Sea of Stars, Serenity Island, Danqing Island & Realm, Itzaland." },
 
-  { title:"Random quests",
-    group:"Side quests", soft:true, target:119, link:{ href:MAP, label:"Map" },
-    note:"119 marked on the interactive map." },
+  // --- Dews of Inspiration — what they buy [wiki] ----------------------------
+  // Kilo's costs sum to 1,793 Dews against 1,964 in Wishfield, so there is slack.
+  // The wiki has no costs for Ian's levels 1–13. 2.8's Existence Paradox is in the
+  // wiki's craftable list but not yet on Ian's page; it sits here on the strength
+  // of the 2.8 notice ("Dews plus a world quest").
+  { title:"Kilo the Cadenceborn — Wishfield (36 levels, 1,793 Dews)",
+    group:"Dews of Inspiration", soft:true, link:{ href:MAP, label:"Map" },
+    note:"Stylist's Guild Memorial, after the world quest \"Hello, Cadenceborn!\". 1,964 Dews across Wishfield.",
+    items:["Rebirth Wish — levels 1–8 (233 Dews)","Momo's Cloak: Sunny Day — level 8",
+      "Hometown Breeze — levels 9–16 (380 Dews)","Momo's Cloak: Gentle Breeze — level 16",
+      "Starwish Echoes — levels 17–24 (400 Dews)","Momo's Cloak: Light Veil — level 24",
+      "Levels 25–35 — Shiny Bubbles, Threads of Purity, Diamonds, Resonite (780 Dews)",
+      "Kilo's Admirer — level 36"] },
 
-  // --- Dews of Inspiration (K) -----------------------------------------------
-  { title:"Dews of Inspiration",
-    group:"Dews of Inspiration", soft:true, target:665, link:{ href:MAP, label:"Map" },
-    note:"665 on the map. Each region has its own exchange — Kilo in Florawish, and so on — paying out sketches, Bling and outfits." },
+  { title:"Ian the Cadenceborn — Itzaland (16 levels)",
+    group:"Dews of Inspiration", soft:true, link:{ href:MAP, label:"Map" },
+    items:["Deepwood Dream — levels 1–8","Heart of Shield — level 8","Feathery Song — levels 9–16 (levels 14–16 cost 60 each)",
+      "Existence Paradox — Dews plus a world quest (2.8)"] },
 
-  { title:"Faewish Sprites",
-    group:"Dews of Inspiration", soft:true, link:{ href:MAP, label:"Map" } },
+  { title:"Vita — Dews of Firework (8 levels, 240 of 261)",
+    group:"Dews of Inspiration", soft:true, target:240, link:{ href:MAP, label:"Map" },
+    note:"Fireworks Workshop: Sparklight Treasures. Resonite Crystals, Glitter Bubbles, Bling — no outfit." },
 
-  { title:"Curio Domains",
-    group:"Dews of Inspiration", soft:true, link:{ href:MAP, label:"Map" } },
+  { title:"Pouchy — Serenity Dewdrops (8 levels, 240)",
+    group:"Dews of Inspiration", soft:true, target:240, link:{ href:MAP, label:"Map" },
+    note:"Treasure Pouch, Serenity Island. Resonite Crystals, prisms, Iridescent Thoughts — no outfit." },
+
+  { title:"Zhou Suchan — Danqing Jade Souls (8 levels, 240)",
+    group:"Dews of Inspiration", soft:true, target:240, link:{ href:MAP, label:"Map" },
+    note:"Danqing Treasures, Danqing Island. Same reward table as Serenity — no outfit." },
+
+  { title:"Faewish Sprites & Curio Domains",
+    group:"Dews of Inspiration", soft:true, link:{ href:MAP, label:"Map" },
+    note:"The other Dew sources. No list here — the map has them." },
 
   // --- Chests (K) ------------------------------------------------------------
   { title:"Basic Crates",
     group:"Chests & crates", soft:true, target:254, link:{ href:MAP, label:"Map" },
     note:"254 on the map. The map lists other chest types without totals — add rows for the ones you track." },
 
-  // --- Whimstars & Warp Spires (K) -------------------------------------------
-  { title:"Whimstars",
-    group:"Whimstars", soft:true, target:356, link:{ href:MAP, label:"Map" },
-    note:"356 on the map. They unlock Heart of Infinity nodes — ability outfits and Miracle-outfit sketches." },
+  // --- Whimstars — what the Heart of Infinity buys [wiki] --------------------
+  // Each shard's full outfits, then its loose pieces. Costs omitted; the tree
+  // shows them. Hymn to Dusk is from the 2.8 notice, not yet on the wiki's shard page.
+  { title:"Shard: Wishfield — Miracle outfits",
+    group:"Whimstars · Heart of Infinity", soft:true,
+    items:["Wishful Aurosa (9 nodes, tied to main-quest progress)","Silvergale's Aria (9 nodes, after the 7,000-Insight nodes)",
+      "Hexbreaker · Violet Phantom · Batwing Pulse (after Silvergale Makeup)"] },
 
-  { title:"Warp Spires",
-    group:"Warp Spires", soft:true, target:110, link:{ href:MAP, label:"Map" },
-    note:"110 on the map. The cheapest exploration upgrade there is." },
+  { title:"Shard: Wishfield — ability outfits",
+    group:"Whimstars · Heart of Infinity", soft:true,
+    items:["Wind of Purity — Purification","Bubbly Voyage — Floating","Fully Charged — Electrician","Floral Memory — Floral: Gliding",
+      "Symphony of Strings — Violinist","Starlet Burst — Shrinking","Bye-Bye Dust — Animal-Grooming","Afternoon Shine — Bug-Catching",
+      "Rippling Serenity — Fishing","Fiery Glow — Fireworks","Springbloom Enchantment — Springbloom Awakening","Danqing Craft — Danqing"] },
 
-  // --- Outfit gathering (K) --------------------------------------------------
-  { title:"Dew-exchange outfits — trade for any 4-star you haven't yet",
-    group:"Outfit gathering", soft:true,
-    note:"2.8's Existence Paradox worked this way: Dews plus a world quest." },
+  { title:"Shard: Wishfield — loose pieces",
+    group:"Whimstars · Heart of Infinity", soft:true,
+    note:"Single sketches on the Insight branches and the Styling Challenge nodes.",
+    items:["Sunburn Blockers","Pepper Frame","Journey with Daisy","Top View","Sunshade Wings","Fresh Square","Pink Sheep","Twilight Hour",
+      "Tangy Sweetness","Cozy Warmth","Fruit Candy","Fluffy Warmth","Undersea Encounter","Sharky Bite","Azure Canvas","Oceanic Hero",
+      "Pristine Grace","Clearsky Moon","Snowfall Boots","Sleek Attire","Blazing Scorch","Sunlit Wave","Fearless Butterfly"] },
 
-  { title:"Heart of Infinity — unlock the ability-outfit sketches you're missing",
-    group:"Outfit gathering", soft:true,
-    note:"Paid in Whimstars." },
+  { title:"Shard: Itzaland — Miracle outfits",
+    group:"Whimstars · Heart of Infinity", soft:true,
+    items:["Providence Immemorial (11 nodes)","Slumber by Blossoms (10 nodes)","Hymn to Dusk (Golden Dust, 2.8)"] },
 
-  { title:"Craft the sketches sitting in your bag",
-    group:"Outfit gathering", soft:true,
-    note:"Bling, Shiny Bubbles, Threads of Purity. Anything you're short on is a farming target." },
+  { title:"Shard: Itzaland — ability outfits",
+    group:"Whimstars · Heart of Infinity", soft:true,
+    items:["Purifying Wind — Archery","Forest Folk — Gigantification","Shadow Swiftweave — Sticky Claw","Dragonbone Master"] },
+
+  { title:"Shard: Itzaland — loose pieces",
+    group:"Whimstars · Heart of Infinity", soft:true,
+    items:["Arrow Unleashed","Fallen Feathers","Wishing Fireworks","Clear Focus","Woodland Music","Bones of Giants","Brilliant Dawn",
+      "Skybound Hunt","Fleeting Fin","Flower Dots","Green Bobo","Silver Feather","Professional Choice","Quiet Night Watch",
+      "Remaining Silhouette","Unspoken Vow"] },
+
+  { title:"Shard: Sea of Stars — paid in Ethereal Stars, not Whimstars",
+    group:"Whimstars · Heart of Infinity", soft:true,
+    items:["Sea of Stars (Miracle, 8 nodes)","Heartlake Ripples (10 pieces)",
+      "Poses: Wish Upon Stars · Starlight Invitation · Gaze at the Star · Light the Celestial River · Star-Holding Prayer · Touch the Star"] },
+
+  // --- Sketches — the rest of the craftable outfits [wiki] -------------------
+  // The wiki lists 65 craftable outfits. 28 of them are the Dew and Heart of
+  // Infinity sets above; these are the other 37, from quests, styling challenges and
+  // chests. Some were event rewards and can't be started now — strike those.
+  { title:"Craftable outfits from quests, styling challenges and chests",
+    group:"Sketches", soft:true,
+    note:"Check the ones you've crafted. Anything you're short materials on is a farming target.",
+    items:["A Beautiful Day","Blossoming Future","Burning Heart","Carnival Ode","Chic Elegance","Chromatic Comet","Departing Blossom",
+      "Endless Longing","Far and Away","Fish Tales","Flawless Vision","Fuzzy Affection","Heroic Legend","Honey Hunt",
+      "Immeasurable Findings","Lush Waltz","Luster Covenant","Mark of Time","Meadow Symphony","Melody Bloom","Mysterious Adventurer",
+      "Nefarious Shadows","Origin of Machinery","Refined Grace","Scarlet Dream","Searching for Dreams","Sound of Leaves","Spring Blossom",
+      "Star Memory","Starlit Celebration","Sweet Traces","Sweet-Cool Clash","Tasting the World","Unfettered Meadow","Verdant Chord",
+      "Visionary Dreamer","Whispered Dreams"] },
 
   { title:"Compendium — push collection levels for the Diamond rewards",
-    group:"Outfit gathering", soft:true,
+    group:"Sketches", soft:true,
     note:"2.11 added the Spiritual Dreamweaver title and the Forest-Spirit Symbiosis card at certain levels." }
 
 ];
@@ -663,6 +821,7 @@ const enriched = TASKS.map((t,i) => {
           expired: left <= 0};
 });
 const countKey = t => "count:" + t.title;
+const itemKey  = (t, name) => "sub:" + t.title + "|" + name;
 
 const byId = id => TASKS.find(x => x.id === id);
 const label = t => t && (t.short || t.title);
@@ -787,6 +946,48 @@ function row(t, opts){
     body.appendChild(wrap);
   }
 
+  if (t.items && t.items.length){
+    // Item list: "k / N" + bar, a Show/Hide button, and the names behind it.
+    // Ticking a name only saves that name; the row's own box is untouched.
+    const wrap = document.createElement("div");
+    wrap.className = "items";
+    const head = document.createElement("div");
+    head.className = "itemhead";
+    const of = document.createElement("span");
+    of.className = "of";
+    const bar = document.createElement("div");
+    bar.className = "bar";
+    const fill = document.createElement("i");
+    bar.appendChild(fill);
+    const list = document.createElement("ul");
+    list.hidden = true;
+    const paint = () => {
+      const k = t.items.filter(n => done[itemKey(t, n)]).length;
+      of.textContent = k + " / " + t.items.length;
+      fill.style.width = (k / t.items.length * 100) + "%";
+    };
+    t.items.forEach(n => {
+      const li = document.createElement("li");
+      const box = document.createElement("input");
+      box.type = "checkbox";
+      box.checked = !!done[itemKey(t, n)];
+      box.setAttribute("aria-label", n);
+      li.className = box.checked ? "on" : "";
+      box.onchange = () => {
+        done[itemKey(t, n)] = box.checked; save();
+        li.className = box.checked ? "on" : ""; paint();
+      };
+      const txt = document.createElement("span");
+      txt.textContent = n;
+      li.append(box, txt);
+      list.appendChild(li);
+    });
+    paint();
+    head.append(of, bar, discloser(list, t.items.length));
+    wrap.append(head, list);
+    body.appendChild(wrap);
+  }
+
   if (!opts.hideMeta){
     const meta = document.createElement("div");
     meta.className = "meta";
@@ -835,6 +1036,8 @@ function opensText(t){
 function renderStory(){
   const col = document.getElementById("storyCol");
   col.textContent = "";
+  document.querySelector(".cols").classList.toggle("nostory", !storyTasks.length);
+  col.hidden = !storyTasks.length;
   if (!storyTasks.length) return;
 
   const n = storyTasks.filter(t => done[t.title]).length;
@@ -1011,15 +1214,16 @@ function card(g){
 }
 
 /* One line standing in for a run of locked rows, grouped by what they wait on. */
-function discloser(hold){
+function discloser(hold, n){
   const btn = document.createElement("button");
   btn.className = "disclose";
   btn.type = "button";
-  btn.textContent = "Show";
+  const label = () => (hold.hidden ? "Show" : "Hide") + (n ? " " + n : "");
+  btn.textContent = label();
   btn.setAttribute("aria-expanded", "false");
   btn.onclick = () => {
     hold.hidden = !hold.hidden;
-    btn.textContent = hold.hidden ? "Show" : "Hide";
+    btn.textContent = label();
     btn.setAttribute("aria-expanded", String(!hold.hidden));
   };
   return btn;
