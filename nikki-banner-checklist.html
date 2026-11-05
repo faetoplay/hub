@@ -415,6 +415,19 @@ const TASKS = [
     group:"Check-in", type:"unique", startBy:7, deadline:"2026-11-12T20:59-05:00",
     note:"One claim per day. The Flight to Freedom and Daydream Weaver reruns close at the same moment." },
 
+  // The daily-point grinds live here too (K). Their weekly caps are in This week.
+  { title:"Home Island — daily tasks",
+    group:"Check-in", type:"unique", startBy:0,
+    note:"2,000 points is the weekly cap." },
+
+  { title:"Mira Journey — reach level 90 and claim everything",
+    group:"Check-in", type:"unique", startBy:10,
+    note:"Journey Overture, Distant Anthem, Miracle Epic. 8,000 points a week. Ends with 2.11, cap 90." },
+
+  { title:"The Little Prince — its Mira Journey-style track",
+    group:"Check-in", type:"unique", startBy:10,
+    note:"Rename this to the tile's actual name — the 2.10 notice lists Sunset Hour (check-in) and Love's Keepsake, and doesn't say which is the points track. Ends with 2.11." },
+
   // --- Dreamland Showcase — ends Nov 23, 04:00 server → 6:00 AM ET [2.11] ----
   { title:"Spend your Memory Stones",
     group:"Dreamland Showcase", type:"unique", startBy:3, deadline:"2026-11-23T06:00-05:00",
@@ -486,11 +499,6 @@ const TASKS = [
 
   { title:"Face It! Wild Surge Returns",
     group:"Current Adventures", type:"unique", startBy:3 },
-
-  // --- Mira Journey — new phase ends with 2.11, cap 90 [2.11] ----------------
-  { title:"Reach level 90 and claim everything",
-    group:"Mira Journey", type:"unique", startBy:10,
-    note:"Journey Overture, Distant Anthem, Miracle Epic. 8,000 points a week — the weekly box tracks the cap." },
 
   // --- Mira Crown: Pinnacle Contest [2.11] -----------------------------------
   // Phase II is Nov 16, 04:00 – Dec 1, 03:59 server time, so it outlives 3.0 — it is
