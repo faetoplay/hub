@@ -359,7 +359,7 @@ const STORY_GROUP = "Main story";
 
 /* Cards listed here render first, in this order, ahead of the dated ones. The point
    of this run is 100% Itzaland before 3.0, so the quest cards lead. */
-const PINNED_GROUPS = ["Random quests", "World quests", "Dews of Inspiration — sketch tracker", "Sketches"];
+const PINNED_GROUPS = ["World quests", "Random quests", "Dews of Inspiration — sketch tracker", "Sketches"];
 const STORY_LEDE  = "Do these in order. 3.0's story will pick up where this ends.";
 
 /* Task fields:
@@ -664,9 +664,28 @@ const TASKS = [
       "The Past of Dragons and You: A Final Wish for the Future","The Past of Dragons and You: May Rebirth Touch All Things",
       "The Past of Dragons and You: Protection of the Newborn"] },
 
-  { title:"Heaven's Reach",
+  // Heaven's Reach challenge quests and permanent activities, from the official
+  // "Golden City Training Guide" (infinitynikki.infoldgames.com/en/news/541) and the
+  // 2.8 notice (news/561); counts from CROFTY GUIDE's 2.8 Heaven's Reach playlist.
+  // The 15 named side quests are on the World quests card's Heaven's Reach tab.
+  { title:"Challenges",
+    group:"Random quests", tab:"Heaven's Reach", soft:true, link:{ href:MAP, label:"Map" },
+    items:["Challenge: Golden Court — replay from Mothis [furniture]","Imprisoned Immortality: Titan King [Immortal Glory outerwear]",
+      "Compass Guide challenges (2)"] },
+
+  { title:"Activities — first clears pay Diamonds",
     group:"Random quests", tab:"Heaven's Reach", soft:true,
-    note:"Add the quests from your log." },
+    note:"Repeats pay Fidis Gold Coins for Happy Everyday Toys and the races.",
+    items:["Wonder Coin Machine — Dawn Market","Shroom-Ring Toss — Dawn Market","Master Mechanic — Dawn Market",
+      "Skyward Race: Chase","Skyward Race: Speed","Shroomsera Bootcamp (11)","Everbloom Mystery — Everbloom Garden",
+      "Wanted: Coocoo Copter — Center District","Compendium of Blessings — hand in Crystals of Blessing"] },
+
+  { title:"Exploration",
+    group:"Random quests", tab:"Heaven's Reach", soft:true,
+    items:["Curio Domains (17)","Maintenance Passage — Academic Area","Maintenance Passage — Theater of Lament",
+      "Maintenance Passage — Sol Gate","Maintenance Passage — Golden Court Bridge","Maintenance Passage — Everbloom Garden",
+      "Maintenance Passage — The Golden Hour","The Fullbloom Celebration dungeon","Golden Court dungeon — first clear [headwear sketch]",
+      "Expeditions — all locations plus the final one"] },
 
   { title:"Wanxiang Realm",
     group:"Random quests", tab:"Misc Maps", soft:true,
@@ -808,9 +827,19 @@ const TASKS = [
       "Goodbye, Until We Meet Again",
       "Who Are You, Who Am I?"] },
 
-  { title:"Heaven's Reach",
-    group:"World quests", tab:"Heaven's Reach", soft:true,
-    note:"Add the quests from your log." },
+  // Heaven's Reach side quests: names from Whimsy Haven's "Side Quest Marathon:
+  // Heaven's Reach | Infinity Nikki 2.8" (youtube.com/watch?v=J5E1-Mn8wT8), which
+  // doesn't split world from random, so they all sit here. The 2.8 notice confirms
+  // the area has permanent world and random quests (Gilded Ballads pages).
+  { title:"Heaven's Reach — side quests",
+    group:"World quests", tab:"Heaven's Reach", soft:true, link:{ href:MAP, label:"Map" },
+    note:"World and random quests together. Rewards in brackets.",
+    items:["Midnight Riddle","A Bitter Taste","A Sweet Cause","Across the Sea of Yesterday",
+      "Which One to Fix [Heartwheel Covenant necklace]","Beautiful Shroomcaps Never Fade [Floral Chic outerwear]",
+      "A Seed Should Choose Its Spring","A Perfect Celebration [Fullbloom Covenant dress]",
+      "Shifting Cogs at Dawn and Dusk [Decorative Painting: Abundance]","La La Heaven's Reach","No Sound, Nowhere",
+      "Two Shroomlings and a Cavern","The Shroomsera and the Stars [When Stars Speak sketch]",
+      "Of Shroomseras & Shroomlings [Shroomling's Dreamscape headwear]","Expedition Handbook [Wind & Sand Watch gloves]"] },
 
   { title:"Wanxiang Realm",
     group:"World quests", tab:"Misc Maps", soft:true,
@@ -1051,7 +1080,10 @@ const TASKS = [
 
   { title:"Heaven's Reach",
     group:"Sketches", tab:"Heaven's Reach", soft:true, link:{ href:MAP, label:"Map" },
-    items:["Sweet-Cool Clash — Sovereign of Sweet Styling Faction challenges"] },
+    items:["Sweet-Cool Clash — Sovereign of Sweet Styling Faction challenges",
+      "Stellar Banquet — 8 sketches in Advanced Chests","Dreamveil Hymn — 8 sketches in Advanced Chests",
+      "Happy Everyday Toys — five of the same woodcarving earns its sketch (Fidis Gold Coins)",
+      "Golden Court — first clear gives a headwear sketch"] },
 
   { title:"Home",
     group:"Sketches", tab:"Misc Maps", soft:true,
