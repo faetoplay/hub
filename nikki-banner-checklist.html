@@ -71,6 +71,8 @@
   }
   .reminder .title{font-weight:600}
   .reminder .cadence{font-family:'DM Mono',monospace;font-size:13px;color:var(--alarm)}
+  .reminder a.cadence{text-decoration:underline;text-underline-offset:3px}
+  .reminder a.cadence:hover{color:var(--gold-bright)}
 
   /* Two-column body: story spine on the left, everything else on the right. */
   .cols{display:grid;grid-template-columns:290px minmax(0,1fr);gap:26px;margin-top:44px;align-items:start}
@@ -303,8 +305,9 @@ const BANNER = {
   endLabel:  "3.0 maintenance starts"
 };
 
-/* Interactive map used by the permanent-goal rows. Swap for your preferred one. */
-const MAP = "https://interactivemap.app/infinity-nikki/maps/miraland";
+/* The official interactive map (Pear-Pal). Linked from the pinned note and the Map
+   pills on the permanent rows. */
+const MAP = "http://pearpal.infoldgames.com/tools/map?language=en&lat=331495.47&lng=754601.11&markerType=0123&selectedCatalogIds=244%2C248&worldId=1.1&zoom=4";
 
 /* The group whose tasks run down the left column as a sequence rather than a
    set. One per banner — the main story chain. Every other group is a card. */
@@ -353,12 +356,15 @@ const STORY_LEDE  = "Do these in order. 3.0's story will pick up where this ends
 /* Pinned reminders. These are NOT tasks — no checkbox, no saved state, and they
    don't count toward the tally. They render above everything and stay put.
      title    (required) what to remember
-     cadence  (required) how often, shown in parentheses beside the title  */
+     cadence  (required) how often, shown in parentheses beside the title
+     href     optional link; the cadence text becomes the link  */
 const REMINDERS = [
   { title:"Before maintenance: claim any Deep Echoes rewards and spend leftover event currencies — Wish Snowflakes especially. Cherished Rose converts to Resonite Crystals 1:1 on its own.",
     cadence:"by 12:29 PM ET on Nov 26" },
   { title:"Spend your Dark currencies — they stop being useful in 3.0.",   // Kahako, Nov 5
-    cadence:"before Nov 26" }
+    cadence:"before Nov 26" },
+  { title:"Missing chests, Dews or Whimstars? The official interactive map shows what's left in each area.",
+    cadence:"open the map", href:MAP }
 ];
 
 /* Weekly tasks. Checkbox like a normal task, but the tick is stored against the
@@ -826,9 +832,10 @@ const TASKS = [
     items:["9 · Distant Call","10 · Dawn Sonata","11 · Will of the Wind","12 · Forest Trip",
       "13 · Silent Echo","14 · Windborne Steps (60)","15 · Legendary Legacy (60)","16 · Night Overture (60)"] },
 
-  { title:"Existence Paradox — Dews plus a world quest",
+  { title:"Later sets — not on the wiki's Ian page yet",
     group:"Dews of Inspiration", tab:"Itzaland", soft:true,
-    note:"From the 2.8 notice. Not on the wiki's Ian page yet, so no level numbers." },
+    note:"Each outfit's own page names Ian as the source; level numbers aren't documented.",
+    items:["Whispered Dreams (2.5)","Existence Paradox (2.8)"] },
 
   { title:"Vita — Fireworks Workshop: Sparklight Treasures (8 × 30, of 261 Dews of Firework)",
     group:"Dews of Inspiration", tab:"Firework Isles", soft:true, link:{ href:MAP, label:"Map" },
@@ -853,70 +860,159 @@ const TASKS = [
       "5 · 10 Radiant Prism, 75 Threads of Purity, 30k Bling","6 · 30 Glitter Bubbles: Fresh, 25 Luminous Prism, 30k Bling",
       "7 · 50 Shining Particles, 25 Rainbow Prism, 30k Bling","8 · 10 Radiant Prism, 30 Glitter Bubbles: Fresh, 30k Bling"] },
 
-  // --- Chests (K) ------------------------------------------------------------
-  { title:"Basic Crates",
-    group:"Chests & crates", soft:true, target:254, link:{ href:MAP, label:"Map" },
-    note:"254 on the map. The map lists other chest types without totals — add rows for the ones you track." },
+  // --- Whimstars — what the Heart of Infinity buys, node by node [wiki] -------
+  // Tabbed by shard, plus the island Whim objects. Item format: node · Whimstars
+  // (★) · Bling. Sea of Stars spends Ethereal Stars, not Whimstars. The wiki's
+  // shard pages stop around 2.6; the later Heart of Infinity sets (from the
+  // outfits' own pages) are on an "added later" row without node detail.
+  { title:"Wishful Aurosa — Miracle, 9 nodes, tied to main-quest progress",
+    group:"Whimstars · Heart of Infinity", tab:"Wishfield", soft:true, link:{ href:MAP, label:"Map" },
+    items:["Vibrant Goldvines · 1 ★ · 10k","Golden Butterfly · 1 ★ · 10k","Golden Diadem · 1 ★ · 20k","Goldbud Promise · 1 ★ · 20k",
+      "Aurosa Traces · 1 ★ · 50k","Goldleaf Ascent · 1 ★ · 50k","Radiant Blossom · 1 ★ · 100k","Aurosa Bloom · 1 ★ · 200k","Aurosa Makeup · 1 ★ · 300k"] },
 
-  // --- Whimstars — what the Heart of Infinity buys [wiki] --------------------
-  // Each shard's full outfits, then its loose pieces. Costs omitted; the tree
-  // shows them. Hymn to Dusk is from the 2.8 notice, not yet on the wiki's shard page.
-  { title:"Shard: Wishfield — Miracle outfits",
-    group:"Whimstars · Heart of Infinity", soft:true,
-    items:["Wishful Aurosa (9 nodes, tied to main-quest progress)","Silvergale's Aria (9 nodes, after the 7,000-Insight nodes)",
-      "Hexbreaker · Violet Phantom · Batwing Pulse (after Silvergale Makeup)"] },
+  { title:"Silvergale's Aria — Miracle, 9 nodes + 3, after the 7,000-Insight nodes",
+    group:"Whimstars · Heart of Infinity", tab:"Wishfield", soft:true,
+    items:["Silverspring Love · 1 ★ · 50k","Echoing Silverwings · 1 ★ · 50k","Silvermoon Serenade · 1 ★ · 100k","Silverweaving Star · 1 ★ · 100k",
+      "Silver Nightglow · 1 ★ · 100k","Moonveil Mirror · 1 ★ · 150k","Silver Shattering · 1 ★ · 150k","Song of the Silvergale · 1 ★ · 200k",
+      "Silvergale Makeup · 1 ★ · 200k","Hexbreaker · 3 ★ · 150k","Violet Phantom · 3 ★ · 150k","Batwing Pulse · 3 ★ · 150k"] },
 
-  { title:"Shard: Wishfield — ability outfits",
-    group:"Whimstars · Heart of Infinity", soft:true,
-    items:["Wind of Purity — Purification","Bubbly Voyage — Floating","Fully Charged — Electrician","Floral Memory — Floral: Gliding",
-      "Symphony of Strings — Violinist","Starlet Burst — Shrinking","Bye-Bye Dust — Animal-Grooming","Afternoon Shine — Bug-Catching",
-      "Rippling Serenity — Fishing","Fiery Glow — Fireworks","Springbloom Enchantment — Springbloom Awakening","Danqing Craft — Danqing"] },
+  { title:"Ability outfits — 12",
+    group:"Whimstars · Heart of Infinity", tab:"Wishfield", soft:true,
+    items:["Wind of Purity — Purification · 2 ★ · 1k","Bubbly Voyage — Floating · 1 ★","Fully Charged — Electrician · 1 ★ · 10k",
+      "Floral Memory — Floral: Gliding · 1 ★ · 10k","Symphony of Strings — Violinist · 1 ★ · 10k","Starlet Burst — Shrinking · 1 ★ · 10k",
+      "Bye-Bye Dust — Animal-Grooming · 2 ★ · 1k","Afternoon Shine — Bug-Catching · 2 ★ · 1k","Rippling Serenity — Fishing · 3 ★ · 1k",
+      "Fiery Glow — Fireworks · 10k","Springbloom Enchantment — Springbloom Awakening · 10k","Danqing Craft — Danqing · 10k"] },
 
-  { title:"Shard: Wishfield — loose pieces",
-    group:"Whimstars · Heart of Infinity", soft:true,
-    note:"Single sketches on the Insight branches and the Styling Challenge nodes.",
-    items:["Sunburn Blockers","Pepper Frame","Journey with Daisy","Top View","Sunshade Wings","Fresh Square","Pink Sheep","Twilight Hour",
-      "Tangy Sweetness","Cozy Warmth","Fruit Candy","Fluffy Warmth","Undersea Encounter","Sharky Bite","Azure Canvas","Oceanic Hero",
-      "Pristine Grace","Clearsky Moon","Snowfall Boots","Sleek Attire","Blazing Scorch","Sunlit Wave","Fearless Butterfly"] },
+  { title:"Loose pieces — Insight branches and Styling Challenge nodes",
+    group:"Whimstars · Heart of Infinity", tab:"Wishfield", soft:true,
+    items:["Pristine Grace · 1 ★ · 10k","Clearsky Moon · 1 ★ · 10k","Snowfall Boots · 1 ★ · 10k","Sleek Attire · 1 ★ · 50k",
+      "Sunburn Blockers · 2 ★ · 5k","Pepper Frame · 3 ★ · 20k","Journey with Daisy · 2 ★ · 100k","Top View · 3 ★ · 150k",
+      "Sunshade Wings · 2 ★ · 5k","Fresh Square · 3 ★ · 20k","Pink Sheep · 2 ★ · 100k","Twilight Hour · 3 ★ · 150k",
+      "Tangy Sweetness · 2 ★ · 5k","Cozy Warmth · 3 ★ · 20k","Fruit Candy · 2 ★ · 100k","Fluffy Warmth · 3 ★ · 150k",
+      "Undersea Encounter · 2 ★ · 5k","Sharky Bite · 3 ★ · 20k","Azure Canvas · 2 ★ · 100k","Oceanic Hero · 3 ★ · 150k",
+      "Blazing Scorch · 2 ★ · 50k","Sunlit Wave · 2 ★ · 50k","Fearless Butterfly · 3 ★ · 50k"] },
 
-  { title:"Shard: Itzaland — Miracle outfits",
-    group:"Whimstars · Heart of Infinity", soft:true,
-    items:["Providence Immemorial (11 nodes)","Slumber by Blossoms (10 nodes)","Hymn to Dusk (Golden Dust, 2.8)"] },
+  { title:"Whim Fragrances — Purification tree and the island branches",
+    group:"Whimstars · Heart of Infinity", tab:"Wishfield", soft:true,
+    note:"Each needs the matching Find Fragrance random quest first.",
+    items:["Budding Tales (Sprouting Melody) · 1 ★ · 10k","Woodland Maze (Mossy Hush) · 1 ★ · 10k","Summer Breeze (Citrus Burst) · 1 ★ · 10k",
+      "Unbridled Growth (Viney Infusion) · 1 ★ · 20k","Double Vanilla (Meadow Zest) · 1 ★ · 100k","Traveler's Musings (Herbal Scent) · 1 ★ · 10k",
+      "Immersed in Thoughts (Forest Whisper) · 1 ★ · 10k","Chilling Green (Summer Fragrance) · 1 ★ · 10k","Tranquil Woodfall (Verdant Aroma) · 1 ★ · 20k",
+      "Quick Perkup (Herbal Aroma) · 1 ★ · 50k","Minty Blast (Midsummer Breeze) · 1 ★ · 100k",
+      "Light of Dawn (Budding Medley) · 50k","Breath of Wilderness (Grace of Leaves) · 50k",
+      "Pristine Dewdrop (Blossom Essence) · 50k","Soothing Spring (Dewdrop Essence) · 50k",
+      "Drifting Blossoms (Danqing) · 50k","Rain Traces (Danqing) · 50k"] },
 
-  { title:"Shard: Itzaland — ability outfits",
-    group:"Whimstars · Heart of Infinity", soft:true,
-    items:["Purifying Wind — Archery","Forest Folk — Gigantification","Shadow Swiftweave — Sticky Claw","Dragonbone Master"] },
+  { title:"Sea of Stars — Miracle, 8 nodes (Ethereal Stars)",
+    group:"Whimstars · Heart of Infinity", tab:"Sea of Stars", soft:true, link:{ href:MAP, label:"Map" },
+    note:"This shard spends Ethereal Stars, not Whimstars. Opens with \"Where the Stars Keep Watch\".",
+    items:["Starbell · free","Starhaze · 1 · 2k","Dancing Star · 22 · 5k","Eye of Stars · 20 · 5k","Stage of Stars · 22 · 50k",
+      "Starry Cascade · 20 · 50k","Sea of Stars · 35 · 100k","Sea of Stars Makeup · 35 · 100k"] },
 
-  { title:"Shard: Itzaland — loose pieces",
-    group:"Whimstars · Heart of Infinity", soft:true,
-    items:["Arrow Unleashed","Fallen Feathers","Wishing Fireworks","Clear Focus","Woodland Music","Bones of Giants","Brilliant Dawn",
-      "Skybound Hunt","Fleeting Fin","Flower Dots","Green Bobo","Silver Feather","Professional Choice","Quiet Night Watch",
-      "Remaining Silhouette","Unspoken Vow"] },
+  { title:"Heartlake Ripples — 10 pieces",
+    group:"Whimstars · Heart of Infinity", tab:"Sea of Stars", soft:true,
+    items:["Flowing Thoughts · 20 · 10k","Wreathed in Clouds · 12 · 10k","Lake Reflections · 12 · 20k","Light Ripples · 12 · 20k","Beaded Rain · 12 · 20k",
+      "Dreamlike Veil · 18 · 50k","Glittering Light · 18 · 50k","Gentle Steps · 16 · 50k","Feather Falls · 12 · 50k","Greeting of Rain · 28 · 100k"] },
 
-  { title:"Shard: Sea of Stars — paid in Ethereal Stars, not Whimstars",
-    group:"Whimstars · Heart of Infinity", soft:true,
-    items:["Sea of Stars (Miracle, 8 nodes)","Heartlake Ripples (10 pieces)",
-      "Poses: Wish Upon Stars · Starlight Invitation · Gaze at the Star · Light the Celestial River · Star-Holding Prayer · Touch the Star"] },
+  { title:"Heartshine, poses and extras",
+    group:"Whimstars · Heart of Infinity", tab:"Sea of Stars", soft:true,
+    note:"Heartshine 1–12 chain off Sea of Stars Makeup (40 / 50 / 60 Ethereal Stars each); the free poses unlock off specific Heartshine nodes.",
+    items:["Wish Upon Stars (pose) · 25 · 100k","Starlight Invitation (pose) · 25 · 100k","Gaze at the Star (pose) · 25 · 100k",
+      "Light the Celestial River (pose) · 150k · after Heartshine 2","Star-Holding Prayer (pose) · 150k · after Heartshine 7",
+      "Touch the Star (pose) · 200k · after Heartshine 10","Starry Thoughts (evolution material) · 150k · after Heartshine 6",
+      "Heartshine 1–4 · 40 each · 100k","Heartshine 5–8 · 50 each · 200k","Heartshine 9–12 · 60 each · 300k"] },
 
-  // --- Sketches — the rest of the craftable outfits [wiki] -------------------
-  // The wiki lists 65 craftable outfits. 28 of them are the Dew and Heart of
-  // Infinity sets above; these are the other 37, from quests, styling challenges and
-  // chests. Some were event rewards and can't be started now — strike those.
-  { title:"Craftable outfits from quests, styling challenges and chests",
-    group:"Sketches", soft:true,
-    note:"Check the ones you've crafted. Anything you're short materials on is a farming target.",
-    items:["A Beautiful Day","Blossoming Future","Burning Heart","Carnival Ode","Chic Elegance","Chromatic Comet","Departing Blossom",
-      "Endless Longing","Far and Away","Fish Tales","Flawless Vision","Fuzzy Affection","Heroic Legend","Honey Hunt",
-      "Immeasurable Findings","Lush Waltz","Luster Covenant","Mark of Time","Meadow Symphony","Melody Bloom","Mysterious Adventurer",
-      "Nefarious Shadows","Origin of Machinery","Refined Grace","Scarlet Dream","Searching for Dreams","Sound of Leaves","Spring Blossom",
-      "Star Memory","Starlit Celebration","Sweet Traces","Sweet-Cool Clash","Tasting the World","Unfettered Meadow","Verdant Chord",
-      "Visionary Dreamer","Whispered Dreams"] },
+  { title:"Providence Immemorial — Miracle, 11 nodes",
+    group:"Whimstars · Heart of Infinity", tab:"Itzaland", soft:true, link:{ href:MAP, label:"Map" },
+    items:["Dawnlight Dream · 2 ★ · 20k","Crown of Glimmers · 2 ★ · 20k","Divine Veil · 2 ★ · 30k","Melting Moonlight · 30k","Oracle's Awakening · 2 ★ · 50k",
+      "Dragon's Shadow · 2 ★ · 50k","Mark in Time · 2 ★ · 80k","Spring Breath · 2 ★ · 80k","Cycled Traces · 2 ★ · 100k","Sacred Cycle · 3 ★ · 100k",
+      "Providence Immemorial: Makeup · 3 ★ · 100k"] },
 
-  { title:"Compendium — push collection levels for the Diamond rewards",
-    group:"Sketches", soft:true,
-    note:"2.11 added the Spiritual Dreamweaver title and the Forest-Spirit Symbiosis card at certain levels." }
+  { title:"Slumber by Blossoms — 10 nodes",
+    group:"Whimstars · Heart of Infinity", tab:"Itzaland", soft:true,
+    items:["Glimmers and Longing · 2 ★ · 20k","Divine Kiss · 2 ★ · 20k","Stardust Wreath · 2 ★ · 20k","Dangling Blooms · 2 ★ · 20k","Into the Light · 2 ★ · 50k",
+      "Cradled Past Dreams · 2 ★ · 50k","Dewfall Breeze · 3 ★ · 100k","Breeze Whispers · 3 ★ · 100k","Farshore Blossoms · 3 ★ · 200k",
+      "Slumber by Blossoms: Makeup · 3 ★ · 200k"] },
+
+  { title:"Added 2.2–2.8 — not on the wiki's shard page yet",
+    group:"Whimstars · Heart of Infinity", tab:"Itzaland", soft:true,
+    note:"Each outfit's own wiki page lists its source as Heart of Infinity; node names and costs aren't documented.",
+    items:["Nefarious Shadows (2.2)","Visionary Dreamer (2.3)","Luster Covenant (2.5)","Origin of Machinery (2.8)","Hymn to Dusk — Miracle (2.8)"] },
+
+  { title:"Ability outfits — 4",
+    group:"Whimstars · Heart of Infinity", tab:"Itzaland", soft:true,
+    items:["Purifying Wind — Archery · 1 ★ · 1k","Forest Folk — Gigantification · 1 ★ · 1k","Shadow Swiftweave — Sticky Claw · 2 ★ · 1k","Dragonbone Master · 1 ★ · 10k"] },
+
+  { title:"Loose pieces — Archery, Gigantify, Sticky Claw, Blueprint and Dragonbone branches",
+    group:"Whimstars · Heart of Infinity", tab:"Itzaland", soft:true,
+    items:["Arrow Unleashed · 1 ★ · 20k","Fallen Feathers · 1 ★ · 20k","Wishing Fireworks · 1 ★ · 20k","Clear Focus · 1 ★ · 20k",
+      "Woodland Music · 2 ★ · 20k","Bones of Giants · 2 ★ · 50k","Brilliant Dawn · 2 ★ · 80k",
+      "Skybound Hunt · 2 ★ · 20k","Fleeting Fin · 2 ★ · 50k","Flower Dots · 2 ★ · 80k",
+      "Green Bobo · 2 ★ · 20k","Silver Feather · 2 ★ · 20k","Professional Choice · 2 ★ · 20k",
+      "Quiet Night Watch · 2 ★ · 20k","Remaining Silhouette · 2 ★ · 30k","Unspoken Vow · 2 ★ · 30k"] },
+
+  { title:"Whim Balloons — 56, traded at the Whim Exchange for Firework sketches",
+    group:"Whimstars · Heart of Infinity", tab:"Firework Isles", soft:true, target:56, link:{ href:MAP, label:"Map" },
+    note:"The wiki has no reward table for the exchange. Count what you've found." },
+
+  { title:"Whim Bubbles — 41, traded with Pouchy for Bubblets",
+    group:"Whimstars · Heart of Infinity", tab:"Serenity Island", soft:true, target:41, link:{ href:MAP, label:"Map" },
+    note:"Some hide inside Springblooms and drift away when you get close. No reward table on the wiki." },
+
+  { title:"Whim Jades — 68 across Danqing Island and the Danqing Realm",
+    group:"Whimstars · Heart of Infinity", tab:"Danqing Island", soft:true, target:68, link:{ href:MAP, label:"Map" },
+    note:"Artistic Whim Exchange with Zhou Suchan by the Loong Pagoda. Some are animals or sit behind Curio Domains. No reward table on the wiki." },
+
+  // --- Sketches — craftable outfits by where their sketches drop [wiki] ------
+  // Source field from each outfit's own wiki page (sketch_source / location).
+  // Same seven tabs as the quest cards. Eight of the wiki's 65 craftable outfits
+  // were event or pre-registration rewards with no place to find them now, so
+  // they're left out: Blossoming Future, Endless Longing, Honey Hunt, Melody Bloom,
+  // Starlit Celebration, Tasting the World, Verdant Chord, Far and Away.
+  { title:"Florawish",
+    group:"Sketches", tab:"Wishfield", soft:true, link:{ href:MAP, label:"Map" },
+    items:["Refined Grace — Florawish Styling Faction challenges"] },
+
+  { title:"Breezy Meadow",
+    group:"Sketches", tab:"Wishfield", soft:true,
+    items:["A Beautiful Day — Breezy Meadow Styling Faction challenges"] },
+
+  { title:"Stoneville & Abandoned District",
+    group:"Sketches", tab:"Stoneville", soft:true, link:{ href:MAP, label:"Map" },
+    items:["Carnival Ode — treasure chests across both areas","Searching for Dreams — Stonewoods Styling Faction challenges"] },
+
+  { title:"Wishing Woods",
+    group:"Sketches", tab:"Wishing Woods", soft:true, link:{ href:MAP, label:"Map" },
+    items:["Chic Elegance — treasure chests","Scarlet Dream — treasure chests","Departing Blossom — Wishing Woods Styling Faction challenges"] },
+
+  { title:"Elderwood Forest",
+    group:"Sketches", tab:"Elderwood Forest / Spira", soft:true, link:{ href:MAP, label:"Map" },
+    items:["Burning Heart — treasure chests","Fuzzy Affection — treasure chests","Immeasurable Findings — treasure chests",
+      "Sound of Leaves — from Monty after 3 of the 6 Behemoth Risky Photography quests",
+      "Heroic Legend — quest \"With the Wind and the Rain\" (2.4)","Lush Waltz — Itzaland Styling Faction challenges"] },
+
+  { title:"Spira",
+    group:"Sketches", tab:"Elderwood Forest / Spira", soft:true,
+    items:["Mysterious Adventurer — treasure chests"] },
+
+  { title:"Anywhere in Itzaland",
+    group:"Sketches", tab:"Elderwood Forest / Spira", soft:true,
+    items:["Mark of Time — treasure chests throughout Itzaland"] },
+
+  { title:"Boneyard",
+    group:"Sketches", tab:"Boneyard", soft:true, link:{ href:MAP, label:"Map" },
+    items:["Unfettered Meadow — Boneyard Styling Faction challenges","Chromatic Comet — quest reward (2.5; the wiki doesn't name the quest)"] },
+
+  { title:"Heaven's Reach",
+    group:"Sketches", tab:"Heaven's Reach", soft:true, link:{ href:MAP, label:"Map" },
+    items:["Sweet-Cool Clash — Sovereign of Sweet Styling Faction challenges"] },
+
+  { title:"Home",
+    group:"Sketches", tab:"Misc Maps", soft:true,
+    items:["Fish Tales","Flawless Vision","Meadow Symphony","Spring Blossom","Star Memory","Sweet Traces"] }
 
 ];
+
 
 /* ============================================================ */
 
@@ -1577,8 +1673,9 @@ REMINDERS.forEach(r => {
   d.className = "reminder";
   const t = document.createElement("span");
   t.className = "title"; t.textContent = r.title;
-  const c = document.createElement("span");
+  const c = document.createElement(r.href ? "a" : "span");
   c.className = "cadence"; c.textContent = "(" + r.cadence + ")";
+  if (r.href){ c.href = r.href; c.target = "_blank"; c.rel = "noopener"; }
   d.append(t, c);
   remEl.appendChild(d);
 });
