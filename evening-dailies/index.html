@@ -307,6 +307,27 @@ li + li { border-top: 1px dashed color-mix(in srgb, var(--tone) 28%, transparent
 .item input:checked ~ .text { color: var(--muted); text-decoration: line-through; }
 .text { overflow-wrap: anywhere; }
 
+/* Tiny countdown that sits beside one checklist item */
+li.has-timer { display: flex; align-items: center; gap: 8px; }
+li.has-timer .item { flex: 1; min-width: 0; }
+.mini {
+  flex: none;
+  font-size: 14px;
+  letter-spacing: .04em;
+  padding: 5px 10px;
+  min-height: 32px;
+  border-radius: 999px;
+  border-color: var(--tone);
+  color: var(--tone);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.mini[data-state="running"] {
+  background: color-mix(in srgb, var(--tone) 18%, transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--tone) 50%, transparent);
+}
+.mini[data-state="done"] { background: var(--tone); color: var(--bg); }
+
 /* Crop timer inside the Heartopia card */
 .crop {
   margin: 10px 0 8px;
@@ -409,7 +430,7 @@ main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
   <div class="bar">
     <div class="head">
       <span>Tonight's progress</span>
-      <span class="count" id="count">0 of 15 dailies</span>
+      <span class="count" id="count">0 of 16 dailies</span>
     </div>
     <div class="track" aria-hidden="true"><div class="fill" id="fill"></div></div>
     <div class="timers">
@@ -446,6 +467,7 @@ main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 (function () {
   var RESET_HOUR = 3; // list clears at 3:00am, device time
   var KEY = "evening-dailies-v1";
+  var SKILL_MS = 15 * 60000; // length of the skill-practice countdown
 
   var SECTIONS = [
     { id: "heartopia", name: "Heartopia", tone: "heart", note: "longest, do first", daily: true, items: [
@@ -455,7 +477,8 @@ main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
       ["h-train", "Train pets once"],
       ["h-event", "Do 1 event"],
       ["h-animals", "Feed community animals"],
-      ["h-crops", "Rotate crops"]
+      ["h-crops", "Rotate crops"],
+      ["h-skill", "Work on one skill for 15 minutes", "skill-timer"]
     ]},
     { id: "aniimo", name: "Aniimo", tone: "ani", note: "", daily: true, items: [
       ["a-login", "Claim login rewards"],
@@ -480,7 +503,8 @@ main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
     return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
   }
   function fresh(now) {
-    return { day: gameDay(now), checks: {}, sw: { running: false, startedAt: 0, acc: 0 } };
+    return { day: gameDay(now), checks: {}, sw: { running: false, startedAt: 0, acc: 0 },
+             skill: { endAt: 0, left: SKILL_MS } };
   }
 
   var state;
@@ -489,7 +513,11 @@ main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
     try {
       var raw = localStorage.getItem(KEY);
       var s = raw ? JSON.parse(raw) : null;
-      if (s && s.day === gameDay(now) && s.checks && s.sw) { state = s; return; }
+      if (s && s.day === gameDay(now) && s.checks && s.sw) {
+        if (!s.skill) s.skill = { endAt: 0, left: SKILL_MS };
+        state = s;
+        return;
+      }
     } catch (e) {}
     state = fresh(now);
   }
@@ -512,8 +540,9 @@ main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
       (sec.note ? '<span class="note">' + sec.note + '</span>' : '') +
       '</h2><span class="pill" id="pill-' + sec.id + '">0/' + sec.items.length + '</span></div><ul>';
     sec.items.forEach(function (it) {
-      html += '<li><label class="item" for="' + it[0] + '"><input type="checkbox" id="' + it[0] + '">' +
-        '<span class="box">' + CHECK + '</span><span class="text">' + it[1] + '</span></label></li>';
+      html += '<li' + (it[2] ? ' class="has-timer"' : '') + '><label class="item" for="' + it[0] + '"><input type="checkbox" id="' + it[0] + '">' +
+        '<span class="box">' + CHECK + '</span><span class="text">' + it[1] + '</span></label>' +
+        (it[2] ? '<button type="button" class="mini" id="' + it[2] + '">15:00</button>' : '') + '</li>';
     });
     g.innerHTML = html + "</ul>";
     groupsEl.appendChild(g);
@@ -646,6 +675,26 @@ main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
     tick();
   });
 
+  // 15-minute skill countdown: tap to start, tap to pause, tap again after it ends to rearm
+  var skillBtn = document.getElementById("skill-timer");
+  skillBtn.addEventListener("click", function () {
+    var now = Date.now(), k = state.skill;
+    if (k.endAt) { k.left = Math.max(0, k.endAt - now); k.endAt = 0; }       // pause
+    else if (k.left <= 0) { k.left = SKILL_MS; }                              // rearm
+    else { k.endAt = now + k.left; }                                          // start / resume
+    save();
+    tick();
+  });
+  function paintSkill(now) {
+    var k = state.skill, st, text, label;
+    if (k.endAt) { st = "running"; text = fmt(k.endAt - now + 999, false); label = "Pause skill timer, " + text + " left"; }
+    else if (k.left <= 0) { st = "done"; text = "Done"; label = "Skill timer finished. Tap to set it again"; }
+    else { st = "idle"; text = "\u25b8 " + fmt(k.left, false); label = "Start skill timer, " + fmt(k.left, false); }
+    skillBtn.setAttribute("data-state", st);
+    if (skillBtn.textContent !== text) skillBtn.textContent = text;
+    skillBtn.setAttribute("aria-label", label);
+  }
+
   // Two-tap clear (no browser dialogs)
   var clearBtn = document.getElementById("clear");
   var armed = null;
@@ -688,6 +737,16 @@ main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
       save();
       paint();
     }
+    if (state.skill.endAt && now >= state.skill.endAt) { // 15 minutes are up: tick the item
+      state.skill.endAt = 0;
+      state.skill.left = 0;
+      state.checks["h-skill"] = true;
+      if (dailyDone() === dailyTotal) pause(now);
+      save();
+      paint();
+    }
+    paintSkill(now);
+
     var c = countdown(now);
     document.getElementById("cd").setAttribute("data-tone", c.tone);
     document.getElementById("cd-label").textContent = c.label;
