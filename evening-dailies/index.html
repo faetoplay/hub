@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evening Dailies</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+/* One visual world, dark only: a worksheet page from a neon-lit library.
+   Layout: title block with doodles, sticky timer bar, one numbered tinted card
+   per game (double-ruled border in its own neon), closing line. */
+:root {
+  --bg: #120b1f;
+  --panel: #1b1230;
+  --ink: #ece3d0;
+  --muted: #a898bd;
+  --line: #3a2a5c;
+  --violet: #b48cff;
+  --pink: #ff6ec7;
+  --cyan: #5ee7ff;
+  --gold: #e3b866;
+  --crit: #ff5d6c;
+  --font-display: "Cinzel", "Trajan Pro", Georgia, serif;
+  --font-body: "EB Garamond", Georgia, "Times New Roman", serif;
+  --font-mono: "Share Tech Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(120% 420px at 50% -80px, rgba(180, 140, 255, .20), rgba(180, 140, 255, 0) 70%),
+    repeating-linear-gradient(0deg, rgba(180, 140, 255, .05) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(90deg, rgba(180, 140, 255, .05) 0 1px, transparent 1px 28px);
+  background-repeat: no-repeat, repeat, repeat;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.35;
+  -webkit-text-size-adjust: 100%;
+}
+.page {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 16px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Title block */
+.hero {
+  position: relative;
+  text-align: center;
+  padding: 26px 0 4px;
+}
+.eyebrow {
+  margin: 0 0 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(38px, 12.5vw, 58px);
+  line-height: .98;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+h1 span { display: block; }
+.t1 { color: var(--violet); text-shadow: 0 0 18px rgba(180, 140, 255, .65), 0 2px 0 #2a1850; }
+.t2 { color: var(--pink); text-shadow: 0 0 18px rgba(255, 110, 199, .6), 0 2px 0 #4a1238; }
+.sub {
+  margin: 10px auto 0;
+  max-width: 30ch;
+  font-style: italic;
+  color: var(--muted);
+  text-wrap: balance;
+}
+.doodle {
+  position: absolute;
+  pointer-events: none;
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.d-moon { top: 16px; right: 2px; width: 34px; stroke: var(--cyan); filter: drop-shadow(0 0 5px rgba(94, 231, 255, .7)); }
+.d-star { top: 20px; left: 4px; width: 24px; stroke: var(--gold); filter: drop-shadow(0 0 5px rgba(227, 184, 102, .7)); }
+.d-heart { top: 84px; left: 0; width: 18px; stroke: var(--pink); filter: drop-shadow(0 0 5px rgba(255, 110, 199, .7)); }
+.d-bolt { top: 92px; right: 6px; width: 14px; stroke: var(--gold); filter: drop-shadow(0 0 5px rgba(227, 184, 102, .7)); }
+.d-pad { bottom: 2px; right: 0; width: 34px; stroke: var(--violet); opacity: .8; }
+.d-spark { bottom: 8px; left: 6px; width: 16px; stroke: var(--cyan); opacity: .8; }
+
+/* Sticky timer bar */
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--bg);
+  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  border-bottom: 1px solid var(--line);
+}
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.count { color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.track {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line);
+  overflow: hidden;
+}
+.fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--violet), var(--pink));
+  box-shadow: 0 0 10px rgba(255, 110, 199, .7);
+  border-radius: 3px;
+  transition: width .25s ease;
+}
+.timers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.timer {
+  --tone: var(--violet);
+  background: var(--panel);
+  border: 1px solid color-mix(in srgb, var(--tone) 55%, transparent);
+  box-shadow: inset 0 0 0 3px var(--panel), inset 0 0 0 4px color-mix(in srgb, var(--tone) 28%, transparent);
+  border-radius: 12px;
+  padding: 11px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.timer-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.timer-value {
+  font-family: var(--font-mono);
+  font-size: 30px;
+  line-height: 1.1;
+  color: var(--tone);
+  text-shadow: 0 0 12px color-mix(in srgb, var(--tone) 60%, transparent);
+  font-variant-numeric: tabular-nums;
+}
+.timer[data-tone="warn"] { --tone: var(--gold); }
+.timer[data-tone="crit"] { --tone: var(--crit); }
+.timer[data-tone="warn"] .timer-label, .timer[data-tone="crit"] .timer-label { color: var(--tone); }
+.sw-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+button {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border-radius: 8px;
+  padding: 7px 10px;
+  min-height: 34px;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+}
+button.primary {
+  background: var(--violet);
+  border-color: var(--violet);
+  color: var(--bg);
+  box-shadow: 0 0 12px rgba(180, 140, 255, .45);
+  flex: 1;
+}
+button:focus-visible, input:focus-visible + .box {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+.status {
+  font-style: italic;
+  font-size: 16px;
+  color: var(--muted);
+  margin: 0;
+  min-height: 22px;
+}
+.status.done { color: var(--cyan); font-style: normal; }
+
+/* Numbered game cards */
+#groups { display: flex; flex-direction: column; gap: 14px; }
+.group {
+  background: color-mix(in srgb, var(--tone) 7%, var(--panel));
+  border: 1px solid color-mix(in srgb, var(--tone) 60%, transparent);
+  box-shadow:
+    inset 0 0 0 3px color-mix(in srgb, var(--tone) 7%, var(--panel)),
+    inset 0 0 0 4px color-mix(in srgb, var(--tone) 30%, transparent),
+    0 0 20px color-mix(in srgb, var(--tone) 14%, transparent);
+  border-radius: 14px;
+  padding: 15px 15px 8px;
+}
+.group[data-tone="heart"] { --tone: var(--gold); }
+.group[data-tone="ani"] { --tone: var(--cyan); }
+.group[data-tone="nikki"] { --tone: var(--pink); }
+.group[data-tone="wind"] { --tone: var(--violet); }
+.group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 2px;
+}
+h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--tone);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--tone) 45%, transparent);
+  margin: 0;
+}
+.note {
+  display: block;
+  font-family: var(--font-body);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 15px;
+  letter-spacing: 0;
+  text-transform: none;
+  text-shadow: none;
+  color: var(--muted);
+}
+.pill {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--tone);
+  color: var(--tone);
+  white-space: nowrap;
+}
+.group.complete .pill {
+  background: var(--tone);
+  color: var(--bg);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--tone) 60%, transparent);
+}
+ul { list-style: none; margin: 0; padding: 0; }
+li + li { border-top: 1px dashed color-mix(in srgb, var(--tone) 28%, transparent); }
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+  min-height: 48px;
+  cursor: pointer;
+}
+.item input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.box {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--tone);
+  display: grid;
+  place-items: center;
+  transition: background .15s ease, box-shadow .15s ease;
+}
+.box svg { width: 13px; height: 13px; opacity: 0; }
+.box path { stroke: var(--bg); }
+.item input:checked + .box {
+  background: var(--tone);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--tone) 70%, transparent);
+}
+.item input:checked + .box svg { opacity: 1; }
+.item input:checked ~ .text { color: var(--muted); text-decoration: line-through; }
+.text { overflow-wrap: anywhere; }
+
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+.foot span { font-variant-numeric: tabular-nums; }
+.closing {
+  margin: 4px 0 0;
+  text-align: center;
+  font-style: italic;
+  color: var(--violet);
+  text-wrap: balance;
+}
+.closing b { font-style: normal; font-weight: 400; color: var(--pink); }
+
+@media (prefers-reduced-motion: reduce) {
+  .fill, .box { transition: none; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="hero">
+    <svg class="doodle d-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6-5.3-3-5.3 3 1.2-6L3.4 9.3l6-.7z"/></svg>
+    <svg class="doodle d-moon" viewBox="0 0 34 34" aria-hidden="true"><path d="M23 5a13 13 0 1 0 6 20A11 11 0 0 1 23 5z"/></svg>
+    <svg class="doodle d-heart" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 15.5S2.5 11.6 2.5 6.9A3.4 3.4 0 0 1 9 5.4a3.4 3.4 0 0 1 6.5 1.5c0 4.700-6.500 8.600-6.500 8.600z"/></svg>
+    <svg class="doodle d-bolt" viewBox="0 0 14 22" aria-hidden="true"><path d="M9 1L2 12h5l-2 9 7-12H7z"/></svg>
+    <svg class="doodle d-pad" viewBox="0 0 34 22" aria-hidden="true"><rect x="2" y="3" width="30" height="16" rx="8"/><path d="M9 8v6M6 11h6"/><circle cx="23" cy="9" r="1.2"/><circle cx="27" cy="13" r="1.2"/></svg>
+    <svg class="doodle d-spark" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1v14M1 8h14M3.5 3.500l9 9M12.500 3.500l-9 9"/></svg>
+    <p class="eyebrow">Begins 8:00pm &middot; Bed 12:00am</p>
+    <h1><span class="t1">Evening</span><span class="t2">Dailies</span></h1>
+    <p class="sub">Dailies first, then free play, then bed by midnight.</p>
+  </header>
+
+  <div class="bar">
+    <div class="head">
+      <span>Tonight's progress</span>
+      <span class="count" id="count">0 of 13 dailies</span>
+    </div>
+    <div class="track" aria-hidden="true"><div class="fill" id="fill"></div></div>
+    <div class="timers">
+      <div class="timer" id="cd" data-tone="ok">
+        <span class="timer-label" id="cd-label">Wind-down in</span>
+        <span class="timer-value" id="cd-value">0:00:00</span>
+      </div>
+      <div class="timer" id="sw">
+        <span class="timer-label">Dailies stopwatch</span>
+        <span class="timer-value" id="sw-value">0:00</span>
+        <div class="sw-row">
+          <button type="button" class="primary" id="sw-toggle">Start</button>
+          <button type="button" id="sw-zero">Zero</button>
+        </div>
+      </div>
+    </div>
+    <p class="status" id="status" aria-live="polite">Tap Start when you begin your dailies.</p>
+  </div>
+
+  <div id="groups"></div>
+
+  <div class="foot">
+    <span id="resets">List clears itself at 3:00am</span>
+    <button type="button" id="clear">Clear today's ticks</button>
+  </div>
+  <p class="closing">Remember: gaming is better when the chores are done. <b>Sleep well.</b></p>
+</div>
+
+<script>
+(function () {
+  var RESET_HOUR = 3; // list clears at 3:00am, device time
+  var KEY = "evening-dailies-v1";
+
+  var SECTIONS = [
+    { id: "heartopia", name: "Heartopia", tone: "heart", note: "longest, do first", daily: true, items: [
+      ["h-login", "Claim login rewards"],
+      ["h-requests", "Complete 5 resident requests"],
+      ["h-clean", "Clean pets"],
+      ["h-train", "Train pets once"],
+      ["h-event", "Do 1 event"]
+    ]},
+    { id: "aniimo", name: "Aniimo", tone: "ani", note: "", daily: true, items: [
+      ["a-login", "Claim login rewards"],
+      ["a-activity", "Daily Activity to 500 points"],
+      ["a-packs", "Claim the 5 reward packs"],
+      ["a-heist", "1 round of Egg Heists"],
+      ["a-rv", "RV dailies"]
+    ]},
+    { id: "nikki", name: "Infinity Nikki", tone: "nikki", note: "swiftest", daily: true, items: [
+      ["n-wishes", "Daily Wishes to 500 points"],
+      ["n-energy", "Spend Vital Energy"],
+      ["n-claim", "Claim rewards"]
+    ]},
+    { id: "wind", name: "Wind down", tone: "wind", note: "at 11:30pm", daily: false, items: [
+      ["w-logoff", "Finish current activity and log off"],
+      ["w-ready", "Get ready for bed"]
+    ]}
+  ];
+
+  function gameDay(now) {
+    var d = new Date(now - RESET_HOUR * 3600000);
+    return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+  }
+  function fresh(now) {
+    return { day: gameDay(now), checks: {}, sw: { running: false, startedAt: 0, acc: 0 } };
+  }
+
+  var state;
+  function load() {
+    var now = Date.now();
+    try {
+      var raw = localStorage.getItem(KEY);
+      var s = raw ? JSON.parse(raw) : null;
+      if (s && s.day === gameDay(now) && s.checks && s.sw) { state = s; return; }
+    } catch (e) {}
+    state = fresh(now);
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  // Build the list once
+  var groupsEl = document.getElementById("groups");
+  var CHECK = '<svg viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.5l3 3 6-7" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var dailyTotal = 0;
+
+  SECTIONS.forEach(function (sec, i) {
+    if (sec.daily) dailyTotal += sec.items.length;
+    var g = document.createElement("section");
+    g.className = "group";
+    g.id = "group-" + sec.id;
+    g.setAttribute("data-tone", sec.tone);
+    var html = '<div class="group-head"><h2>' + (i + 1) + ". " + sec.name +
+      (sec.note ? '<span class="note">' + sec.note + '</span>' : '') +
+      '</h2><span class="pill" id="pill-' + sec.id + '">0/' + sec.items.length + '</span></div><ul>';
+    sec.items.forEach(function (it) {
+      html += '<li><label class="item" for="' + it[0] + '"><input type="checkbox" id="' + it[0] + '">' +
+        '<span class="box">' + CHECK + '</span><span class="text">' + it[1] + '</span></label></li>';
+    });
+    g.innerHTML = html + "</ul>";
+    groupsEl.appendChild(g);
+  });
+
+  function dailyDone() {
+    var n = 0;
+    SECTIONS.forEach(function (sec) {
+      if (!sec.daily) return;
+      sec.items.forEach(function (it) { if (state.checks[it[0]]) n++; });
+    });
+    return n;
+  }
+
+  function paint() {
+    SECTIONS.forEach(function (sec) {
+      var n = 0;
+      sec.items.forEach(function (it) {
+        var on = !!state.checks[it[0]];
+        document.getElementById(it[0]).checked = on;
+        if (on) n++;
+      });
+      document.getElementById("pill-" + sec.id).textContent = n + "/" + sec.items.length;
+      document.getElementById("group-" + sec.id).classList.toggle("complete", n === sec.items.length);
+    });
+    var done = dailyDone();
+    document.getElementById("count").textContent = done + " of " + dailyTotal + " dailies";
+    document.getElementById("fill").style.width = (100 * done / dailyTotal) + "%";
+  }
+
+  // Stopwatch
+  function elapsed(now) {
+    return state.sw.acc + (state.sw.running ? now - state.sw.startedAt : 0);
+  }
+  function pause(now) {
+    if (!state.sw.running) return;
+    state.sw.acc += now - state.sw.startedAt;
+    state.sw.running = false;
+  }
+  function fmt(ms, withHours) {
+    var s = Math.max(0, Math.floor(ms / 1000));
+    var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+    var mm = (h || withHours) && m < 10 ? "0" + m : "" + m;
+    var ss = sec < 10 ? "0" + sec : "" + sec;
+    return (h || withHours) ? h + ":" + mm + ":" + ss : mm + ":" + ss;
+  }
+
+  groupsEl.addEventListener("change", function (e) {
+    var t = e.target;
+    if (!t || t.type !== "checkbox") return;
+    var now = Date.now();
+    if (t.checked) state.checks[t.id] = true; else delete state.checks[t.id];
+    if (dailyDone() === dailyTotal) pause(now); // all dailies ticked: stop the clock
+    save();
+    paint();
+    tick();
+  });
+
+  document.getElementById("sw-toggle").addEventListener("click", function () {
+    var now = Date.now();
+    if (state.sw.running) pause(now);
+    else { state.sw.running = true; state.sw.startedAt = now; }
+    save();
+    tick();
+  });
+  document.getElementById("sw-zero").addEventListener("click", function () {
+    state.sw = { running: false, startedAt: 0, acc: 0 };
+    save();
+    tick();
+  });
+
+  // Two-tap clear (no browser dialogs)
+  var clearBtn = document.getElementById("clear");
+  var armed = null;
+  clearBtn.addEventListener("click", function () {
+    if (armed) {
+      clearTimeout(armed); armed = null;
+      state = fresh(Date.now());
+      save(); paint(); tick();
+      clearBtn.textContent = "Clear today's ticks";
+      return;
+    }
+    clearBtn.textContent = "Tap again to clear";
+    armed = setTimeout(function () {
+      armed = null;
+      clearBtn.textContent = "Clear today's ticks";
+    }, 3000);
+  });
+
+  function countdown(now) {
+    var d = new Date(now);
+    var mins = d.getHours() * 60 + d.getMinutes();
+    var t = new Date(now);
+    if (mins < RESET_HOUR * 60) {
+      t.setHours(0, 0, 0, 0);
+      return { label: "Past bedtime by", ms: now - t.getTime(), tone: "crit" };
+    }
+    if (mins >= 23 * 60 + 30) {
+      t.setHours(24, 0, 0, 0);
+      return { label: "Bed in", ms: t.getTime() - now, tone: "warn" };
+    }
+    t.setHours(23, 30, 0, 0);
+    var left = t.getTime() - now;
+    return { label: "Wind-down in", ms: left, tone: left <= 30 * 60000 ? "warn" : "ok" };
+  }
+
+  function tick() {
+    var now = Date.now();
+    if (state.day !== gameDay(now)) { // 3am passed: new day, clean list
+      state = fresh(now);
+      save();
+      paint();
+    }
+    var c = countdown(now);
+    document.getElementById("cd").setAttribute("data-tone", c.tone);
+    document.getElementById("cd-label").textContent = c.label;
+    document.getElementById("cd-value").textContent = fmt(c.ms, true);
+
+    var el = elapsed(now);
+    document.getElementById("sw-value").textContent = fmt(el, false);
+    document.getElementById("sw-toggle").textContent = state.sw.running ? "Pause" : (el > 0 ? "Resume" : "Start");
+
+    var status = document.getElementById("status");
+    var allDone = dailyDone() === dailyTotal;
+    var msg;
+    if (allDone) {
+      msg = el > 0 ? "Dailies done in " + fmt(el, false) + ". Free play until 11:30pm."
+                   : "Dailies done. Free play until 11:30pm.";
+    } else if (state.sw.running) {
+      msg = "Timing your dailies. It stops when the last one is ticked.";
+    } else if (el > 0) {
+      msg = "Stopwatch paused.";
+    } else {
+      msg = "Tap Start when you begin your dailies.";
+    }
+    if (status.textContent !== msg) status.textContent = msg;
+    status.classList.toggle("done", allDone);
+
+    var next = new Date(now);
+    next.setHours(RESET_HOUR, 0, 0, 0);
+    if (next.getTime() <= now) next.setDate(next.getDate() + 1);
+    var leftMin = Math.ceil((next.getTime() - now) / 60000);
+    document.getElementById("resets").textContent =
+      "Clears at 3:00am, in " + Math.floor(leftMin / 60) + "h " + (leftMin % 60) + "m";
+  }
+
+  load();
+  paint();
+  tick();
+  setInterval(tick, 1000);
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) tick(); });
+})();
+</script>
+</body>
+</html>
