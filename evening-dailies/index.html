@@ -327,6 +327,25 @@ li + li { border-top: 1px dashed color-mix(in srgb, var(--tone) 28%, transparent
 }
 .closing b { font-style: normal; font-weight: 400; color: var(--pink); }
 
+/* Wide screens: title and timers stay put on the left, game cards fill the right */
+.side { display: contents; }
+main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+@media (min-width: 900px) {
+  .page {
+    max-width: 1120px;
+    display: grid;
+    grid-template-columns: 380px minmax(0, 1fr);
+    gap: 32px;
+    align-items: start;
+    padding: 28px 24px 40px;
+  }
+  .side { display: flex; flex-direction: column; gap: 14px; position: sticky; top: 20px; }
+  .hero { padding-top: 12px; }
+  .bar { position: static; border-bottom: 0; padding: 0; background: transparent; }
+  main { gap: 18px; padding-top: 12px; }
+  #groups { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .fill, .box { transition: none; }
 }
@@ -334,6 +353,7 @@ li + li { border-top: 1px dashed color-mix(in srgb, var(--tone) 28%, transparent
 </head>
 <body>
 <div class="page">
+  <div class="side">
   <header class="hero">
     <svg class="doodle d-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6-5.3-3-5.3 3 1.2-6L3.4 9.3l6-.7z"/></svg>
     <svg class="doodle d-moon" viewBox="0 0 34 34" aria-hidden="true"><path d="M23 5a13 13 0 1 0 6 20A11 11 0 0 1 23 5z"/></svg>
@@ -369,6 +389,9 @@ li + li { border-top: 1px dashed color-mix(in srgb, var(--tone) 28%, transparent
     <p class="status" id="status" aria-live="polite">Tap Start when you begin your dailies.</p>
   </div>
 
+  </div>
+
+  <main>
   <div id="groups"></div>
 
   <div class="foot">
@@ -376,6 +399,7 @@ li + li { border-top: 1px dashed color-mix(in srgb, var(--tone) 28%, transparent
     <button type="button" id="clear">Clear today's ticks</button>
   </div>
   <p class="closing">Remember: gaming is better when the chores are done. <b>Sleep well.</b></p>
+  </main>
 </div>
 
 <script>
