@@ -307,6 +307,46 @@ li + li { border-top: 1px dashed color-mix(in srgb, var(--tone) 28%, transparent
 .item input:checked ~ .text { color: var(--muted); text-decoration: line-through; }
 .text { overflow-wrap: anywhere; }
 
+/* Crop timer inside the Heartopia card */
+.crop {
+  margin: 10px 0 8px;
+  padding: 12px;
+  border: 1px dashed color-mix(in srgb, var(--tone) 50%, transparent);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.crop-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.crop-value {
+  font-family: var(--font-mono);
+  font-size: 26px;
+  line-height: 1.1;
+  color: var(--tone);
+  text-shadow: 0 0 12px color-mix(in srgb, var(--tone) 55%, transparent);
+  font-variant-numeric: tabular-nums;
+}
+.crop-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.crop-row button { padding: 7px 4px; }
+.crop button.primary {
+  background: var(--tone);
+  border-color: var(--tone);
+  color: var(--bg);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--tone) 45%, transparent);
+}
+.crop[data-state="done"] {
+  border-style: solid;
+  border-color: var(--tone);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--tone) 40%, transparent);
+}
+.crop[data-state="done"] .timer-label { color: var(--tone); }
+
 .foot {
   display: flex;
   align-items: center;
@@ -369,7 +409,7 @@ main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
   <div class="bar">
     <div class="head">
       <span>Tonight's progress</span>
-      <span class="count" id="count">0 of 13 dailies</span>
+      <span class="count" id="count">0 of 15 dailies</span>
     </div>
     <div class="track" aria-hidden="true"><div class="fill" id="fill"></div></div>
     <div class="timers">
@@ -413,7 +453,9 @@ main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
       ["h-requests", "Complete 5 resident requests"],
       ["h-clean", "Clean pets"],
       ["h-train", "Train pets once"],
-      ["h-event", "Do 1 event"]
+      ["h-event", "Do 1 event"],
+      ["h-animals", "Feed community animals"],
+      ["h-crops", "Rotate crops"]
     ]},
     { id: "aniimo", name: "Aniimo", tone: "ani", note: "", daily: true, items: [
       ["a-login", "Claim login rewards"],
@@ -476,6 +518,67 @@ main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
     g.innerHTML = html + "</ul>";
     groupsEl.appendChild(g);
   });
+
+  // Crop timer: lives in the Heartopia card, kept apart from the daily reset
+  var CROP_KEY = "evening-dailies-crop-v1";
+  var crop = { dur: 90, endAt: 0 }; // dur in minutes; endAt = 0 means not running
+  try {
+    var cr = JSON.parse(localStorage.getItem(CROP_KEY) || "null");
+    if (cr && typeof cr.dur === "number" && typeof cr.endAt === "number") crop = cr;
+  } catch (e) {}
+  function saveCrop() {
+    try { localStorage.setItem(CROP_KEY, JSON.stringify(crop)); } catch (e) {}
+  }
+  var cropEl = document.createElement("div");
+  cropEl.className = "crop";
+  cropEl.id = "crop";
+  cropEl.innerHTML =
+    '<div class="crop-top"><span class="timer-label" id="crop-label">Crop timer, set for</span>' +
+    '<span class="crop-value" id="crop-value">1:30:00</span></div>' +
+    '<div class="crop-row">' +
+    '<button type="button" id="crop-m60" data-adj="-60" aria-label="Minus 1 hour">&minus;1h</button>' +
+    '<button type="button" id="crop-m5" data-adj="-5" aria-label="Minus 5 minutes">&minus;5m</button>' +
+    '<button type="button" id="crop-p5" data-adj="5" aria-label="Plus 5 minutes">+5m</button>' +
+    '<button type="button" id="crop-p60" data-adj="60" aria-label="Plus 1 hour">+1h</button></div>' +
+    '<button type="button" class="primary" id="crop-go">Start</button>';
+  document.getElementById("group-heartopia").appendChild(cropEl);
+
+  cropEl.addEventListener("click", function (e) {
+    var t = e.target;
+    if (!t || t.tagName !== "BUTTON") return;
+    var now = Date.now();
+    if (t.id === "crop-go") {
+      crop.endAt = crop.endAt ? 0 : now + crop.dur * 60000; // Start, or Stop / Reset
+    } else {
+      var adj = parseInt(t.getAttribute("data-adj"), 10);
+      if (crop.endAt) { // running or finished: move the finish time
+        var left = Math.max(0, crop.endAt - now);
+        if (left === 0 && adj < 0) return;
+        crop.endAt = now + Math.max(60000, left + adj * 60000);
+      } else { // idle: change the set length (5 minutes to 99 hours)
+        crop.dur = Math.min(5940, Math.max(5, crop.dur + adj));
+      }
+    }
+    saveCrop();
+    tick();
+  });
+
+  function paintCrop(now) {
+    var st, label, value, go;
+    if (!crop.endAt) {
+      st = "idle"; label = "Crop timer, set for"; value = fmt(crop.dur * 60000, true); go = "Start";
+    } else if (crop.endAt > now) {
+      st = "running"; label = "Crops ready in"; value = fmt(crop.endAt - now + 999, true); go = "Stop";
+    } else {
+      st = "done"; label = "Crops ready"; value = "Harvest"; go = "Reset";
+    }
+    cropEl.setAttribute("data-state", st);
+    document.getElementById("crop-label").textContent = label;
+    document.getElementById("crop-value").textContent = value;
+    document.getElementById("crop-go").textContent = go;
+    var title = (st === "done" ? "Crops ready \u00b7 " : "") + "Evening Dailies";
+    if (document.title !== title) document.title = title;
+  }
 
   function dailyDone() {
     var n = 0;
@@ -609,6 +712,8 @@ main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
     }
     if (status.textContent !== msg) status.textContent = msg;
     status.classList.toggle("done", allDone);
+
+    paintCrop(now);
 
     var next = new Date(now);
     next.setHours(RESET_HOUR, 0, 0, 0);
